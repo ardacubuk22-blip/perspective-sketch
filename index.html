@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2D5BFF">
+<meta name="description" content="Learn perspective drawing step by step, on real paper. By @perspective.sketch">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Perspective Sketch App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600&display=swap">
+<style>
+/* Layout: one phone-width column; a drafting-paper canvas is the hero of every screen; lesson path like a game map; bottom tab bar */
+:root{
+  --bg:#E8ECF1; --surface:#FFFFFF; --paper:#FBFCFE; --grid:#E2E9F2;
+  --ink:#1E2228; --muted:#5B6573; --line:#D3DAE3;
+  --guide:#7DAEE0; --accent:#2D5BFF; --accent-deep:#1B3DC2; --accent-ink:#FFFFFF; --accent-soft:#DDE5FF;
+  --new:#F0661E; --marker:#FFC53D; --ok:#17996A; --ok-deep:#0F7550; --vp:#E0352B; --lock:#C3CBD6; --lock-deep:#A5AFBC;
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101318; --surface:#191D24; --paper:#1F242C; --grid:#283039;
+  --ink:#E8ECF1; --muted:#9CA6B3; --line:#2C343F;
+  --guide:#4E7FB5; --accent:#6F8CFF; --accent-deep:#4560D6; --accent-ink:#0C1020; --accent-soft:#232C4A;
+  --new:#FF8A4A; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101318; --surface:#191D24; --paper:#1F242C; --grid:#283039;
+  --ink:#E8ECF1; --muted:#9CA6B3; --line:#2C343F;
+  --guide:#4E7FB5; --accent:#6F8CFF; --accent-deep:#4560D6; --accent-ink:#0C1020; --accent-soft:#232C4A;
+  --new:#FF8A4A; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,label:focus-within,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+.app{max-width:480px;margin:0 auto;padding-block:14px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:22px}
+.app.full{padding-bottom:20px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:17px;line-height:1}
+.brand svg{width:34px;height:34px}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);margin-top:3px}
+.stats{display:flex;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.chip .ico{width:17px;height:17px}
+.chip.flame .ico{stroke:var(--new)} .chip.star .ico{stroke:var(--marker);fill:var(--marker)}
+.chip.pro{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+
+/* paper */
+.paper{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;background-position:-1px -1px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.art{display:block;width:100%;height:auto;aspect-ratio:4/3}
+.art .sh{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.art .ink{stroke:var(--ink);stroke-width:2.4}
+.art .thin{stroke:var(--ink);stroke-width:1.4}
+.art .guide{stroke:var(--guide);stroke-width:1.3}
+.art .shade{fill:url(#hatch);stroke:none}
+.art .shadeLight{fill:url(#hatchLight);stroke:none}
+.hl{stroke:var(--ink);stroke-width:1.1}
+.art .dot circle{fill:var(--vp)}
+.art .lab{font-family:var(--hand);font-size:19px;fill:var(--vp)}
+.art .lab.hor{fill:var(--guide)}
+.art .new.ink,.art .new.thin{stroke:var(--new)}
+.art .new.guide{stroke:var(--new);opacity:.65}
+.art path.new.ink,.art path.new.thin,.art path.new.guide{stroke-dasharray:1 1;stroke-dashoffset:1;animation:draw .65s cubic-bezier(.5,0,.3,1) forwards;animation-delay:calc(var(--i)*.17s)}
+.art .new.shade,.art .new.shadeLight,.art .new.lab{opacity:0;animation:fade .7s ease forwards;animation-delay:calc(var(--i)*.17s)}
+.art g.dot.new circle{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pop .45s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--i)*.17s)}
+.art g.dot.new .lab{opacity:0;animation:fade .5s ease forwards;animation-delay:calc(var(--i)*.17s + .2s)}
+.art.final .guide{opacity:.4}
+.art.final .dot circle{opacity:.55}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fade{to{opacity:1}}
+@keyframes pop{to{transform:scale(1)}}
+
+/* continue card */
+.continue{display:grid;grid-template-columns:116px 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px}
+.continue .paper{border-radius:10px}
+.continue h2{font-size:19px;margin:3px 0 10px}
+.continue > div{min-width:0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:13px 18px;font-weight:700;font-size:15px;min-height:48px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 4px 0 var(--accent-deep)}
+.btn.primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.btn.ok{background:var(--ok);color:#fff;box-shadow:0 4px 0 var(--ok-deep)}
+.btn.ghost{background:var(--surface);border:1.5px solid var(--line)}
+.btn.small{min-height:40px;padding:9px 14px;font-size:14px;border-radius:12px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* units & path */
+.unit{display:flex;flex-direction:column;gap:14px}
+.unit-head{border-radius:16px;padding:14px 16px;background:var(--accent);color:var(--accent-ink)}
+.unit-head .eyebrow{color:inherit;opacity:.8}
+.unit-head h2{font-size:22px;margin-top:2px}
+.unit-head p{font-size:14px;opacity:.9;margin-top:4px}
+.unit.u2 .unit-head{background:var(--ok);color:#fff}
+.unit.u3 .unit-head{background:var(--ink);color:var(--bg)}
+.path{list-style:none;margin:0;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:20px}
+.node{display:flex;flex-direction:column;align-items:center;gap:6px;transform:translateX(var(--x,0));position:relative}
+.node .nb{width:70px;height:66px;border-radius:50%;border:0;display:grid;place-items:center;position:relative;font-family:var(--display);font-weight:800;font-size:22px}
+.node .nb .ico{width:28px;height:28px;stroke-width:2.6}
+.node.done .nb{background:var(--ok);color:#fff;box-shadow:0 6px 0 var(--ok-deep)}
+.node.current .nb{background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 0 var(--accent-deep)}
+.node.locked .nb,.node.soon .nb{background:var(--lock);color:var(--muted);box-shadow:0 6px 0 var(--lock-deep)}
+.node.current .nb::after{content:"";position:absolute;inset:-9px;border-radius:50%;border:3px solid var(--accent);opacity:.35;animation:ring 1.8s ease-out infinite}
+@keyframes ring{0%{transform:scale(.92);opacity:.5}100%{transform:scale(1.12);opacity:0}}
+.node .gem{position:absolute;right:-6px;top:-4px;width:26px;height:26px;border-radius:50%;background:var(--marker);color:#3A2A00;display:grid;place-items:center}
+.node .gem .ico{width:15px;height:15px;stroke-width:2.2}
+.node .lbl{font-weight:600;font-size:13px;text-align:center;max-width:150px;line-height:1.25}
+.node.locked .lbl,.node.soon .lbl{color:var(--muted)}
+.start{position:absolute;top:-30px;background:var(--surface);border:1.5px solid var(--line);color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:8px;white-space:nowrap}
+.foot-note{font-size:13px;color:var(--muted);text-align:center}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
+.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tabs button{background:none;border:0;border-radius:12px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted)}
+.tabs button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+
+/* lesson */
+.lbar{display:flex;align-items:center;gap:12px}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
+.segs{flex:1;display:flex;gap:5px;min-width:0}
+.segs i{flex:1;height:8px;border-radius:99px;background:var(--line)}
+.segs i.on{background:var(--ok)}
+.segs i.cur{background:var(--new)}
+.lnum{font-family:var(--mono);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.lbody{display:flex;flex-direction:column;gap:8px}
+.lbody h2{font-size:26px}
+.lbody p.txt{font-size:16.5px;max-width:60ch}
+.tip{font-family:var(--hand);font-size:22px;color:var(--new);line-height:1.15}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{display:inline-block;width:18px;height:3px;border-radius:2px}
+.lactions{display:grid;grid-template-columns:auto auto 1fr;gap:10px}
+
+/* complete */
+.done-head{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+.done-head h1{font-size:30px}
+.reward{display:flex;gap:10px;justify-content:center}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.panel h3{font-size:18px}
+.upload{display:flex;align-items:center;justify-content:center;gap:10px;border:2px dashed var(--line);border-radius:14px;padding:16px;font-weight:600;cursor:pointer;text-align:center}
+.upload input{position:absolute;opacity:0;width:1px;height:1px}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compare figure{margin:0;display:flex;flex-direction:column;gap:5px;min-width:0}
+.compare figcaption{font-size:12px;color:var(--muted);text-align:center}
+.compare img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.copyrow{display:flex;gap:8px;align-items:center}
+.copyrow code{flex:1;min-width:0;font-family:var(--mono);font-size:13px;background:var(--bg);border-radius:10px;padding:10px 12px;overflow-wrap:anywhere;user-select:all}
+
+/* challenge */
+.hero-c{background:var(--ink);color:var(--bg);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.hero-c .eyebrow{color:inherit;opacity:.7}
+.hero-c h1{font-size:28px}
+.bar{height:10px;border-radius:99px;background:color-mix(in srgb,var(--bg) 25%,transparent);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--marker);border-radius:99px}
+.days{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.day{aspect-ratio:1;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;position:relative;padding:0}
+.day.done{background:var(--ok);border-color:var(--ok);color:#fff}
+.day.next{border-color:var(--accent);color:var(--accent);border-width:2.5px}
+.day.locked{color:var(--muted);background:transparent}
+.day.sel{outline:3px solid var(--marker);outline-offset:2px}
+.day .pdot{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--marker)}
+.prompt{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.2}
+
+/* profile */
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat b{display:block;font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.plan{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,14,22,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:520px;background:var(--surface);border-radius:22px 22px 0 0;padding:20px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:92%;overflow:auto;animation:up .3s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet h2{font-size:26px}
+.feat{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.feat li{display:flex;gap:10px;align-items:flex-start}
+.feat .ico{stroke:var(--ok);margin-top:2px}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.planopt{border:2px solid var(--line);border-radius:14px;padding:12px;text-align:left;background:var(--surface);display:flex;flex-direction:column;gap:2px;position:relative}
+.planopt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.planopt b{font-family:var(--display);font-size:20px}
+.planopt small{color:var(--muted);font-size:12.5px}
+.save{position:absolute;top:-10px;right:10px;background:var(--marker);color:#3A2A00;font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px}
+.fine{font-size:12.5px;color:var(--muted);text-align:center}
+
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+
+<svg class="defs" aria-hidden="true">
+  <defs>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="hl"/></pattern>
+    <pattern id="hatchLight" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="9" class="hl" style="opacity:.6"/></pattern>
+  </defs>
+</svg>
+
+<main id="app" class="app" aria-live="polite"></main>
+<nav class="tabs" id="tabs" aria-label="Main">
+  <div>
+    <button id="tab-learn" data-act="tab" data-tab="learn"><svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Learn</button>
+    <button id="tab-challenge" data-act="tab" data-tab="challenge"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>30 days</button>
+    <button id="tab-profile" data-act="tab" data-tab="profile"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Profile</button>
+  </div>
+</nav>
+<div id="sheetwrap" hidden></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+/* ---------- icons ---------- */
+const I={
+  flame:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 2.5c.8 3.6 5.5 5.6 5.5 11a5.5 5.5 0 0 1-11 0c0-2.8 1.6-4.6 2.6-5.6.1 1.9 1 3 2 3.2C11.2 7.6 10.6 5 12 2.5z"/></svg>',
+  star:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 3l2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 16.9 6.4 20l1.3-6.2L3 9.5l6.3-.7z"/></svg>',
+  check:'<svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  lock:'<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>',
+  gem:'<svg class="ico" viewBox="0 0 24 24"><path d="M7 4h10l4 5.5L12 20 3 9.5z"/><path d="M3 9.5h18M9.5 4L8 9.5l4 10.5 4-10.5L14.5 4"/></svg>',
+  x:'<svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  replay:'<svg class="ico" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4v4.5H9"/></svg>',
+  back:'<svg class="ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+  next:'<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+  cam:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
+  copy:'<svg class="ico" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>',
+  pencil:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>'
+};
+const LOGO='<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="9" fill="var(--accent)"/><path d="M4 14h26" stroke="var(--accent-ink)" stroke-opacity=".45" stroke-width="1.5"/><path d="M5 29L17 14l12 15" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linejoin="round"/><path d="M11 29l6-15 6 15" fill="none" stroke="var(--accent-ink)" stroke-opacity=".6" stroke-width="1.6"/><circle cx="17" cy="14" r="2.8" fill="var(--marker)"/></svg>';
+
+/* ---------- geometry ---------- */
+const W=400,H=300;
+const L=(a,b,k='ink')=>({t:'l',a,b,k});
+const G=(a,b)=>L(a,b,'guide');
+const Th=(a,b)=>L(a,b,'thin');
+const D=(p,label)=>({t:'d',p,label});
+const P=(pts,k='shade')=>({t:'p',pts,k});
+const T=(p,s,c='')=>({t:'t',p,s,c});
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+const atX=(p,q,x)=>{const t=(x-p[0])/(q[0]-p[0]);return [x,p[1]+(q[1]-p[1])*t]};
+const atY=(p,q,y)=>{const t=(y-p[1])/(q[1]-p[1]);return [p[0]+(q[0]-p[0])*t,y]};
+function inter(p1,p2,p3,p4){const d=(p1[0]-p2[0])*(p3[1]-p4[1])-(p1[1]-p2[1])*(p3[0]-p4[0]);const a=p1[0]*p2[1]-p1[1]*p2[0],b=p3[0]*p4[1]-p3[1]*p4[0];return [(a*(p3[0]-p4[0])-(p1[0]-p2[0])*b)/d,(a*(p3[1]-p4[1])-(p1[1]-p2[1])*b)/d]}
+function ext(p,q){const dx=q[0]-p[0],dy=q[1]-p[1],ts=[];if(dx>0)ts.push((W-p[0])/dx);if(dx<0)ts.push(-p[0]/dx);if(dy>0)ts.push((H-p[1])/dy);if(dy<0)ts.push(-p[1]/dy);const t=Math.min(...ts);return [p[0]+dx*t,p[1]+dy*t]}
+
+/* ---------- lessons ---------- */
+function road(){const hy=120,V=[200,hy],E=[360,300];
+  const B1=lerp(V,E,.9),T1=[B1[0],B1[1]-112];
+  return [
+    {title:'Find your eye level',text:'Draw a light horizontal line across the page. This is the horizon: the height of your eyes.',tip:'press softly, it is only a guide',shapes:[G([10,hy],[390,hy]),T([300,hy-9],'horizon','hor')]},
+    {title:'Place the vanishing point',text:'Put one dot in the middle of the horizon. Everything that goes away from you meets at this point.',tip:'VP = vanishing point',shapes:[D(V,'VP')]},
+    {title:'Draw the road',text:'From the dot, draw two lines down to the bottom corners of the page. That is a road running to the horizon.',tip:'use a ruler for clean lines',shapes:[L(V,[40,300]),L(V,E)]},
+    {title:'Dash the centre line',text:'Add the centre line as dashes. Each dash gets shorter as it gets closer to the vanishing point.',tip:'smaller = further away',shapes:[[.14,.19],[.26,.34],[.44,.56],[.68,.86]].map(([a,b])=>L(lerp(V,[200,300],a),lerp(V,[200,300],b)))},
+    {title:'Line up the poles',text:'Draw the closest pole. Run a guide line from its top to the VP. Every other pole stands on the road edge and stops at that line.',tip:'same height in real life, smaller on paper',shapes:[G(V,ext(V,T1)),...[.9,.62,.44,.32].map(t=>{const b=lerp(V,E,t);return L(b,atX(V,T1,b[0]))})]}
+  ]}
+function box1(){const hy=110,V=[200,hy],A=[90,170],B=[170,170],C=[170,240],Dd=[90,240],t=.35;
+  const A2=lerp(A,V,t),B2=lerp(B,V,t),C2=lerp(C,V,t),D2=lerp(Dd,V,t);
+  return [
+    {title:'Horizon and one VP',text:'Draw the horizon and put one vanishing point on it.',tip:'one-point = one VP',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'Draw the front square',text:'Below and to the left of the VP, draw a square facing you. Its sides are perfectly vertical and horizontal.',tip:'front faces never bend',shapes:[L(A,B),L(B,C),L(C,Dd),L(Dd,A)]},
+    {title:'Connect corners to the VP',text:'Draw a light line from each corner of the square to the vanishing point.',tip:'these are the depth lines',shapes:[G(A,V),G(B,V),G(C,V),G(Dd,V)]},
+    {title:'Choose the depth',text:'Decide how deep the box is. Draw the back edges: one across for the top, one straight down for the side.',tip:'parallel to the front edges',shapes:[L(A2,B2),L(B2,C2)]},
+    {title:'Ink the visible edges',text:'Ink the edges between the front and the back that you can see. Leave the hidden ones out.',tip:'3 edges, not 4',shapes:[L(A,A2),L(B,B2),L(C,C2)]},
+    {title:'Shade it',text:'Shade the side away from the light, and give the top a light tone. That is a box in one-point perspective.',tip:'dark side + light top = 3D',shapes:[P([B,B2,C2,C]),P([A,A2,B2,B],'shadeLight')]}
+  ]}
+function room(){const hy=140,V=[200,hy],p1=[140,100],p2=[260,100],p3=[260,180],p4=[140,180];
+  const w0t=[60,90],w0b=[60,170],w1t=atX(V,w0t,105),w1b=atX(V,w0b,105);
+  const tiles=[40,120,200,280,360].map(x=>L(atY(V,[x,300],180),[x,300],'thin'));
+  const rows=[205,235,270].map(y=>Th([Math.max(0,atY(V,p4,y)[0]),y],[Math.min(400,atY(V,p3,y)[0]),y]));
+  return [
+    {title:'Horizon and VP',text:'Start with the horizon and a vanishing point in the middle of the page.',tip:'this is where you stand',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'Draw the back wall',text:'Draw a rectangle around the vanishing point. This is the far wall of the room.',tip:'the VP sits inside it',shapes:[L(p1,p2),L(p2,p3),L(p3,p4),L(p4,p1)]},
+    {title:'Open up the room',text:'Draw lines from the VP through each corner, out to the edge of the page. Now you have a floor, a ceiling and two side walls.',tip:'four lines, four planes',shapes:[p1,p2,p3,p4].map(p=>L(p,ext(V,p)))},
+    {title:'Add a door and a window',text:'The door on the back wall is a plain rectangle. On the side wall, the window’s top and bottom edges point to the VP.',tip:'verticals stay vertical',shapes:[L([168,180],[168,128]),L([168,128],[196,128]),L([196,128],[196,180]),G(w0t,V),G(w0b,V),L(w0t,w1t),L(w1t,w1b),L(w1b,w0b),L(w0b,w0t)]},
+    {title:'Lay the floor tiles',text:'Draw lines from the VP down to the bottom of the page. Then add horizontal lines that get closer together as they go back.',tip:'closer lines = more distance',shapes:[...tiles,...rows]},
+    {title:'Shade a wall',text:'Shade the right wall to show where the light comes from. Your first room is done.',tip:'light from the left',shapes:[P([p2,ext(V,p2),ext(V,p3),p3],'shadeLight')]}
+  ]}
+function box2geo(){const hy=100,V1=[20,hy],V2=[380,hy],F0=[200,150],F1=[200,240];
+  const L0=atX(F0,V1,140),L1=atX(F1,V1,140),R0=atX(F0,V2,270),R1=atX(F1,V2,270),K=inter(L0,V2,R0,V1);
+  return {hy,V1,V2,F0,F1,L0,L1,R0,R1,K}}
+function box2(){const g=box2geo(),{hy,V1,V2,F0,F1,L0,L1,R0,R1,K}=g;
+  return [
+    {title:'Two vanishing points',text:'Draw the horizon and put a vanishing point near each end of it.',tip:'wide apart = less distortion',shapes:[G([10,hy],[390,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The nearest corner',text:'Draw one vertical line below the horizon. This is the corner of the box closest to you.',tip:'only verticals stay straight',shapes:[L(F0,F1)]},
+    {title:'Connect to both VPs',text:'From the top and the bottom of that line, draw light lines to both vanishing points.',tip:'four guide lines',shapes:[G(F0,V1),G(F1,V1),G(F0,V2),G(F1,V2)]},
+    {title:'Set the width',text:'Pick how wide each side is and draw two more verticals. Ink the edges between them.',tip:'the box now has two faces',shapes:[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'Close the top',text:'From the top of each new edge, draw a line to the opposite VP. Where they cross is the back corner of the top.',tip:'cross the lines, find the corner',shapes:[G(K,V2),G(K,V1),L(L0,K),L(R0,K)]},
+    {title:'Shade it',text:'Shade the right side and give the top a light tone. That is a box in two-point perspective.',tip:'one light, one shadow',shapes:[P([F0,R0,R1,F1]),P([F0,L0,K,R0],'shadeLight')]}
+  ]}
+function house(){const {hy,V1,V2,F0,F1,L0,L1,R0,R1}=box2geo();
+  const C=inter(L0,F1,F0,L1),topC=atX(F0,V1,C[0]),Pk=[C[0],topC[1]-58];
+  const Rm=lerp(R0,R1,.5),Cb=inter(C,V2,Rm,V1),P2=inter(Pk,V2,[Cb[0],0],[Cb[0],300]);
+  const dl=C[0]-11,dr=C[0]+11,dlb=atX(F1,V1,dl),drb=atX(F1,V1,dr),drt=[dr,drb[1]-44],dlt=atX(drt,V1,dl);
+  const w0t=[222,168],w0b=[222,196],w1t=atX(w0t,V2,252),w1b=atX(w0b,V2,252);
+  return [
+    {title:'Start with a box',text:'Draw a two-point box, like the last lesson, but leave out the top face.',tip:'the roof will sit on top',shapes:[G([10,hy],[390,hy]),D(V1,'VP1'),D(V2,'VP2'),L(F0,F1),L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'Find the centre',text:'Draw an X from corner to corner on the left face. Where the lines cross is the centre in perspective.',tip:'never measure the middle by eye',shapes:[G(L0,F1),G(F0,L1),D(C,'')]},
+    {title:'Raise the peak',text:'Draw a vertical line up through the centre and mark the top of the roof on it.',tip:'taller peak = steeper roof',shapes:[G([C[0],L1[1]-4],[C[0],Pk[1]-14]),D(Pk,'')]},
+    {title:'Draw the gable',text:'Connect the peak to the two top corners of the left face. That triangle is the end of the roof.',tip:'',shapes:[L(Pk,L0),L(Pk,F0)]},
+    {title:'Run the ridge',text:'Draw the ridge from the peak toward VP2. Bring the back roof edge down to the far corner of the box.',tip:'the ridge points to VP2',shapes:[G(P2,V2),L(Pk,P2),L(P2,R0)]},
+    {title:'Door and window',text:'Door and window edges follow the same rule: verticals stay vertical, the other edges point to their VP.',tip:'door → VP1, window → VP2',shapes:[L(dlb,dlt),L(dlt,drt),L(drt,drb),G(drt,V1),L(w0t,w1t),L(w1t,w1b),L(w1b,w0b),L(w0b,w0t),G(w1t,V2)]},
+    {title:'Shade and finish',text:'Tone the roof lightly and shade the long wall. Your house is finished.',tip:'',shapes:[P([Pk,F0,R0,P2],'shadeLight'),P([F0,R0,R1,F1])]}
+  ]}
+function tower(){const hy=275,V1=[12,hy],V2=[388,hy],V3=[200,14],F0=[200,292];
+  const L0=atX(F0,V1,128),R0=atX(F0,V2,282),Ft=lerp(F0,V3,.64),Lt=inter(Ft,V1,L0,V3),Rt=inter(Ft,V2,R0,V3);
+  const floors=[.16,.32,.48,.64,.8].flatMap(f=>{const p=lerp(F0,Ft,f);return [Th(p,inter(p,V1,L0,Lt)),Th(p,inter(p,V2,R0,Rt))]});
+  return [
+    {title:'A low horizon',text:'Three-point perspective adds a third VP. Draw a low horizon with VP1 and VP2. We are looking up at a tall building.',tip:'low horizon = looking up',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The third VP',text:'Put VP3 high above the middle. Every vertical edge of the building leans toward it.',tip:'VP3 is in the sky',shapes:[D(V3,'VP3'),G(F0,V3)]},
+    {title:'The base',text:'From the nearest bottom corner, draw the base edges toward VP1 and VP2.',tip:'',shapes:[G(R0,V2),G(L0,V1),L(F0,L0),L(F0,R0)]},
+    {title:'Lean the walls',text:'Draw the three vertical edges up toward VP3. Choose the height on the front edge.',tip:'they get closer as they rise',shapes:[G(Lt,V3),G(Rt,V3),L(F0,Ft),L(L0,Lt),L(R0,Rt)]},
+    {title:'The top edges',text:'From the top of the front edge, draw lines to VP1 and VP2. They end at the side edges.',tip:'',shapes:[G(Lt,V1),G(Rt,V2),L(Ft,Lt),L(Ft,Rt)]},
+    {title:'Floors and shade',text:'Mark floors on the front edge and send each one to its VP. Shade one side and your tower is done.',tip:'floors get thinner as they rise',shapes:[...floors,P([F0,R0,Rt,Ft])]}
+  ]}
+const LESSONS=[
+  {id:'road',unit:1,title:'Road to the horizon',mins:3,steps:road()},
+  {id:'box1',unit:1,title:'Box in one-point',mins:5,steps:box1()},
+  {id:'room',unit:1,title:'Your first room',mins:6,steps:room()},
+  {id:'box2',unit:2,title:'Box in two-point',mins:5,steps:box2()},
+  {id:'house',unit:2,title:'A simple house',mins:8,pro:true,steps:house()},
+  {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()}
+];
+const UNITS=[
+  {n:1,cls:'u1',eyebrow:'Unit 1 · One-point',title:'Foundations',text:'Horizon, vanishing point and your first 3D shapes.',soon:[]},
+  {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner','Stairs']},
+  {n:3,cls:'u3',eyebrow:'Unit 3 · Three-point',title:'Tall and dramatic',text:'A third vanishing point for towers and bird’s-eye views.',soon:['Bird’s-eye city']}
+];
+const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
+const FREE_DAYS=7;
+
+/* ---------- state ---------- */
+const KEY='ps-proto-v1';
+const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0});
+let S=blank();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const today=()=>new Date().toISOString().slice(0,10);
+function bumpStreak(){const t=today();if(S.last===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
+
+let view={name:'learn'},selDay=null,resetArm=false,photoURL=null;
+
+/* ---------- render helpers ---------- */
+const f=p=>p[0].toFixed(1)+' '+p[1].toFixed(1);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function art(lesson,upto,mode){
+  let polys='',lines='',top='';
+  for(let i=0;i<=upto;i++){
+    const isNew=mode==='step'&&i===upto;let j=0;
+    for(const s of lesson.steps[i].shapes){
+      const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
+      if(s.t==='l')lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;
+      else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
+      else if(s.t==='d'){const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-36:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${s.label}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
+      else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${s.s}</text>`;
+    }
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
+}
+function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
+function header(){
+  return `<header class="top"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
+  <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip star" title="XP">${I.star}${S.xp}</span></div></header>`;
+}
+function setTabs(name){
+  document.getElementById('tabs').hidden=!['learn','challenge','profile'].includes(name);
+  for(const t of ['learn','challenge','profile']){const b=document.getElementById('tab-'+t);if(t===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')}
+}
+
+/* ---------- views ---------- */
+function vLearn(){
+  const ni=nextIdx();let cont;
+  if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[5],LESSONS[5].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
+  else{const l=LESSONS[ni],locked=l.pro&&!S.pro;
+    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(l.title)}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+  const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
+  const units=UNITS.map(u=>{
+    const items=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n).map(({l,i})=>{
+      const st=S.done[l.id]?'done':(i===ni?'current':'locked');const x=offs[k++%offs.length];
+      const inner=st==='done'?I.check:st==='current'?(i+1):I.lock;
+      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(l.title)} (${st})">${inner}${l.pro&&!S.pro?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(l.title)}</span></li>`}).join('');
+    const soon=u.soon.map(s=>{const x=offs[k++%offs.length];return `<li class="node soon" style="--x:${x}px"><button class="nb" data-act="soon" aria-label="${esc(s)}: coming soon">${I.lock}</button><span class="lbl">${esc(s)} · soon</span></li>`}).join('');
+    return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${u.eyebrow}</p><h2>${u.title}</h2><p>${u.text}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
+  return header()+cont+units+`<p class="foot-note">Draw on real paper. The app shows you each line, one step at a time.</p>`;
+}
+function vLesson(){
+  const l=LESSONS[view.i],n=l.steps.length,s=view.s,st=l.steps[s];
+  const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
+  return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span></div>
+  <div class="paper" id="canvas">${art(l,s,'step')}</div>
+  <div class="legend"><span><b style="background:var(--new)"></b>this step</span><span><b style="background:var(--ink)"></b>ink</span><span><b style="background:var(--guide)"></b>light guide</span></div>
+  <div class="lbody"><p class="eyebrow">${esc(l.title)} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
+  <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>`;
+}
+function vComplete(){
+  const l=LESSONS[view.i];const gained=view.gained;
+  const ni=nextIdx();
+  return `<div class="done-head"><p class="eyebrow">Lesson complete</p><h1>${esc(l.title)}</h1><div class="reward">${gained?`<span class="chip star">${I.star}+${gained} XP</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
+  <div class="paper">${art(l,l.steps.length-1,'final')}</div>
+  <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper. It stays on this device.</p>
+    ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
+    <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
+  <section class="panel"><h3>Share it</h3><p style="font-size:14px">Post your drawing and tag the page. The best ones get featured.</p>
+    <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
+  <button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`;
+}
+function vChallenge(){
+  const doneN=S.days.length,next=doneN+1;if(selDay===null)selDay=Math.min(next,30);
+  const cells=PROMPTS.map((_,i)=>{const d=i+1,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!S.pro;
+    return `<button class="day ${isDone?'done':isNext?'next':'locked'}${selDay===d?' sel':''}" data-act="day" data-d="${d}" aria-label="Day ${d}${isDone?', done':''}">${isDone?I.check:d}${proL?'<span class="pdot"></span>':''}</button>`}).join('');
+  const d=selDay,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!S.pro;
+  let action;
+  if(isDone)action=`<button class="btn ghost wide" disabled>${I.check}Done</button>`;
+  else if(proL)action=`<button class="btn primary wide" data-act="paywall">${I.gem}Unlock days 8–30 with Pro</button>`;
+  else if(isNext)action=`<button class="btn ok wide" data-act="daydone">${I.check}I drew it · +10 XP</button>`;
+  else action=`<button class="btn ghost wide" disabled>${I.lock}Finish day ${next} first</button>`;
+  return header()+`<section class="hero-c"><p class="eyebrow">Challenge</p><h1>30-Day Perspective Challenge</h1><p>One small drawing a day. Days 1–7 are free.</p><div class="bar" aria-label="${doneN} of 30 days"><span style="width:${doneN/30*100}%"></span></div><p class="eyebrow" style="opacity:.85">${doneN} / 30 days</p></section>
+  <div class="days">${cells}</div>
+  <section class="panel"><p class="eyebrow">Day ${d}</p><p class="prompt">${esc(PROMPTS[d-1])}</p><p style="color:var(--muted);font-size:14px">About 10 minutes. Pencil, ruler and any paper.</p>${action}</section>`;
+}
+function vProfile(){
+  const lessons=Object.keys(S.done).length;
+  return header()+`<h1 style="font-size:28px">Your progress</h1>
+  <div class="grid4"><div class="stat"><b>${S.xp}</b><span>XP earned</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
+  <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${S.pro?'Perspective Pro':'Free'}</h3></div>${S.pro?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
+  <p style="font-size:14px;color:var(--muted)">${S.pro?'All lessons and all 30 challenge days are open.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p></section>
+  <section class="panel"><h3>Reset</h3><p style="font-size:14px;color:var(--muted)">This is a working prototype. Progress is saved on this device only.</p>
+  <button class="btn ghost" data-act="reset">${resetArm?'Tap again to erase all progress':'Reset progress'}</button></section>`;
+}
+function paywall(){
+  return `<div class="scrim" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pw-title" data-stop="1">
+  <div class="sheet-top"><div><p class="eyebrow">Perspective Pro</p><h2 id="pw-title">Draw anything in perspective</h2></div><button class="iconbtn" data-act="closesheet" aria-label="Close">${I.x}</button></div>
+  <ul class="feat"><li>${I.check}<span>Every lesson: two-point houses, streets, three-point towers</span></li><li>${I.check}<span>All 30 days of the challenge</span></li><li>${I.check}<span>A new lesson every week</span></li><li>${I.check}<span>Printable practice workbooks (PDF)</span></li></ul>
+  <div class="plans"><button class="planopt" aria-pressed="true" data-act="plan"><span class="save">Save 50%</span><small>Yearly</small><b>$29.99</b><small>$2.50 / month</small></button><button class="planopt" aria-pressed="false" data-act="plan"><small>Monthly</small><b>$4.99</b><small>billed monthly</small></button></div>
+  <button class="btn primary wide" data-act="gopro">Start 7-day free trial</button>
+  <p class="fine">Prototype: example prices, no payment is taken. The button unlocks Pro on this device so you can try every lesson.</p></div></div>`;
+}
+
+/* ---------- render ---------- */
+const app=document.getElementById('app');
+function render(scrollTop){
+  app.classList.toggle('full',view.name==='lesson'||view.name==='complete');
+  setTabs(view.name);
+  app.innerHTML=view.name==='learn'?vLearn():view.name==='lesson'?vLesson():view.name==='complete'?vComplete():view.name==='challenge'?vChallenge():vProfile();
+  if(scrollTop)window.scrollTo(0,0);
+}
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
+const sheet=document.getElementById('sheetwrap');
+function openPaywall(){sheet.innerHTML=paywall();sheet.hidden=false;sheet.querySelector('[data-act="gopro"]').focus()}
+function closePaywall(){sheet.hidden=true;sheet.innerHTML=''}
+
+function openLesson(i){
+  const l=LESSONS[i];
+  if(l.pro&&!S.pro){openPaywall();return}
+  photoURL=null;view={name:'lesson',i,s:0};render(true);
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act;
+  if(a==='closesheet'){if(el.classList.contains('scrim')&&e.target!==el)return;closePaywall();return}
+  if(a==='tab'){view={name:el.dataset.tab};resetArm=false;render(true);return}
+  if(a==='open'){openLesson(+el.dataset.i);return}
+  if(a==='node'){const i=+el.dataset.i,l=LESSONS[i];
+    if(S.done[l.id]||i===nextIdx())openLesson(i);
+    else toast(`Finish “${LESSONS[nextIdx()].title}” first`);return}
+  if(a==='soon'){toast('Coming soon');return}
+  if(a==='close'||a==='home'){view={name:'learn'};render(true);return}
+  if(a==='prev'){view.s=Math.max(0,view.s-1);render();return}
+  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');return}
+  if(a==='next'){const l=LESSONS[view.i];
+    if(view.s<l.steps.length-1){view.s++;render();return}
+    let gained=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained}
+    bumpStreak();save();view={name:'complete',i:view.i,gained};render(true);return}
+  if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
+    const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
+    try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
+  if(a==='day'){selDay=+el.dataset.d;render();return}
+  if(a==='daydone'){const d=S.days.length+1;S.days.push(d);S.xp+=10;bumpStreak();save();selDay=Math.min(d+1,30);toast(`Day ${d} done · +10 XP`);render();return}
+  if(a==='paywall'){openPaywall();return}
+  if(a==='plan'){sheet.querySelectorAll('.planopt').forEach(b=>b.setAttribute('aria-pressed',b===el?'true':'false'));return}
+  if(a==='gopro'){S.pro=true;save();closePaywall();toast('Pro unlocked on this device');render();return}
+  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S=blank();save();resetArm=false;selDay=null;toast('Progress erased');render();return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closePaywall()});
+document.addEventListener('change',e=>{
+  if(e.target.id!=='photo')return;const file=e.target.files&&e.target.files[0];if(!file)return;
+  const r=new FileReader();r.onload=()=>{photoURL=r.result;S.photos++;save();render()};r.readAsDataURL(file);
+});
+render();
+</script>
+</body>
+</html>
