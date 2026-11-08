@@ -220,6 +220,18 @@ a.btn{text-decoration:none;color:inherit}
 .seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 /* kids mode: colour fills instead of hatching, bigger text */
 :root{--kid1:#FFB547;--kid2:#7FD3F7;--kid3:#FF8DBF}
+.brand>div{min-width:0}
+.brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){.stats{gap:5px}.chip{padding:5px 8px;font-size:13px}.brand{font-size:15px;gap:8px}.brand svg{width:30px;height:30px}}
+.banner{display:flex;gap:10px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:16px;padding:12px 14px;background:var(--accent-soft)}
+.banner p{font-size:14px;flex:1 1 200px;min-width:0}
+.banner b{font-family:var(--display)}
+.banner.warn{background:color-mix(in srgb,var(--marker) 32%,var(--surface))}
+.banner.gift{background:var(--ok);color:#fff}
+.coderow{display:flex;gap:8px}
+.coderow input{flex:1;min-width:0;font:600 15px var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.coderow input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .kid .art .shade,.kidpick .art .shade{fill:var(--kid1);opacity:.8}
 .kid .art .shadeLight,.kidpick .art .shadeLight{fill:var(--kid2);opacity:.65}
 .kid .unit.u1 .unit-head{background:var(--kid3);color:#2A0A1A}
@@ -426,7 +438,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=2');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=3');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
@@ -434,7 +446,7 @@ const FREE_DAYS=7;
 
 /* ---------- state ---------- */
 const KEY='ps-proto-v1';
-const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true});
+const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true,trialEnd:0,trialCode:'',myCode:''});
 let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -442,6 +454,36 @@ const today=()=>new Date().toISOString().slice(0,10);
 function bumpStreak(){const t=today();if(S.last===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
 
 let view={name:'learn'},selDay=null,resetArm=false,photoURL=null;
+
+/* ---------- promo codes & 15-day trial ---------- */
+const APP_URL='https://ardacubuk22-blip.github.io/perspective-sketch/';
+const TRIAL_DAYS=15;
+const CODES={SKETCH15:'Instagram bio',REEL15:'Instagram Reels',STORY15:'Instagram Stories',DM15:'Instagram DMs',YT15:'YouTube',FRIEND15:'Friends'};
+const validCode=c=>!!CODES[c]||/^PS-[A-Z0-9]{4}$/.test(c);
+function isPro(){return S.pro||Date.now()<S.trialEnd}
+const onTrial=()=>!S.pro&&Date.now()<S.trialEnd;
+const trialOver=()=>!S.pro&&S.trialEnd>0&&Date.now()>=S.trialEnd;
+const daysLeft=()=>Math.max(0,Math.ceil((S.trialEnd-Date.now())/864e5));
+function myCode(){if(!S.myCode){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let c='PS-';for(let i=0;i<4;i++)c+=a[Math.floor(Math.random()*a.length)];S.myCode=c;save()}return S.myCode}
+function track(ev){try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:ev,title:ev,event:true})}catch(e){}}
+function applyCode(raw){
+  const c=String(raw||'').trim().toUpperCase();
+  if(!validCode(c))return 'bad';
+  if(S.myCode&&c===S.myCode)return 'own';
+  if(S.pro)return 'pro';
+  if(S.trialCode)return 'used';
+  S.trialCode=c;S.trialEnd=Date.now()+TRIAL_DAYS*864e5;save();track('code/'+(CODES[c]?c:'friend'));return 'ok';
+}
+const CODE_MSG={ok:'15 days of Pro, free. Every lesson is open!',bad:'That code does not work. Check the spelling.',used:'This device already used a free trial.',own:'That is your own invite code. Share it with a friend!',pro:'You already have Pro.'};
+function trialBanner(){
+  if(onTrial()&&daysLeft()<=2)return `<section class="banner warn"><p><b>Your free Pro ends in ${daysLeft()} day${daysLeft()===1?'':'s'}.</b> Keep every lesson open and your streak going.</p><button class="btn primary small" data-act="paywall">See plans</button></section>`;
+  if(trialOver())return `<section class="banner warn"><p><b>Your free Pro trial has ended.</b> Your progress is saved. Go Pro to keep drawing every lesson.</p><button class="btn primary small" data-act="paywall">See plans</button></section>`;
+  if(onTrial())return `<section class="banner"><p><b>Pro trial · ${daysLeft()} days left.</b> Every lesson and all 30 challenge days are open.</p></section>`;
+  if(!S.pro)return `<section class="banner"><p><b>Got a code from Instagram?</b> Get 15 days of Pro free.</p><button class="btn ghost small" data-act="paywall" data-focus="code">Enter code</button></section>`;
+  return '';
+}
+function codeBox(){return `<div class="coderow"><input id="codein" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. SKETCH15" aria-label="Promo code"><button class="btn ghost small" data-act="applycode">Apply</button></div>`}
+
 
 /* ---------- render helpers ---------- */
 const f=p=>p[0].toFixed(1)+' '+p[1].toFixed(1);
@@ -463,7 +505,7 @@ function art(lesson,upto,mode){
 function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
 function header(){
   return `<header class="top"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
-  <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip star" title="XP">${I.star}${S.xp}</span></div></header>`;
+  <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip star" title="XP">${I.star}${S.xp}</span>${onTrial()?`<span class="chip pro" title="Pro trial days left">${I.gem}${daysLeft()}d</span>`:''}</div></header>`;
 }
 function setTabs(name){
   document.getElementById('tabs').hidden=!['learn','challenge','profile'].includes(name);
@@ -474,22 +516,23 @@ function setTabs(name){
 function vLearn(){
   const ni=nextIdx();let cont;
   if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[5],LESSONS[5].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
-  else{const l=LESSONS[ni],locked=l.pro&&!S.pro;
+  else{const l=LESSONS[ni],locked=l.pro&&!isPro();
     cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
   const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
   const units=UNITS.map(u=>{
     const items=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n).map(({l,i})=>{
       const st=S.done[l.id]?'done':(i===ni?'current':'locked');const x=offs[k++%offs.length];
       const inner=st==='done'?I.check:st==='current'?(i+1):I.lock;
-      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!S.pro?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span></li>`}).join('');
+      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!isPro()?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span></li>`}).join('');
     const soon=u.soon.map(s=>{const x=offs[k++%offs.length];return `<li class="node soon" style="--x:${x}px"><button class="nb" data-act="soon" aria-label="${esc(s)}: coming soon">${I.lock}</button><span class="lbl">${esc(s)} · soon</span></li>`}).join('');
     const [ue,ut,ux]=isKid()?KUNITS[u.n]:[u.eyebrow,u.title,u.text];
     return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
-  return header()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
+  return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
 function vOnboard(){
   const demo=LESSONS[1],demo2=LESSONS[4];
   return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
+  ${onTrial()?`<section class="banner gift"><p><b>Code ${esc(S.trialCode)} applied.</b> You have 15 days of Pro, free.</p></section>`:''}
   <div><p class="eyebrow">Welcome</p><h1>Who is learning to draw?</h1></div>
   <div class="who">
     <button class="whobtn" data-act="mode" data-mode="adult"><div class="paper">${art(demo,demo.steps.length-1,'thumb')}</div><div><b>Me</b><span>Teens and adults. Clear steps, real perspective rules.</span></div></button>
@@ -522,9 +565,9 @@ function vComplete(){
 }
 function vChallenge(){
   const doneN=S.days.length,next=doneN+1;if(selDay===null)selDay=Math.min(next,30);
-  const cells=PROMPTS.map((_,i)=>{const d=i+1,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!S.pro;
+  const cells=PROMPTS.map((_,i)=>{const d=i+1,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!isPro();
     return `<button class="day ${isDone?'done':isNext?'next':'locked'}${selDay===d?' sel':''}" data-act="day" data-d="${d}" aria-label="Day ${d}${isDone?', done':''}">${isDone?I.check:d}${proL?'<span class="pdot"></span>':''}</button>`}).join('');
-  const d=selDay,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!S.pro;
+  const d=selDay,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!isPro();
   let action;
   if(isDone)action=`<button class="btn ghost wide" disabled>${I.check}Done</button>`;
   else if(proL)action=`<button class="btn primary wide" data-act="paywall">${I.gem}Unlock days 8–30 with Pro</button>`;
@@ -538,8 +581,12 @@ function vProfile(){
   const lessons=Object.keys(S.done).length;
   return header()+`<h1 style="font-size:28px">Your progress</h1>
   <div class="grid4"><div class="stat"><b>${S.xp}</b><span>XP earned</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
-  <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${S.pro?'Perspective Pro':'Free'}</h3></div>${S.pro?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
-  <p style="font-size:14px;color:var(--muted)">${S.pro?'All lessons and all 30 challenge days are open.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p></section>
+  <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${isPro()?'Perspective Pro':'Free'}</h3></div>${isPro()?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
+  <p style="font-size:14px;color:var(--muted)">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p>
+  ${!isPro()&&!S.trialCode?`<p style="font-size:14px;font-weight:600">Have a code?</p>${codeBox()}`:''}</section>
+  <section class="panel"><h3>Invite a friend</h3><p style="font-size:14px;color:var(--muted)">Your friend gets 15 days of Pro free with your code.</p>
+  <div class="copyrow"><code id="invtext">${APP_URL}?code=${myCode()}</code><button class="iconbtn" data-act="copyinvite" aria-label="Copy invite link">${I.copy}</button></div>
+  <p style="font-size:13px;color:var(--muted)">Your code: <b style="font-family:var(--mono)">${myCode()}</b></p></section>
   <section class="panel"><h3>Who is learning?</h3><div class="seg2"><button data-act="mode" data-mode="adult" aria-pressed="${!isKid()}">Me</button><button data-act="mode" data-mode="kid" aria-pressed="${isKid()}">My child (7–12)</button></div>
   <div class="seg2"><button data-act="voice" aria-pressed="${S.voice}">${S.voice?'Voice on':'Voice off'}</button><button data-act="testvoice">Test the voice</button></div></section>
   <section class="panel"><h3>Reset</h3><p style="font-size:14px;color:var(--muted)">This is a working prototype. Progress is saved on this device only.</p>
@@ -550,7 +597,8 @@ function paywall(){
   <div class="sheet-top"><div><p class="eyebrow">Perspective Pro</p><h2 id="pw-title">Draw anything in perspective</h2></div><button class="iconbtn" data-act="closesheet" aria-label="Close">${I.x}</button></div>
   <ul class="feat"><li>${I.check}<span>Every lesson: two-point houses, streets, three-point towers</span></li><li>${I.check}<span>All 30 days of the challenge</span></li><li>${I.check}<span>A new lesson every week</span></li><li>${I.check}<span>Printable practice workbooks (PDF)</span></li></ul>
   <div class="plans"><button class="planopt" aria-pressed="true" data-act="plan"><span class="save">Save 50%</span><small>Yearly</small><b>$29.99</b><small>$2.50 / month</small></button><button class="planopt" aria-pressed="false" data-act="plan"><small>Monthly</small><b>$4.99</b><small>billed monthly</small></button></div>
-  <button class="btn primary wide" data-act="gopro">Start 7-day free trial</button>
+  <button class="btn primary wide" data-act="gopro">Continue with Pro</button>
+  ${!S.trialCode&&!S.pro?`<div style="display:flex;flex-direction:column;gap:8px"><p style="font-size:14px;font-weight:600">Have a code? Get 15 days free</p>${codeBox()}</div>`:''}
   <p class="fine">Prototype: example prices, no payment is taken. The button unlocks Pro on this device so you can try every lesson.</p></div></div>`;
 }
 
@@ -568,12 +616,13 @@ function render(scrollTop,quiet){
 let toastT;
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2200)}
 const sheet=document.getElementById('sheetwrap');
-function openPaywall(){sheet.innerHTML=paywall();sheet.hidden=false;sheet.querySelector('[data-act="gopro"]').focus()}
+function openPaywall(focusCode){sheet.innerHTML=paywall();sheet.hidden=false;const ci=sheet.querySelector('#codein');(focusCode&&ci?ci:sheet.querySelector('[data-act="gopro"]')).focus()}
+function doApply(){const inp=document.getElementById('codein');if(!inp)return;const r=applyCode(inp.value);toast(CODE_MSG[r]);if(r==='ok'){closePaywall();render()}}
 function closePaywall(){sheet.hidden=true;sheet.innerHTML=''}
 
 function openLesson(i){
   const l=LESSONS[i];
-  if(l.pro&&!S.pro){openPaywall();return}
+  if(l.pro&&!isPro()){openPaywall();return}
   photoURL=null;view={name:'lesson',i,s:0};render(true);
 }
 document.addEventListener('click',e=>{
@@ -602,17 +651,24 @@ document.addEventListener('click',e=>{
     try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
   if(a==='day'){selDay=+el.dataset.d;render();return}
   if(a==='daydone'){const d=S.days.length+1;S.days.push(d);S.xp+=10;bumpStreak();save();selDay=Math.min(d+1,30);toast(`Day ${d} done · +10 XP`);render();return}
-  if(a==='paywall'){openPaywall();return}
+  if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
+  if(a==='applycode'){doApply();return}
+  if(a==='copyinvite'){const txt=document.getElementById('invtext').textContent;
+    const fb=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('invtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
+    try{navigator.clipboard.writeText(txt).then(()=>toast('Invite link copied'),fb)}catch(err){fb()}return}
   if(a==='plan'){sheet.querySelectorAll('.planopt').forEach(b=>b.setAttribute('aria-pressed',b===el?'true':'false'));return}
   if(a==='gopro'){S.pro=true;save();closePaywall();toast('Pro unlocked on this device');render();return}
-  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S=blank();save();resetArm=false;selDay=null;toast('Progress erased');render();return}
+  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S=Object.assign(blank(),{trialEnd:S.trialEnd,trialCode:S.trialCode,myCode:S.myCode});save();resetArm=false;selDay=null;toast('Progress erased');render();return}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closePaywall()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closePaywall();if(e.key==='Enter'&&e.target&&e.target.id==='codein'){e.preventDefault();doApply()}});
 document.addEventListener('change',e=>{
   if(e.target.id!=='photo')return;const file=e.target.files&&e.target.files[0];if(!file)return;
   const r=new FileReader();r.onload=()=>{photoURL=r.result;S.photos++;save();render()};r.readAsDataURL(file);
 });
+let startMsg='';
+try{const q=new URLSearchParams(location.search).get('code');if(q){startMsg=CODE_MSG[applyCode(q)];history.replaceState(null,'',location.pathname+location.hash)}}catch(e){}
 render();
+if(startMsg)toast(startMsg);
 </script>
 </body>
 </html>
