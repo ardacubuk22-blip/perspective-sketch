@@ -376,18 +376,62 @@ function tower(){const hy=275,V1=[12,hy],V2=[388,hy],V3=[200,14],F0=[200,292];
     {title:'The top edges',text:'From the top of the front edge, draw lines to VP1 and VP2. They end at the side edges.',tip:'',shapes:[G(Lt,V1),G(Rt,V2),L(Ft,Lt),L(Ft,Rt)]},
     {title:'Floors and shade',text:'Mark floors on the front edge and send each one to its VP. Shade one side and your tower is done.',tip:'floors get thinner as they rise',shapes:[...floors,P([F0,R0,Rt,Ft])]}
   ]}
+function stairs(){const hy=90,V=[34,hy];
+  const c=[[150,262],[150,234],[195,234],[195,206],[240,206],[240,178],[285,178],[285,150],[330,150],[330,262]];
+  const b=c.map(p=>lerp(p,V,.26));
+  const front=c.map((p,i)=>L(p,c[(i+1)%c.length]));
+  const backZ=[0,1,2,3,4,5,6,7].map(i=>L(b[i],b[i+1]));
+  return [
+    {title:'Horizon and VP on the left',text:'Draw the horizon high on the page and put the VP near the left edge. We will look at the stairs from the left.',tip:'VP left = we see the left side',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'Draw the side profile',text:'Draw the stairs as a flat zigzag: up, across, up, across. This is the side of the staircase facing you.',tip:'risers vertical, treads horizontal',shapes:front},
+    {title:'Lines to the VP',text:'From every corner of the zigzag, except the bottom right one, draw a light line to the VP.',tip:'nine guide lines',shapes:[0,1,2,3,4,5,6,7,8].map(i=>G(c[i],V))},
+    {title:'Choose the width',text:'Decide how wide the stairs are. Copy the zigzag along the guide lines. Each back edge is parallel to its front edge.',tip:'vertical stays vertical',shapes:backZ},
+    {title:'Connect the steps',text:'Join each front corner to its back corner. Now every step has a top and a front.',tip:'',shapes:[0,1,2,3,4,5,6,7,8].map(i=>L(c[i],b[i]))},
+    {title:'Shade the risers',text:'Shade the upright faces of the steps and give the tops a light tone. Your staircase is done.',tip:'tops catch the light',shapes:[...[0,2,4,6].map(i=>P([c[i],c[i+1],b[i+1],b[i]])),...[1,3,5,7].map(i=>P([c[i],c[i+1],b[i+1],b[i]],'shadeLight'))]}
+  ]}
+function glass(){const hy=120,V1=[8,hy],V2=[392,hy],F0=[135,30],F1=[135,262];
+  const L0=atX(F0,V1,70),L1=atX(F1,V1,70),R0=atX(F0,V2,305),R1=atX(F1,V2,305),Fm=lerp(F0,F1,.5);
+  const col=x=>({a:atX(F0,V2,x),b:atX(F1,V2,x),m:atX(Fm,V2,x)});
+  const cols=[col(198)],diags=[];let top=F0;
+  for(let k=0;k<14;k++){const cur=cols[cols.length-1],nb=inter(top,cur.m,F1,V2);diags.push(G(top,nb));if(nb[0]>R0[0]-6)break;top=cur.a;cols.push(col(nb[0]))}
+  const floors=[1,2,3,4,5].flatMap(j=>{const p=lerp(F0,F1,j/6);return [Th(p,atX(p,V2,R0[0])),Th(p,atX(p,V1,L0[0]))]});
+  return [
+    {title:'Eye level in the middle',text:'Draw the horizon across the middle of the page and put VP1 and VP2 near the ends.',tip:'',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The front corner',text:'Draw a tall vertical line that crosses the horizon. Part of the building is above your eyes, part is below.',tip:'',shapes:[L(F0,F1)]},
+    {title:'Build the walls',text:'Connect the top and the bottom of the corner to both VPs. Close the walls with two more verticals: a short wall on the left, a long wall on the right.',tip:'',shapes:[G(F0,V1),G(F1,V1),G(R0,V2),G(R1,V2),L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'The first column',text:'Draw one vertical line on the long wall. The space between it and the corner is the first column of windows.',tip:'you choose this width',shapes:[Th(cols[0].a,cols[0].b)]},
+    {title:'The middle line',text:'Mark the middle of the front corner and draw a guide line from it to VP2. It cuts every column line in half.',tip:'',shapes:[D(Fm,''),G(Fm,atX(Fm,V2,R0[0]))]},
+    {title:'Measure the columns',text:'From the top of the corner, draw a diagonal through the middle of the first column line, down to the bottom edge. Put the next column line there, and keep going to the end of the wall.',tip:'the same trick as the poles',shapes:[...diags,...cols.slice(1).map(c=>Th(c.a,c.b))]},
+    {title:'Divide the floors',text:'Divide the front corner into equal floors with a ruler. Send each mark to both VPs.',tip:'the front corner is the edge you can measure directly',shapes:floors},
+    {title:'Shade and finish',text:'Shade the short wall and give the glass a light tone. Your glass tower is done.',tip:'',shapes:[P([F0,L0,L1,F1]),P([F0,R0,R1,F1],'shadeLight')]}
+  ]}
+function birdseye(){const hy=42,V1=[10,hy],V2=[390,hy],V3=[205,298],F0=[205,112];
+  const L0=atX(F0,V1,102),R0=atX(F0,V2,316),K=inter(L0,V2,R0,V1);
+  const F1=lerp(F0,V3,.66),L1=inter(L0,V3,F1,V1),R1=inter(R0,V3,F1,V2);
+  const floors=[.2,.38,.54,.68,.8,.9].flatMap(f=>{const p=lerp(F0,F1,f);return [Th(p,inter(p,V1,L0,L1)),Th(p,inter(p,V2,R0,R1))]});
+  return [
+    {title:'A high horizon',text:'Draw the horizon near the top of the page with VP1 and VP2. We are high up, looking down.',tip:'high horizon = looking down',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'VP3 below',text:'Put VP3 low, below the middle of the page. Every vertical edge now leans down toward it.',tip:'VP3 is under your feet',shapes:[D(V3,'VP3'),G(F0,V3)]},
+    {title:'The roof',text:'From the nearest roof corner, draw edges toward VP1 and VP2. Cross lines to the opposite VPs to find the back corner.',tip:'',shapes:[G(F0,V1),G(F0,V2),G(K,V1),G(K,V2),L(F0,L0),L(F0,R0),L(L0,K),L(R0,K)]},
+    {title:'Walls down to VP3',text:'Draw the three vertical edges down toward VP3. Choose how tall the building is on the front edge.',tip:'they get closer as they go down',shapes:[G(L1,V3),G(R1,V3),L(F0,F1),L(L0,L1),L(R0,R1)]},
+    {title:'The base',text:'From the bottom of the front edge, draw lines toward VP1 and VP2. They end at the side edges.',tip:'',shapes:[G(L1,V1),G(R1,V2),L(F1,L1),L(F1,R1)]},
+    {title:'Floors and shade',text:'Draw floor lines toward VP1 and VP2. They get closer as they go down. Shade one side and tone the roof.',tip:'far floors look thinner',shapes:[...floors,P([F0,R0,R1,F1]),P([F0,L0,K,R0],'shadeLight')]}
+  ]}
 const LESSONS=[
   {id:'road',unit:1,title:'Road to the horizon',mins:5,steps:road()},
   {id:'box1',unit:1,title:'Box in one-point',mins:5,steps:box1()},
   {id:'room',unit:1,title:'Your first room',mins:6,steps:room()},
+  {id:'stairs',unit:1,title:'Stairs in one-point',mins:6,steps:stairs()},
   {id:'box2',unit:2,title:'Box in two-point',mins:5,steps:box2()},
   {id:'house',unit:2,title:'A simple house',mins:8,pro:true,steps:house()},
-  {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()}
+  {id:'glass',unit:2,title:'Glass tower with even columns',mins:10,pro:true,steps:glass()},
+  {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()},
+  {id:'birdseye',unit:3,title:'Building from above',mins:8,pro:true,steps:birdseye()}
 ];
 const UNITS=[
   {n:1,cls:'u1',eyebrow:'Unit 1 · One-point',title:'Foundations',text:'Horizon, vanishing point and your first 3D shapes.',soon:[]},
-  {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner','Stairs']},
-  {n:3,cls:'u3',eyebrow:'Unit 3 · Three-point',title:'Tall and dramatic',text:'A third vanishing point for towers and bird’s-eye views.',soon:['Bird’s-eye city']}
+  {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner']},
+  {n:3,cls:'u3',eyebrow:'Unit 3 · Three-point',title:'Tall and dramatic',text:'A third vanishing point for towers and bird’s-eye views.',soon:['Cityscape']}
 ];
 /* kids track: same drawings, simpler words */
 const KIDS={
@@ -429,6 +473,29 @@ const KIDS={
     ['The long roof','Draw the roof line toward the right dot, then down to the corner.',''],
     ['Door and window','Add a door and a window. Their lines point to the dots too.',''],
     ['Color it','Color the roof and the wall. Welcome home!','']]},
+  stairs:{title:'Treehouse Stairs',steps:[
+    ['Line and dot','Draw the sky line high and put the magic dot near the left side.','we look from the left'],
+    ['Zigzag','Draw a zigzag: up, across, up, across. It looks like steps from the side!',''],
+    ['Lines to the dot','Draw soft lines from the zigzag corners to the magic dot.',''],
+    ['The back','Copy the zigzag a little closer to the dot. Keep every line pointing the same way.',''],
+    ['Join them','Connect the front corners to the back corners. Real steps!',''],
+    ['Color it','Color the steps. Where do your stairs go?','']]},
+  glass:{title:'Shiny Glass Tower',steps:[
+    ['Two magic dots','Draw the sky line across the middle and put a dot at each end.',''],
+    ['The tall corner','Draw a tall straight line that crosses the sky line.',''],
+    ['The walls','Draw lines from the top and the bottom to both dots. Close the walls with two lines going down.',''],
+    ['First window line','Draw one line going down on the long wall.',''],
+    ['The middle line','Put a dot in the middle of the corner. Draw a soft line from it to the right dot.',''],
+    ['Magic diagonals','Draw a line from the top corner, through the middle of your window line, down to the bottom. Draw the next window line there. Keep going!','the post trick again'],
+    ['Floors','Mark floors on the corner with a ruler. Draw lines from each mark to both dots.',''],
+    ['Color it','Color the short wall. Your glass tower shines!','']]},
+  birdseye:{title:'Flying Over a Tower',steps:[
+    ['High sky line','Draw the sky line near the top with two dots. We are flying!',''],
+    ['The ground dot','Put a third dot low, near the bottom of the page.',''],
+    ['The roof','Draw the roof with lines toward the two top dots.',''],
+    ['Down, down, down','Draw the walls going down toward the bottom dot.',''],
+    ['The bottom','Connect the bottom corners toward the two top dots.',''],
+    ['Floors and color','Draw floor lines and color one side. What a view!','']]},
   tower:{title:'Super Tall Tower',steps:[
     ['Low sky line','Draw the sky line low, with two dots. We are looking up!',''],
     ['The sky dot','Put a third dot high up in the sky.','three dots!'],
@@ -448,7 +515,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=4');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=5');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
@@ -525,7 +592,7 @@ function setTabs(name){
 /* ---------- views ---------- */
 function vLearn(){
   const ni=nextIdx();let cont;
-  if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[5],LESSONS[5].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
+  if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
   else{const l=LESSONS[ni],locked=l.pro&&!isPro();
     cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
   const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
@@ -540,7 +607,7 @@ function vLearn(){
   return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
 function vOnboard(){
-  const demo=LESSONS[1],demo2=LESSONS[4];
+  const demo=LESSONS.find(l=>l.id==='box1'),demo2=LESSONS.find(l=>l.id==='house');
   return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
   ${onTrial()?`<section class="banner gift"><p><b>Code ${esc(S.trialCode)} applied.</b> You have 15 days of Pro, free.</p></section>`:''}
   <div><p class="eyebrow">Welcome</p><h1>Who is learning to draw?</h1></div>
