@@ -74,10 +74,12 @@ p{margin:0}
 .art .lab.hor{fill:var(--guide)}
 .art .new.ink,.art .new.thin{stroke:var(--new)}
 .art .new.guide{stroke:var(--new);opacity:.65}
-.art path.new.ink,.art path.new.thin,.art path.new.guide{stroke-dasharray:1 1;stroke-dashoffset:1;animation:draw .65s cubic-bezier(.5,0,.3,1) forwards;animation-delay:calc(var(--i)*.17s)}
-.art .new.shade,.art .new.shadeLight,.art .new.lab{opacity:0;animation:fade .7s ease forwards;animation-delay:calc(var(--i)*.17s)}
-.art g.dot.new circle{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pop .45s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--i)*.17s)}
-.art g.dot.new .lab{opacity:0;animation:fade .5s ease forwards;animation-delay:calc(var(--i)*.17s + .2s)}
+.art path.new.ink,.art path.new.thin,.art path.new.guide{stroke-dasharray:1 1;stroke-dashoffset:1;animation:draw .8s cubic-bezier(.5,0,.3,1) forwards;animation-delay:calc(var(--i)*.85s)}
+.art .new.shade,.art .new.shadeLight,.art .new.lab{opacity:0;animation:fade .7s ease forwards;animation-delay:calc(var(--i)*.85s)}
+.art .start{fill:none;stroke:var(--new);stroke-width:2.4;opacity:0;transform-box:fill-box;transform-origin:center;animation:startpulse .9s ease-out forwards;animation-delay:calc(var(--i)*.85s)}
+@keyframes startpulse{0%{opacity:1;transform:scale(.3)}55%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(1.4)}}
+.art g.dot.new circle{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:pop .45s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--i)*.85s)}
+.art g.dot.new .lab{opacity:0;animation:fade .5s ease forwards;animation-delay:calc(var(--i)*.85s + .2s)}
 .art.final .guide{opacity:.4}
 .art.final .dot circle{opacity:.55}
 @keyframes draw{to{stroke-dashoffset:0}}
@@ -331,12 +333,18 @@ function room(){const hy=140,V=[200,hy],p1=[140,100],p2=[260,100],p3=[260,180],p
   const w0t=[60,90],w0b=[60,170],w1t=atX(V,w0t,105),w1b=atX(V,w0b,105);
   const tiles=[40,120,200,280,360].map(x=>L(atY(V,[x,300],180),[x,300],'thin'));
   const rows=[205,235,270].map(y=>Th([Math.max(0,atY(V,p4,y)[0]),y],[Math.min(400,atY(V,p3,y)[0]),y]));
+  const corner=p=>[G(V,p),L(p,ext(V,p))];
   return [
     {title:'Horizon and VP',text:'Start with the horizon and a vanishing point in the middle of the page.',tip:'this is where you stand',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
-    {title:'Draw the back wall',text:'Draw a rectangle around the vanishing point. This is the far wall of the room.',tip:'the VP sits inside it',shapes:[L(p1,p2),L(p2,p3),L(p3,p4),L(p4,p1)]},
-    {title:'Open up the room',text:'Draw lines from the VP through each corner, out to the edge of the page. Now you have a floor, a ceiling and two side walls.',tip:'four lines, four planes',shapes:[p1,p2,p3,p4].map(p=>L(p,ext(V,p)))},
-    {title:'Add a door and a window',text:'The door on the back wall is a plain rectangle. On the side wall, the window’s top and bottom edges point to the VP.',tip:'verticals stay vertical',shapes:[L([168,180],[168,128]),L([168,128],[196,128]),L([196,128],[196,180]),G(w0t,V),G(w0b,V),L(w0t,w1t),L(w1t,w1b),L(w1b,w0b),L(w0b,w0t)]},
-    {title:'Lay the floor tiles',text:'Draw lines from the VP down to the bottom of the page. Then add horizontal lines that get closer together as they go back.',tip:'closer lines = more distance',shapes:[...tiles,...rows]},
+    {title:'Draw the back wall',text:'Draw a rectangle around the vanishing point, one side at a time: top, right, bottom, left. This is the far wall of the room.',tip:'the VP sits inside it',shapes:[L(p1,p2),L(p2,p3),L(p3,p4),L(p4,p1)]},
+    {title:'The first corner line',text:'Put your ruler on the VP and on the top left corner of the wall. Draw a light line from the VP to the corner, then keep going in the same direction to the edge of the page.',tip:'start at the VP, pass the corner, keep going',shapes:corner(p1)},
+    {title:'The other three corners',text:'Do the same for the other three corners, one at a time. Start at the VP, pass through the corner and continue to the edge. Now you have a ceiling, a floor and two side walls.',tip:'four lines, four planes',shapes:[...corner(p2),...corner(p3),...corner(p4)]},
+    {title:'The door',text:'On the back wall, draw the left side of the door straight up from the floor line. Then draw the top, then the right side.',tip:'the back wall faces you, so no VP here',shapes:[L([168,180],[168,128]),L([168,128],[196,128]),L([196,128],[196,180])]},
+    {title:'Window: the near edge',text:'On the left wall, draw one vertical line. This is the edge of the window closest to you.',tip:'verticals stay vertical',shapes:[L(w0t,w0b)]},
+    {title:'Window: top and bottom',text:'Put your ruler on the VP and on the top of that line, and draw a light line. Do the same for the bottom. The window sits between these two lines.',tip:'start at the VP',shapes:[G(V,w0t),G(V,w0b)]},
+    {title:'Window: the far edge',text:'Draw a second vertical line between the two guide lines. Then ink the top and the bottom of the window along the guides.',tip:'',shapes:[L(w1t,w1b),L(w0t,w1t),L(w0b,w1b)]},
+    {title:'Floor lines to the VP',text:'Draw lines from the bottom of the back wall down to the bottom of the page, one at a time. Every line points back to the VP.',tip:'line your ruler up with the VP each time',shapes:tiles},
+    {title:'Floor lines across',text:'Now draw horizontal lines across the floor. Make the gaps smaller as they get closer to the back wall.',tip:'closer lines = more distance',shapes:rows},
     {title:'Shade a wall',text:'Shade the right wall to show where the light comes from. Your first room is done.',tip:'light from the left',shapes:[P([p2,ext(V,p2),ext(V,p3),p3],'shadeLight')]}
   ]}
 function box2geo(){const hy=100,V1=[20,hy],V2=[380,hy],F0=[200,150],F1=[200,240];
@@ -362,7 +370,8 @@ function house(){const {hy,V1,V2,F0,F1,L0,L1,R0,R1}=box2geo();
     {title:'Raise the peak',text:'Draw a vertical line up through the centre and mark the top of the roof on it.',tip:'taller peak = steeper roof',shapes:[G([C[0],L1[1]-4],[C[0],Pk[1]-14]),D(Pk,'')]},
     {title:'Draw the gable',text:'Connect the peak to the two top corners of the left face. That triangle is the end of the roof.',tip:'',shapes:[L(Pk,L0),L(Pk,F0)]},
     {title:'Run the ridge',text:'Draw the ridge from the peak toward VP2. Bring the back roof edge down to the far corner of the box.',tip:'the ridge points to VP2',shapes:[G(P2,V2),L(Pk,P2),L(P2,R0)]},
-    {title:'Door and window',text:'Door and window edges follow the same rule: verticals stay vertical, the other edges point to their VP.',tip:'door → VP1, window → VP2',shapes:[L(dlb,dlt),L(dlt,drt),L(drt,drb),G(drt,V1),L(w0t,w1t),L(w1t,w1b),L(w1b,w0b),L(w0b,w0t),G(w1t,V2)]},
+    {title:'The door',text:'Draw the right side of the door. From VP1, draw a light line to its top. Draw the left side up to that line, then the top of the door.',tip:'door edges point to VP1',shapes:[L(drb,drt),G(V1,drt),L(dlb,dlt),L(dlt,drt)]},
+    {title:'The window',text:'Draw the left side of the window. From VP2, draw light lines to its top and its bottom. Draw the right side between them, then the top and the bottom.',tip:'window edges point to VP2',shapes:[L(w0b,w0t),G(V2,w0t),G(V2,w0b),L(w1b,w1t),L(w0t,w1t),L(w0b,w1b)]},
     {title:'Shade and finish',text:'Tone the roof lightly and shade the long wall. Your house is finished.',tip:'',shapes:[P([Pk,F0,R0,P2],'shadeLight'),P([F0,R0,R1,F1])]}
   ]}
 function tower(){const hy=275,V1=[12,hy],V2=[388,hy],V3=[200,14],F0=[200,292];
@@ -398,7 +407,8 @@ function glass(){const hy=120,V1=[8,hy],V2=[392,hy],F0=[135,30],F1=[135,262];
   return [
     {title:'Eye level in the middle',text:'Draw the horizon across the middle of the page and put VP1 and VP2 near the ends.',tip:'',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
     {title:'The front corner',text:'Draw a tall vertical line that crosses the horizon. Part of the building is above your eyes, part is below.',tip:'',shapes:[L(F0,F1)]},
-    {title:'Build the walls',text:'Connect the top and the bottom of the corner to both VPs. Close the walls with two more verticals: a short wall on the left, a long wall on the right.',tip:'',shapes:[G(F0,V1),G(F1,V1),G(R0,V2),G(R1,V2),L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'Lines to both VPs',text:'Put your ruler on VP1 and draw light lines to the top and the bottom of the corner. Do the same from VP2.',tip:'start every guide at a VP',shapes:[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]},
+    {title:'Close the walls',text:'Draw a vertical line on the left for the short wall and one on the right for the long wall. Then ink the top and bottom edges of both walls.',tip:'',shapes:[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
     {title:'The first column',text:'Draw one vertical line on the long wall. The space between it and the corner is the first column of windows.',tip:'you choose this width',shapes:[Th(cols[0].a,cols[0].b)]},
     {title:'The middle line',text:'Mark the middle of the front corner and draw a guide line from it to VP2. It cuts every column line in half.',tip:'',shapes:[D(Fm,''),G(Fm,atX(Fm,V2,R0[0]))]},
     {title:'Measure the columns',text:'From the top of the corner, draw a diagonal through the middle of the first column line, down to the bottom edge. Put the next column line there, and keep going to the end of the wall.',tip:'the same trick as the poles',shapes:[...diags,...cols.slice(1).map(c=>Th(c.a,c.b))]},
@@ -420,7 +430,7 @@ function birdseye(){const hy=42,V1=[10,hy],V2=[390,hy],V3=[205,298],F0=[205,112]
 const LESSONS=[
   {id:'road',unit:1,title:'Road to the horizon',mins:5,steps:road()},
   {id:'box1',unit:1,title:'Box in one-point',mins:5,steps:box1()},
-  {id:'room',unit:1,title:'Your first room',mins:6,steps:room()},
+  {id:'room',unit:1,title:'Your first room',mins:9,steps:room()},
   {id:'stairs',unit:1,title:'Stairs in one-point',mins:6,steps:stairs()},
   {id:'box2',unit:2,title:'Box in two-point',mins:5,steps:box2()},
   {id:'house',unit:2,title:'A simple house',mins:8,pro:true,steps:house()},
@@ -428,6 +438,9 @@ const LESSONS=[
   {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()},
   {id:'birdseye',unit:3,title:'Building from above',mins:8,pro:true,steps:birdseye()}
 ];
+(function orient(){for(const l of LESSONS){const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
+  const near=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1])<1.5,isVP=p=>vps.some(v=>near(p,v));
+  l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='l'&&isVP(sh.b)&&!isVP(sh.a)){const t=sh.a;sh.a=sh.b;sh.b=t}}))}})();
 const UNITS=[
   {n:1,cls:'u1',eyebrow:'Unit 1 · One-point',title:'Foundations',text:'Horizon, vanishing point and your first 3D shapes.',soon:[]},
   {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner']},
@@ -453,10 +466,15 @@ const KIDS={
     ['Color it','Color the side and the top. Your gift box is ready!','add a bow if you like']]},
   room:{title:'Your Secret Room',steps:[
     ['Line and dot','Draw the sky line with the magic dot in the middle.',''],
-    ['The back wall','Draw a box around the dot. That is the far wall.',''],
-    ['Open the room','Draw lines from the dot through each corner, out to the edges. Now you are inside a room!','four long lines'],
-    ['Door and window','Add a door. The window on the side wall points to the dot too.',''],
-    ['Floor tiles','Draw lines from the dot to the bottom, then lines across. A checkered floor!',''],
+    ['The back wall','Draw a box around the dot, one side at a time. That is the far wall.',''],
+    ['The first corner line','Put your ruler on the magic dot and the top left corner. Draw from the dot, through the corner, all the way to the edge!','start at the dot'],
+    ['Three more lines','Do the same for the other three corners, one by one. Now you are inside a room!',''],
+    ['The door','Draw the door on the back wall: one side, the top, then the other side.',''],
+    ['Window edge','On the left wall, draw a straight line going down. That is the edge of the window.',''],
+    ['Window helper lines','Draw soft lines from the magic dot to the top and the bottom of that line.',''],
+    ['Finish the window','Draw a second line going down between the helper lines. Then draw the top and the bottom of the window.',''],
+    ['Floor lines','Draw lines from the back wall down to the bottom of the page. They all point to the dot.',''],
+    ['Lines across','Draw lines across the floor. Make them closer near the back wall. A checkered floor!',''],
     ['Color a wall','Color one wall. Who lives in your room?','']]},
   box2:{title:'Toy Block',steps:[
     ['Two magic dots','Draw the sky line and put a magic dot at each end.','two dots this time'],
@@ -471,7 +489,8 @@ const KIDS={
     ['The roof top','Draw a line up from the middle and put a dot for the top of the roof.',''],
     ['The roof front','Connect the dot to the two top corners. A triangle!',''],
     ['The long roof','Draw the roof line toward the right dot, then down to the corner.',''],
-    ['Door and window','Add a door and a window. Their lines point to the dots too.',''],
+    ['The door','Draw one side of the door. Draw a soft line from the left dot to its top. Then draw the other side and the top.',''],
+    ['The window','Draw one side of the window. Draw soft lines from the right dot to its top and bottom. Then finish the window.',''],
     ['Color it','Color the roof and the wall. Welcome home!','']]},
   stairs:{title:'Treehouse Stairs',steps:[
     ['Line and dot','Draw the sky line high and put the magic dot near the left side.','we look from the left'],
@@ -483,7 +502,8 @@ const KIDS={
   glass:{title:'Shiny Glass Tower',steps:[
     ['Two magic dots','Draw the sky line across the middle and put a dot at each end.',''],
     ['The tall corner','Draw a tall straight line that crosses the sky line.',''],
-    ['The walls','Draw lines from the top and the bottom to both dots. Close the walls with two lines going down.',''],
+    ['Lines to the dots','Draw soft lines from both magic dots to the top and the bottom of the corner.',''],
+    ['Close the walls','Draw a short line going down on the left and a long one on the right. Then draw the top and bottom edges of the walls.',''],
     ['First window line','Draw one line going down on the long wall.',''],
     ['The middle line','Put a dot in the middle of the corner. Draw a soft line from it to the right dot.',''],
     ['Magic diagonals','Draw a line from the top corner, through the middle of your window line, down to the bottom. Draw the next window line there. Keep going!','the post trick again'],
@@ -515,7 +535,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=5');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=6');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
@@ -571,7 +591,7 @@ function art(lesson,upto,mode){
     const isNew=mode==='step'&&i===upto;let j=0;
     for(const s of lesson.steps[i].shapes){
       const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
-      if(s.t==='l')lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;
+      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
       else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
