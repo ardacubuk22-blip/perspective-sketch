@@ -421,18 +421,14 @@ const LT=l=>isKid()?KIDS[l.id].title:l.title;
 function ST(l,i){const s=l.steps[i];if(!isKid())return s;const k=KIDS[l.id].steps[i];return {title:k[0],text:k[1],tip:k[2]}}
 const wsURL=l=>WS+l.id+(isKid()?'-kids':'')+'.pdf';
 
-/* narration (free, built into the browser) */
-let voices=[];
-function loadV(){try{voices=speechSynthesis.getVoices()}catch(e){}}
-if('speechSynthesis' in window){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
-function hush(){try{speechSynthesis.cancel()}catch(e){}}
-function speak(t){
-  if(!S.voice||!('speechSynthesis' in window))return;
-  try{hush();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';
-    const en=voices.filter(v=>/^en/i.test(v.lang));
-    const pick=isKid()?en.find(v=>/samantha|zira|female|google us english/i.test(v.name)):en.find(v=>/google uk english male|daniel|david|alex|male/i.test(v.name));
-    u.voice=pick||en[0]||null;u.pitch=isKid()?1.75:1;u.rate=isKid()?1.03:.95;speechSynthesis.speak(u)}catch(e){}
+/* narration: pre-recorded English voice files, same on every phone */
+let player=null;
+function hush(){try{if(player){player.pause();player=null}}catch(e){}}
+function play(key,force){
+  if(!S.voice&&!force)return;hush();
+  try{player=new Audio('audio/'+key+'.mp3');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
+const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
 const FREE_DAYS=7;
 
@@ -566,7 +562,7 @@ function render(scrollTop,quiet){
   app.classList.toggle('full',name==='lesson'||name==='complete');
   setTabs(name);
   app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='challenge'?vChallenge():vProfile();
-  if(name==='lesson'&&!quiet){const l=LESSONS[view.i],st=ST(l,view.s);speak(st.title+'. '+st.text)}
+  if(name==='lesson'&&!quiet)narrate(LESSONS[view.i],view.s);
   if(scrollTop)window.scrollTo(0,0);
 }
 let toastT;
@@ -594,9 +590,9 @@ document.addEventListener('click',e=>{
   if(a==='mode'){S.mode=el.dataset.mode;save();if(view.name==='profile'){render();return}view={name:'learn'};render(true);
     toast(isKid()?'Kids mode: simple words and a fun voice':'Welcome! Start with lesson 1');return}
   if(a==='voice'){S.voice=!S.voice;save();if(!S.voice)hush();render(false,!S.voice);return}
-  if(a==='testvoice'){const was=S.voice;S.voice=true;speak(isKid()?'Hi! Let us draw a magic road together!':'Hi. Let us draw a road that runs to the horizon.');S.voice=was;return}
+  if(a==='testvoice'){play(isKid()?'k-test':'a-test',true);return}
   if(a==='prev'){view.s=Math.max(0,view.s-1);render();return}
-  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');const st=ST(l,view.s);speak(st.title+'. '+st.text);return}
+  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');narrate(l,view.s);return}
   if(a==='next'){const l=LESSONS[view.i];
     if(view.s<l.steps.length-1){view.s++;render();return}
     let gained=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained}
