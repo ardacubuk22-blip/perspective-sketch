@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2D5BFF">
 <meta name="description" content="Learn perspective drawing step by step, on real paper. By @perspective.sketch">
-<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Perspective Sketch App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,6 +202,31 @@ p{margin:0}
 .fine{font-size:12.5px;color:var(--muted);text-align:center}
 
 .toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:30;max-width:calc(100% - 32px);text-align:center}
+/* onboarding */
+.onb{display:flex;flex-direction:column;gap:18px;padding-top:8px}
+.onb h1{font-size:32px}
+.who{display:grid;gap:12px}
+.whobtn{display:grid;grid-template-columns:104px 1fr;gap:14px;align-items:center;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px}
+.whobtn:hover{border-color:var(--accent)}
+.whobtn > div{min-width:0}
+.whobtn b{font-family:var(--display);font-size:20px;display:block;line-height:1.15}
+.whobtn span{font-size:14px;color:var(--muted)}
+.whobtn .paper{border-radius:10px}
+.iconbtn[aria-pressed="false"]{color:var(--muted)}
+.extras{display:flex;gap:10px;flex-wrap:wrap}
+a.btn{text-decoration:none;color:inherit}
+.seg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg2 button{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;font-weight:700}
+.seg2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+/* kids mode: colour fills instead of hatching, bigger text */
+:root{--kid1:#FFB547;--kid2:#7FD3F7;--kid3:#FF8DBF}
+.kid .art .shade,.kidpick .art .shade{fill:var(--kid1);opacity:.8}
+.kid .art .shadeLight,.kidpick .art .shadeLight{fill:var(--kid2);opacity:.65}
+.kid .unit.u1 .unit-head{background:var(--kid3);color:#2A0A1A}
+.kid .unit.u2 .unit-head{background:var(--kid1);color:#2A1800}
+.kid .unit.u3 .unit-head{background:var(--kid2);color:#04263A}
+.kid .lbody p.txt{font-size:19px}
+.kid .lbody h2{font-size:30px}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
 }
@@ -241,8 +266,12 @@ const I={
   next:'<svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
   cam:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
   copy:'<svg class="ico" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg>',
-  pencil:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>'
+  pencil:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>',
+  sound:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  mute:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  dl:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>'
 };
+const WS='https://ardacubuk22-blip.github.io/perspective-sketch/worksheets/';
 const LOGO='<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="9" fill="var(--accent)"/><path d="M4 14h26" stroke="var(--accent-ink)" stroke-opacity=".45" stroke-width="1.5"/><path d="M5 29L17 14l12 15" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linejoin="round"/><path d="M11 29l6-15 6 15" fill="none" stroke="var(--accent-ink)" stroke-opacity=".6" stroke-width="1.6"/><circle cx="17" cy="14" r="2.8" fill="var(--marker)"/></svg>';
 
 /* ---------- geometry ---------- */
@@ -341,12 +370,75 @@ const UNITS=[
   {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner','Stairs']},
   {n:3,cls:'u3',eyebrow:'Unit 3 · Three-point',title:'Tall and dramatic',text:'A third vanishing point for towers and bird’s-eye views.',soon:['Bird’s-eye city']}
 ];
+/* kids track: same drawings, simpler words */
+const KIDS={
+  road:{title:'Road to the Castle',steps:[
+    ['Draw the sky line','Draw a long, light line across your paper. That is where the sky touches the ground!','draw it softly, like a whisper'],
+    ['The magic dot','Put a dot in the middle of the line. Everything far away runs into this magic dot.','grown-ups call it the vanishing point'],
+    ['Make the road','Draw two lines from the dot down to the bottom corners. Wow, a road!','a ruler helps a lot'],
+    ['Road stripes','Draw stripes in the middle of the road. Make them smaller near the dot.','far away = tiny'],
+    ['Lamp posts','Draw a tall post near you. Then smaller posts, all the way to the dot!','the line on top helps you']]},
+  box1:{title:'Magic Gift Box',steps:[
+    ['Sky line and magic dot','Draw the sky line and put the magic dot on it.',''],
+    ['Draw a square','Draw a square below the line, a little to the left.','straight sides!'],
+    ['Lines to the dot','Draw light lines from each corner of the square to the magic dot.','four lines'],
+    ['The back of the box','Draw the back edges: one line across and one line down.',''],
+    ['Make it pop','Connect the front corners to the back corners. Look, it pops out!','it is 3D now'],
+    ['Color it','Color the side and the top. Your gift box is ready!','add a bow if you like']]},
+  room:{title:'Your Secret Room',steps:[
+    ['Line and dot','Draw the sky line with the magic dot in the middle.',''],
+    ['The back wall','Draw a box around the dot. That is the far wall.',''],
+    ['Open the room','Draw lines from the dot through each corner, out to the edges. Now you are inside a room!','four long lines'],
+    ['Door and window','Add a door. The window on the side wall points to the dot too.',''],
+    ['Floor tiles','Draw lines from the dot to the bottom, then lines across. A checkered floor!',''],
+    ['Color a wall','Color one wall. Who lives in your room?','']]},
+  box2:{title:'Toy Block',steps:[
+    ['Two magic dots','Draw the sky line and put a magic dot at each end.','two dots this time'],
+    ['The front corner','Draw a straight line going down. That is the corner of the block.',''],
+    ['Lines to both dots','Draw lines from the top and the bottom of the corner to both dots.',''],
+    ['The sides','Draw two more lines going down for the sides.',''],
+    ['The top','From the new tops, draw lines to the other dot. Where they cross is the back corner.','criss-cross!'],
+    ['Color it','Color one side and the top. Your toy block is done!','']]},
+  house:{title:'Dream House',steps:[
+    ['Start with a block','Draw the toy block again, but without the top.',''],
+    ['Find the middle','Draw an X on the left side. The middle is where the lines cross.',''],
+    ['The roof top','Draw a line up from the middle and put a dot for the top of the roof.',''],
+    ['The roof front','Connect the dot to the two top corners. A triangle!',''],
+    ['The long roof','Draw the roof line toward the right dot, then down to the corner.',''],
+    ['Door and window','Add a door and a window. Their lines point to the dots too.',''],
+    ['Color it','Color the roof and the wall. Welcome home!','']]},
+  tower:{title:'Super Tall Tower',steps:[
+    ['Low sky line','Draw the sky line low, with two dots. We are looking up!',''],
+    ['The sky dot','Put a third dot high up in the sky.','three dots!'],
+    ['The bottom','Draw the bottom corners toward the two dots.',''],
+    ['Up, up, up','Draw the sides leaning toward the sky dot.',''],
+    ['The top','Connect the top corners toward the two dots.',''],
+    ['Floors','Draw floor lines and color one side. It touches the clouds!','']]}
+};
+const KUNITS={1:['Level 1 · One magic dot','The magic dot','Roads, boxes and rooms with one dot.'],2:['Level 2 · Two magic dots','Blocks and houses','Two dots make blocks and houses.'],3:['Level 3 · The sky dot','Super tall','A dot in the sky for giant towers.']};
+const isKid=()=>S.mode==='kid';
+const LT=l=>isKid()?KIDS[l.id].title:l.title;
+function ST(l,i){const s=l.steps[i];if(!isKid())return s;const k=KIDS[l.id].steps[i];return {title:k[0],text:k[1],tip:k[2]}}
+const wsURL=l=>WS+l.id+(isKid()?'-kids':'')+'.pdf';
+
+/* narration (free, built into the browser) */
+let voices=[];
+function loadV(){try{voices=speechSynthesis.getVoices()}catch(e){}}
+if('speechSynthesis' in window){loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}}
+function hush(){try{speechSynthesis.cancel()}catch(e){}}
+function speak(t){
+  if(!S.voice||!('speechSynthesis' in window))return;
+  try{hush();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';
+    const en=voices.filter(v=>/^en/i.test(v.lang));
+    const pick=isKid()?en.find(v=>/samantha|zira|female|google us english/i.test(v.name)):en.find(v=>/google uk english male|daniel|david|alex|male/i.test(v.name));
+    u.voice=pick||en[0]||null;u.pitch=isKid()?1.75:1;u.rate=isKid()?1.03:.95;speechSynthesis.speak(u)}catch(e){}
+}
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
 const FREE_DAYS=7;
 
 /* ---------- state ---------- */
 const KEY='ps-proto-v1';
-const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0});
+const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true});
 let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -366,8 +458,8 @@ function art(lesson,upto,mode){
       const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
       if(s.t==='l')lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
-      else if(s.t==='d'){const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-36:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${s.label}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
-      else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${s.s}</text>`;
+      else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
+      else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
     }
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
@@ -387,35 +479,48 @@ function vLearn(){
   const ni=nextIdx();let cont;
   if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[5],LESSONS[5].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
   else{const l=LESSONS[ni],locked=l.pro&&!S.pro;
-    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(l.title)}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
   const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
   const units=UNITS.map(u=>{
     const items=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n).map(({l,i})=>{
       const st=S.done[l.id]?'done':(i===ni?'current':'locked');const x=offs[k++%offs.length];
       const inner=st==='done'?I.check:st==='current'?(i+1):I.lock;
-      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(l.title)} (${st})">${inner}${l.pro&&!S.pro?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(l.title)}</span></li>`}).join('');
+      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!S.pro?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span></li>`}).join('');
     const soon=u.soon.map(s=>{const x=offs[k++%offs.length];return `<li class="node soon" style="--x:${x}px"><button class="nb" data-act="soon" aria-label="${esc(s)}: coming soon">${I.lock}</button><span class="lbl">${esc(s)} · soon</span></li>`}).join('');
-    return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${u.eyebrow}</p><h2>${u.title}</h2><p>${u.text}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
-  return header()+cont+units+`<p class="foot-note">Draw on real paper. The app shows you each line, one step at a time.</p>`;
+    const [ue,ut,ux]=isKid()?KUNITS[u.n]:[u.eyebrow,u.title,u.text];
+    return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
+  return header()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
+}
+function vOnboard(){
+  const demo=LESSONS[1],demo2=LESSONS[4];
+  return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
+  <div><p class="eyebrow">Welcome</p><h1>Who is learning to draw?</h1></div>
+  <div class="who">
+    <button class="whobtn" data-act="mode" data-mode="adult"><div class="paper">${art(demo,demo.steps.length-1,'thumb')}</div><div><b>Me</b><span>Teens and adults. Clear steps, real perspective rules.</span></div></button>
+    <button class="whobtn kidpick" data-act="mode" data-mode="kid"><div class="paper">${art(demo2,demo2.steps.length-1,'thumb')}</div><div><b>My child (7–12)</b><span>Simple words, colors and a friendly voice.</span></div></button>
+  </div>
+  <p class="foot-note">You can change this later in Profile.</p></div>`;
 }
 function vLesson(){
-  const l=LESSONS[view.i],n=l.steps.length,s=view.s,st=l.steps[s];
+  const l=LESSONS[view.i],n=l.steps.length,s=view.s,st=ST(l,s);
   const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
-  return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span></div>
+  return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span><button class="iconbtn" data-act="voice" aria-pressed="${S.voice}" aria-label="Voice ${S.voice?'on':'off'}">${S.voice?I.sound:I.mute}</button></div>
   <div class="paper" id="canvas">${art(l,s,'step')}</div>
-  <div class="legend"><span><b style="background:var(--new)"></b>this step</span><span><b style="background:var(--ink)"></b>ink</span><span><b style="background:var(--guide)"></b>light guide</span></div>
-  <div class="lbody"><p class="eyebrow">${esc(l.title)} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
-  <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>`;
+  <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
+  <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
+  <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
+  <div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`;
 }
 function vComplete(){
   const l=LESSONS[view.i];const gained=view.gained;
   const ni=nextIdx();
-  return `<div class="done-head"><p class="eyebrow">Lesson complete</p><h1>${esc(l.title)}</h1><div class="reward">${gained?`<span class="chip star">${I.star}+${gained} XP</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
+  return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${gained?`<span class="chip star">${I.star}+${gained} XP</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
   <div class="paper">${art(l,l.steps.length-1,'final')}</div>
   <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper. It stays on this device.</p>
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
-  <section class="panel"><h3>Share it</h3><p style="font-size:14px">Post your drawing and tag the page. The best ones get featured.</p>
+  <section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>
+  <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
   <button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`;
 }
@@ -439,6 +544,8 @@ function vProfile(){
   <div class="grid4"><div class="stat"><b>${S.xp}</b><span>XP earned</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
   <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${S.pro?'Perspective Pro':'Free'}</h3></div>${S.pro?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
   <p style="font-size:14px;color:var(--muted)">${S.pro?'All lessons and all 30 challenge days are open.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p></section>
+  <section class="panel"><h3>Who is learning?</h3><div class="seg2"><button data-act="mode" data-mode="adult" aria-pressed="${!isKid()}">Me</button><button data-act="mode" data-mode="kid" aria-pressed="${isKid()}">My child (7–12)</button></div>
+  <div class="seg2"><button data-act="voice" aria-pressed="${S.voice}">${S.voice?'Voice on':'Voice off'}</button><button data-act="testvoice">Test the voice</button></div></section>
   <section class="panel"><h3>Reset</h3><p style="font-size:14px;color:var(--muted)">This is a working prototype. Progress is saved on this device only.</p>
   <button class="btn ghost" data-act="reset">${resetArm?'Tap again to erase all progress':'Reset progress'}</button></section>`;
 }
@@ -453,10 +560,13 @@ function paywall(){
 
 /* ---------- render ---------- */
 const app=document.getElementById('app');
-function render(scrollTop){
-  app.classList.toggle('full',view.name==='lesson'||view.name==='complete');
-  setTabs(view.name);
-  app.innerHTML=view.name==='learn'?vLearn():view.name==='lesson'?vLesson():view.name==='complete'?vComplete():view.name==='challenge'?vChallenge():vProfile();
+function render(scrollTop,quiet){
+  document.body.classList.toggle('kid',isKid());
+  const name=S.mode?view.name:'onboard';
+  app.classList.toggle('full',name==='lesson'||name==='complete');
+  setTabs(name);
+  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='challenge'?vChallenge():vProfile();
+  if(name==='lesson'&&!quiet){const l=LESSONS[view.i],st=ST(l,view.s);speak(st.title+'. '+st.text)}
   if(scrollTop)window.scrollTo(0,0);
 }
 let toastT;
@@ -480,9 +590,13 @@ document.addEventListener('click',e=>{
     if(S.done[l.id]||i===nextIdx())openLesson(i);
     else toast(`Finish “${LESSONS[nextIdx()].title}” first`);return}
   if(a==='soon'){toast('Coming soon');return}
-  if(a==='close'||a==='home'){view={name:'learn'};render(true);return}
+  if(a==='close'||a==='home'){hush();view={name:'learn'};render(true);return}
+  if(a==='mode'){S.mode=el.dataset.mode;save();if(view.name==='profile'){render();return}view={name:'learn'};render(true);
+    toast(isKid()?'Kids mode: simple words and a fun voice':'Welcome! Start with lesson 1');return}
+  if(a==='voice'){S.voice=!S.voice;save();if(!S.voice)hush();render(false,!S.voice);return}
+  if(a==='testvoice'){const was=S.voice;S.voice=true;speak(isKid()?'Hi! Let us draw a magic road together!':'Hi. Let us draw a road that runs to the horizon.');S.voice=was;return}
   if(a==='prev'){view.s=Math.max(0,view.s-1);render();return}
-  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');return}
+  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');const st=ST(l,view.s);speak(st.title+'. '+st.text);return}
   if(a==='next'){const l=LESSONS[view.i];
     if(view.s<l.steps.length-1){view.s++;render();return}
     let gained=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained}
