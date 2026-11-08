@@ -302,13 +302,20 @@ function ext(p,q){const dx=q[0]-p[0],dy=q[1]-p[1],ts=[];if(dx>0)ts.push((W-p[0])
 
 /* ---------- lessons ---------- */
 function road(){const hy=120,V=[200,hy],E=[360,300];
-  const B1=lerp(V,E,.9),T1=[B1[0],B1[1]-112];
+  const B1=lerp(V,E,.95),T1=[B1[0],B1[1]-140],M1=lerp(B1,T1,.5);
+  const B2=lerp(V,E,.72),T2=atX(V,T1,B2[0]),M2=atX(V,M1,B2[0]);
+  const B3=inter(T1,M2,V,E),T3=atX(V,T1,B3[0]),M3=atX(V,M1,B3[0]);
+  const B4=inter(T2,M3,V,E),T4=atX(V,T1,B4[0]),M4=atX(V,M1,B4[0]);
+  const B5=inter(T3,M4,V,E),T5=atX(V,T1,B5[0]);
   return [
     {title:'Find your eye level',text:'Draw a light horizontal line across the page. This is the horizon: the height of your eyes.',tip:'press softly, it is only a guide',shapes:[G([10,hy],[390,hy]),T([300,hy-9],'horizon','hor')]},
     {title:'Place the vanishing point',text:'Put one dot in the middle of the horizon. Everything that goes away from you meets at this point.',tip:'VP = vanishing point',shapes:[D(V,'VP')]},
     {title:'Draw the road',text:'From the dot, draw two lines down to the bottom corners of the page. That is a road running to the horizon.',tip:'use a ruler for clean lines',shapes:[L(V,[40,300]),L(V,E)]},
     {title:'Dash the centre line',text:'Add the centre line as dashes. Each dash gets shorter as it gets closer to the vanishing point.',tip:'smaller = further away',shapes:[[.14,.19],[.26,.34],[.44,.56],[.68,.86]].map(([a,b])=>L(lerp(V,[200,300],a),lerp(V,[200,300],b)))},
-    {title:'Line up the poles',text:'Draw the closest pole. Run a guide line from its top to the VP. Every other pole stands on the road edge and stops at that line.',tip:'same height in real life, smaller on paper',shapes:[G(V,ext(V,T1)),...[.9,.62,.44,.32].map(t=>{const b=lerp(V,E,t);return L(b,atX(V,T1,b[0]))})]}
+    {title:'The first two poles',text:'Draw the closest pole on the road edge. Run a guide line from its top to the VP. Choose where the second pole stands: its top touches that guide line.',tip:'all poles are the same height in real life',shapes:[G(V,ext(V,T1)),L(B1,T1),L(B2,T2)]},
+    {title:'Find the middle',text:'Mark the middle of the first pole. Draw a guide line from that point to the VP. It cuts every pole exactly in half.',tip:'the half-way line',shapes:[D(M1,''),G(M1,V),D(M2,'')]},
+    {title:'Measure the next pole',text:'Draw a diagonal from the top of the first pole through the middle of the second pole, down to the road edge. That is where the third pole stands.',tip:'top, then middle, then ground',shapes:[G(T1,B3),L(B3,T3)]},
+    {title:'Repeat the measuring',text:'Do it again: from the top of pole two through the middle of pole three, then from pole three through pole four. The gaps shrink exactly as they should.',tip:'equal spaces in real life',shapes:[G(T2,B4),L(B4,T4),G(T3,B5),L(B5,T5)]}
   ]}
 function box1(){const hy=110,V=[200,hy],A=[90,170],B=[170,170],C=[170,240],Dd=[90,240],t=.35;
   const A2=lerp(A,V,t),B2=lerp(B,V,t),C2=lerp(C,V,t),D2=lerp(Dd,V,t);
@@ -370,7 +377,7 @@ function tower(){const hy=275,V1=[12,hy],V2=[388,hy],V3=[200,14],F0=[200,292];
     {title:'Floors and shade',text:'Mark floors on the front edge and send each one to its VP. Shade one side and your tower is done.',tip:'floors get thinner as they rise',shapes:[...floors,P([F0,R0,Rt,Ft])]}
   ]}
 const LESSONS=[
-  {id:'road',unit:1,title:'Road to the horizon',mins:3,steps:road()},
+  {id:'road',unit:1,title:'Road to the horizon',mins:5,steps:road()},
   {id:'box1',unit:1,title:'Box in one-point',mins:5,steps:box1()},
   {id:'room',unit:1,title:'Your first room',mins:6,steps:room()},
   {id:'box2',unit:2,title:'Box in two-point',mins:5,steps:box2()},
@@ -389,7 +396,10 @@ const KIDS={
     ['The magic dot','Put a dot in the middle of the line. Everything far away runs into this magic dot.','grown-ups call it the vanishing point'],
     ['Make the road','Draw two lines from the dot down to the bottom corners. Wow, a road!','a ruler helps a lot'],
     ['Road stripes','Draw stripes in the middle of the road. Make them smaller near the dot.','far away = tiny'],
-    ['Lamp posts','Draw a tall post near you. Then smaller posts, all the way to the dot!','the line on top helps you']]},
+    ['The first two posts','Draw a tall post on the road edge. Draw a soft line from its top to the magic dot. Then draw a second post that touches that line.','all posts are the same size in real life'],
+    ['Find the middle','Put a dot in the middle of the first post. Draw a soft line from it to the magic dot.','it cuts every post in half'],
+    ['The magic diagonal','Draw a line from the top of the first post, through the middle of the second post, down to the road. Put the third post there!','top, middle, ground'],
+    ['More posts','Do the same trick again to find the next posts. They get closer and closer!','']]},
   box1:{title:'Magic Gift Box',steps:[
     ['Sky line and magic dot','Draw the sky line and put the magic dot on it.',''],
     ['Draw a square','Draw a square below the line, a little to the left.','straight sides!'],
@@ -438,7 +448,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=3');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=4');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
