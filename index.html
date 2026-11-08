@@ -426,7 +426,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=3');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=2');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
