@@ -274,6 +274,24 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
 }
+/* submissions */
+.field{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:600}
+.field input{font:inherit;font-weight:500;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
+.field input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.fine2{font-size:13px;color:var(--muted)}
+.sentok h3{display:flex;align-items:center;gap:8px;color:var(--ok)}
+.mhead{display:flex;align-items:center;gap:12px}
+.mhead h1{font-size:26px}
+.subs{display:flex;flex-direction:column;gap:12px}
+.sub{display:grid;grid-template-columns:92px 1fr;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;align-items:start}
+.sub img,.sub .ph{width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--paper);display:block}
+.sub .meta2{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sub .meta2 b{font-size:15px}
+.sub small{color:var(--muted);font-size:12.5px}
+.st{align-self:flex-start;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.st.approved{background:var(--ok);color:#fff}.st.rejected{background:var(--lock);color:var(--ink)}.st.feat{background:var(--marker);color:#1E2228}
+.stars{display:inline-flex;gap:1px}.stars span{color:var(--line);display:inline-flex}.stars span.on{color:var(--marker)}.stars .ico{width:17px;height:17px;fill:currentColor;stroke:currentColor}
+.rnote{font-size:14px;background:var(--paper);border-inline-start:3px solid var(--accent);padding:8px 10px;border-radius:8px;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -574,7 +592,7 @@ const FREE_DAYS=7;
 
 /* ---------- state ---------- */
 const KEY='ps-proto-v1';
-const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true,trialEnd:0,trialCode:'',myCode:'',gems:0,gemsInit:false,owned:['grid'],paper:'grid'});
+const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true,trialEnd:0,trialCode:'',myCode:'',gems:0,gemsInit:false,owned:['grid'],paper:'grid',subName:'',subIg:'',rewarded:{},featuredN:0,subsN:0});
 let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -596,7 +614,8 @@ const BADGES=[
   {id:'streak7',name:'7-day streak',desc:'Draw 7 days in a row',test:()=>S.streak>=7},
   {id:'week',name:'Challenge week',desc:'Finish 7 challenge days',test:()=>S.days.length>=7},
   {id:'photo',name:'Show your work',desc:'Add a photo of a drawing',test:()=>S.photos>=1},
-  {id:'style',name:'Collector',desc:'Unlock a paper style',test:()=>S.owned.length>1}
+  {id:'style',name:'Collector',desc:'Unlock a paper style',test:()=>S.owned.length>1},
+  {id:'featured',name:'Drawing of the week',desc:'Get picked by Arda',test:()=>S.featuredN>=1}
 ];
 const earned=()=>BADGES.filter(b=>b.test()).map(b=>b.id);
 const PAPERS=[{id:'grid',name:'Graph paper',cost:0},{id:'dots',name:'Dot grid',cost:5},{id:'kraft',name:'Kraft paper',cost:10},{id:'blueprint',name:'Blueprint',cost:15}];
@@ -633,6 +652,74 @@ function trialBanner(){
 }
 function codeBox(){return `<div class="coderow"><input id="codein" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. SKETCH15" aria-label="Promo code"><button class="btn ghost small" data-act="applycode">Apply</button></div>`}
 
+
+/* ---------- drawing reviews (Supabase) ---------- */
+const SB_URL='https://qrbojitoclgqulokyobf.supabase.co',SB_KEY='sb_publishable_pjbLqnnn_GpmSglIsFrmZw_jeHyRi6B',SBK='ps-sb-v1';
+function sbGet(){try{return JSON.parse(localStorage.getItem(SBK)||'null')}catch(e){return null}}
+function sbKeep(d){const s={at:d.access_token,rt:d.refresh_token,exp:d.expires_at||(Math.floor(Date.now()/1000)+(d.expires_in||3600)),uid:d.user&&d.user.id};try{localStorage.setItem(SBK,JSON.stringify(s))}catch(e){}return s}
+async function sbReq(path,opt,tok){opt=opt||{};const h=Object.assign({apikey:SB_KEY},opt.headers||{});if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(SB_URL+path,Object.assign({},opt,{headers:h}));const txt=await r.text();let j=null;try{j=txt?JSON.parse(txt):null}catch(e){}
+  if(!r.ok)throw new Error((j&&(j.message||j.msg||j.error_description||j.error))||txt||('HTTP '+r.status));return j}
+const JSONH={'Content-Type':'application/json'};
+async function sbSession(create){
+  const s=sbGet();
+  if(s&&s.uid&&s.exp*1000>Date.now()+60000)return s;
+  if(s&&s.rt){try{const n=sbKeep(await sbReq('/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:JSONH,body:JSON.stringify({refresh_token:s.rt})}));if(n.uid)return n}
+    catch(e){if(!/refresh token|not found|invalid/i.test(e.message))throw e;if(!create)return null}}
+  if(!create)return null;
+  return sbKeep(await sbReq('/auth/v1/signup',{method:'POST',headers:JSONH,body:JSON.stringify({data:{}})}));
+}
+function shrink(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>{const m=1600,sc=Math.min(1,m/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*sc));c.height=Math.max(1,Math.round(im.naturalHeight*sc));const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(new Error('image')),'image/jpeg',.85)};im.onerror=()=>rej(new Error('image'));im.src=src})}
+async function sbSubmit(name,ig,lessonId,src){
+  const blob=await shrink(src);const s=await sbSession(true);
+  const path=s.uid+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.jpg';
+  await sbReq('/storage/v1/object/drawings/'+path,{method:'POST',headers:{'Content-Type':'image/jpeg','x-upsert':'false'},body:blob},s.at);
+  await sbReq('/rest/v1/submissions',{method:'POST',headers:Object.assign({Prefer:'return=minimal'},JSONH),body:JSON.stringify({name,instagram:ig||null,lesson_id:lessonId,image_path:path})},s.at);
+}
+function sendErr(e){const m=String(e&&e.message||e);
+  if(/daily_limit/.test(m))return 'You can send 5 drawings a day. Try again tomorrow.';
+  if(m==='image')return 'This photo could not be read. Try another one.';
+  if(/fetch|network|load failed/i.test(m))return 'No connection. Check your internet and try again.';
+  return 'Could not send right now. Please try again.'}
+let mine={loading:false,rows:null,urls:{},err:''};
+async function loadMine(quiet){
+  try{
+    const s=await sbSession(false);
+    if(!s){mine={loading:false,rows:[],urls:{},err:''};if(!quiet&&view.name==='mine')render();return}
+    const rows=await sbReq('/rest/v1/submissions?select=*&user_id=eq.'+s.uid+'&order=created_at.desc&limit=50',{},s.at)||[];
+    let urls={};const paths=rows.map(r=>r.image_path);
+    if(paths.length&&!quiet){try{const sg=await sbReq('/storage/v1/object/sign/drawings',{method:'POST',headers:JSONH,body:JSON.stringify({expiresIn:3600,paths})},s.at)||[];for(const x of sg)if(x.signedURL)urls[x.path]=SB_URL+'/storage/v1'+x.signedURL}catch(e){}}
+    mine={loading:false,rows,urls,err:''};
+    const before=earned();let add=0,fresh=0;S.rewarded=S.rewarded||{};
+    for(const r of rows){if(r.status==='pending')continue;const k=S.rewarded[r.id];
+      if(!k){fresh++;if(r.status==='approved')add+=3;S.rewarded[r.id]=r.status==='approved'?'a':'r'}
+      if(r.featured&&S.rewarded[r.id]!=='f'){add+=10;S.rewarded[r.id]='f';S.featuredN=(S.featuredN||0)+1}}
+    if(fresh||add){save();
+      toast(add?`Arda reviewed your drawing · +${add} gems`:'Arda reviewed your drawing');badgeToast(newBadges(before))}
+    if(view.name==='mine'||((fresh||add)&&['learn','profile'].includes(view.name)))render();
+  }catch(e){mine.loading=false;mine.err='Could not load your drawings. Check your connection.';if(!quiet&&view.name==='mine')render()}
+}
+const stars=n=>`<span class="stars" role="img" aria-label="${n} out of 5">${[1,2,3,4,5].map(i=>`<span class="${i<=n?'on':''}">${I.star}</span>`).join('')}</span>`;
+function sendPanel(l){
+  if(view.sent)return `<section class="panel sentok"><h3>${I.check}Sent to Arda</h3><p style="font-size:14px">${isKid()?'Arda will look at your drawing and give it stars. Check back soon!':'Arda reviews every drawing himself. His score and note will show up in Profile, under My drawings.'}</p><button class="btn ghost" data-act="mine">See my drawings</button></section>`;
+  if(!photoURL)return '';
+  return `<section class="panel"><h3>${isKid()?'Get stars from Arda':'Get a score from Arda'}</h3>
+  <p class="fine2">${isKid()?'Arda from @perspective.sketch looks at every drawing and gives 1 to 5 stars. Good drawings get +3 gems. The drawing of the week gets +10!':'Arda (@perspective.sketch) looks at every drawing himself and gives a score from 1 to 5 with a short note. Approved drawings earn +3 gems, the drawing of the week earns +10.'}</p>
+  <label class="field">${isKid()?'Your first name':'Your name'}<input id="subname" maxlength="40" autocomplete="${isKid()?'off':'given-name'}" value="${esc(S.subName||'')}"></label>
+  ${isKid()?'':`<label class="field">Instagram (optional)<input id="subig" maxlength="40" placeholder="@yourname" autocapitalize="off" autocomplete="off" spellcheck="false" value="${esc(S.subIg||'')}"></label>`}
+  <p class="fine2">${isKid()?'Ask a grown-up before you send. ':''}Only Arda sees your photo. If it is picked as the drawing of the week, it may be shown in the app.</p>
+  <button class="btn primary wide" data-act="send"${view.sending?' disabled':''}>${view.sending?'Sending…':'Send for review'}</button></section>`;
+}
+function vMine(){
+  const st=r=>r.featured?['feat','Drawing of the week']:r.status==='approved'?['approved','Reviewed']:r.status==='rejected'?['rejected','Try again']:['','Waiting for Arda'];
+  let body;
+  if(mine.err)body=`<section class="panel"><p>${esc(mine.err)}</p><button class="btn ghost" data-act="mine">Try again</button></section>`;
+  else if(mine.rows===null||mine.loading&&!mine.rows)body=`<p class="foot-note">Loading…</p>`;
+  else if(!mine.rows.length)body=`<section class="panel"><h3>No drawings yet</h3><p class="fine2">Finish a lesson, add a photo of your paper and send it to Arda. He gives every drawing a score and a short note.</p><button class="btn primary" data-act="home">Go to lessons</button></section>`;
+  else body=`<div class="subs">${mine.rows.map(r=>{const l=LESSONS.find(x=>x.id===r.lesson_id);const [c,t]=st(r);const u=mine.urls[r.image_path];
+    return `<article class="sub">${u?`<img src="${esc(u)}" alt="Your drawing" loading="lazy">`:'<span class="ph"></span>'}<div class="meta2"><span class="st ${c}">${t}</span><b>${esc(l?LT(l):r.lesson_id)}</b><small>${new Date(r.created_at).toLocaleDateString()}</small>${r.score?stars(r.score):''}${r.note?`<p class="rnote">${esc(r.note)}</p>`:''}</div></article>`}).join('')}</div>`;
+  return `<div class="mhead"><button class="iconbtn" data-act="tab" data-tab="profile" aria-label="Back to profile">${I.back}</button><h1>My drawings</h1></div>${body}`;
+}
 
 /* ---------- render helpers ---------- */
 const f=p=>p[0].toFixed(1)+' '+p[1].toFixed(1);
@@ -705,9 +792,10 @@ function vComplete(){
   return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${view.gems?`<span class="chip gemc">${I.gem}+${view.gems} gem${view.gems>1?'s':''}</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
   <div class="paper">${art(l,l.steps.length-1,'final')}</div>
   ${(view.badges||[]).map(b=>`<section class="newbadge"><i>${I.medal}</i><div><b>Badge unlocked: ${esc(b.name)}</b><p style="font-size:13.5px">${esc(b.desc)}</p></div></section>`).join('')}
-  <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper. It stays on this device.</p>
+  <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper to compare. You can send it to Arda for a score.</p>
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
+  ${sendPanel(l)}
   <section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>
   <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
@@ -731,6 +819,7 @@ function vProfile(){
   const lessons=Object.keys(S.done).length;
   return header()+`<h1 style="font-size:28px">Your progress</h1>
   <div class="grid4"><div class="stat"><b>${S.gems}</b><span>Gems</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
+  <section class="panel"><h3>My drawings</h3><p class="fine2">Drawings you sent to Arda, with his score and notes.</p><button class="btn ghost" data-act="mine">${I.star}Open my drawings</button></section>
   <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${isPro()?'Perspective Pro':'Free'}</h3></div>${isPro()?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
   <p style="font-size:14px;color:var(--muted)">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p>
   ${!isPro()&&!S.trialCode?`<p style="font-size:14px;font-weight:600">Have a code?</p>${codeBox()}`:''}</section>
@@ -761,8 +850,8 @@ function render(scrollTop,quiet){
   document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
   app.classList.toggle('full',name==='lesson'||name==='complete');
-  setTabs(name);
-  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='challenge'?vChallenge():vProfile();
+  setTabs(name==='mine'?'profile':name);
+  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='challenge'?vChallenge():name==='mine'?vMine():vProfile();
   if(name==='lesson'&&!quiet)narrate(LESSONS[view.i],view.s);
   if(scrollTop)window.scrollTo(0,0);
 }
@@ -808,6 +897,8 @@ document.addEventListener('click',e=>{
     if(S.owned.includes(pp.id)){S.paper=pp.id;save();render();toast(pp.name+' selected');return}
     if(S.gems<pp.cost){toast(`You need ${pp.cost-S.gems} more gems. Finish lessons to earn them.`);return}
     const before=earned();S.gems-=pp.cost;S.owned.push(pp.id);S.paper=pp.id;save();render();toast(`${pp.name} unlocked`);badgeToast(newBadges(before));return}
+  if(a==='mine'){hush();view={name:'mine'};mine.loading=true;mine.err='';render(true);loadMine(false);return}
+  if(a==='send'){doSend();return}
   if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
   if(a==='applycode'){doApply();return}
   if(a==='copyinvite'){const txt=document.getElementById('invtext').textContent;
@@ -820,12 +911,23 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closePaywall();if(e.key==='Enter'&&e.target&&e.target.id==='codein'){e.preventDefault();doApply()}});
 document.addEventListener('change',e=>{
   if(e.target.id!=='photo')return;const file=e.target.files&&e.target.files[0];if(!file)return;
-  const r=new FileReader();r.onload=()=>{const before=earned();photoURL=r.result;S.photos++;save();render();badgeToast(newBadges(before))};r.readAsDataURL(file);
+  const r=new FileReader();r.onload=()=>{const before=earned();photoURL=r.result;view.sent=false;S.photos++;save();render();badgeToast(newBadges(before))};r.readAsDataURL(file);
 });
+async function doSend(){
+  if(view.sending||!photoURL)return;const l=LESSONS[view.i];
+  const ni=document.getElementById('subname'),ii=document.getElementById('subig');
+  const name=(ni&&ni.value||'').trim().slice(0,40),ig=(ii&&ii.value||'').trim().replace(/^@+/,'').slice(0,40);
+  if(!name){toast(isKid()?'Write your first name first':'Add your name first');ni&&ni.focus();return}
+  S.subName=name;S.subIg=ig;save();view.sending=true;render();
+  try{await sbSubmit(name,ig?'@'+ig:'',l.id,photoURL);view.sent=true;S.subsN=(S.subsN||0)+1;save();track('submit/'+l.id);toast('Sent! Arda will review it soon.')}
+  catch(e){toast(sendErr(e))}
+  view.sending=false;if(view.name==='complete')render();
+}
 let startMsg='';
 try{const q=new URLSearchParams(location.search).get('code');if(q){startMsg=CODE_MSG[applyCode(q)];history.replaceState(null,'',location.pathname+location.hash)}}catch(e){}
 render();
 if(startMsg)toast(startMsg);
+if(sbGet())setTimeout(()=>loadMine(true),1500);
 </script>
 </body>
 </html>
