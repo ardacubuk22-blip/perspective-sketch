@@ -686,7 +686,8 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .sw2:hover{transform:scale(1.06)}
 .sw2.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);transform:scale(1.04)}
 .ctools .seg2 button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.row2{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}
+.row2{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:420px){.row2{grid-template-columns:1fr 1fr 1fr}.row2 .btn[data-act=csave]{grid-column:1 / -1}}
 .row2 .btn{width:100%}
 @media (min-width:960px){
   .app.colorv{max-width:1040px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);column-gap:28px;align-content:start}
@@ -761,6 +762,53 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .lg.mile{border-color:color-mix(in srgb,var(--new) 55%,var(--line-2))}
 @media (max-width:360px){.chstats{grid-template-columns:repeat(2,1fr)}.wd i{width:30px;height:30px}}
 @media (min-width:720px){.days{grid-template-columns:repeat(10,1fr)}}
+/* ================= My Studio (profile) v2 ================= */
+.studio-me{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--sh-2);padding:18px;position:relative;overflow:hidden}
+.studio-me::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent) 60%,var(--new) 60%,var(--new) 80%,var(--pink) 80%)}
+.me-av{width:58px;height:58px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font:800 24px var(--display);box-shadow:0 0 0 4px var(--accent-soft)}
+.me-av .ico{width:26px;height:26px}
+.me-txt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.me-txt h1{font-size:24px;overflow-wrap:anywhere}
+.me-txt .eyebrow{color:var(--accent)}
+.pbars{display:flex;flex-direction:column;gap:12px}
+.pb-top{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.pb-top b{font:700 12px var(--mono);color:var(--ink-2)}
+.jgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.jcard{display:flex;flex-direction:column;gap:4px;text-align:start;background:none;border:0;padding:0;color:var(--ink);min-width:0}
+.jcard .paper{border-radius:12px;box-shadow:var(--sh-1)}
+.jcard b{font-size:12px;font-weight:650;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jcard small{font-size:11px;color:var(--muted)}
+.jcard:hover .paper{border-color:var(--accent)}
+.ggrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.gitem{position:relative;border:0;padding:0;background:var(--surface-2);border-radius:12px;overflow:hidden;aspect-ratio:1}
+.gitem img,.gitem .ph{width:100%;height:100%;object-fit:cover;display:block}
+.gscore{position:absolute;right:6px;bottom:6px;display:inline-flex;align-items:center;gap:2px;background:var(--surface);color:var(--ink);font:700 12px var(--body);padding:2px 7px;border-radius:999px;box-shadow:var(--sh-1)}
+.gscore .ico{width:12px;height:12px;fill:var(--marker);stroke:var(--marker)}
+.empty{display:flex;flex-direction:column;align-items:flex-start;gap:10px;background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--r-md);padding:14px}
+.empty p{font-size:13.5px;color:var(--muted)}
+.parent{background:var(--surface-2);border-radius:12px;padding:10px 12px;border:1px solid var(--line)}
+@media (max-width:380px){.jgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:720px){.jgrid{grid-template-columns:repeat(4,minmax(0,1fr))}.studio-me{padding:24px}.me-av{width:68px;height:68px}}
+.goal{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;box-shadow:var(--sh-1);display:flex;flex-direction:column;gap:2px}
+.goal p:last-child{font-size:14px;font-weight:600;color:var(--ink-2)}
+.goal .eyebrow{color:var(--accent)}
+.colorart .guide{stroke:var(--ink);stroke-width:1.4;opacity:1}
+/* onboarding + paywall v2 */
+.onb-hero{display:flex;flex-direction:column;gap:10px}
+.onb-hero h1{font-size:30px;max-width:16ch}
+.onb-why{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.onb-why li{display:flex;gap:12px;align-items:flex-start}
+.onb-why i{width:36px;height:36px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.onb-why span{display:flex;flex-direction:column;font-size:13.5px;color:var(--muted);line-height:1.4}
+.onb-why b{color:var(--ink);font-size:14.5px}
+.onb-q{font-size:20px;margin-top:6px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cmp-col{border:1px solid var(--line);border-radius:var(--r-md);padding:12px;background:var(--surface-2)}
+.cmp-col.pro{border-color:var(--accent);background:var(--accent-soft)}
+.cmp-col.pro .eyebrow{color:var(--accent)}
+.cmp ul{margin:6px 0 0;padding:0 0 0 16px;font-size:13px;line-height:1.45;display:flex;flex-direction:column;gap:4px}
+@media (max-width:360px){.cmp{grid-template-columns:1fr}}
+@media (max-width:360px){.top .chip.pro{display:none}.brand small{display:none}.brand{font-size:14.5px}.brand svg{width:28px;height:28px}.stats{gap:4px}.chip{padding:4px 7px;font-size:12.5px;gap:4px}.top{gap:8px}.brand>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -961,6 +1009,7 @@ function orient(list){for(const l of list){const vps=[];l.steps.forEach(st=>st.s
   const near=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1])<1.5,isVP=p=>vps.some(v=>near(p,v));
   l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='l'&&isVP(sh.b)&&!isVP(sh.a)){const t=sh.a;sh.a=sh.b;sh.b=t}}))}}
 orient(LESSONS);
+{const r=LESSONS.find(l=>l.id==='road');if(r)r.steps[0].shapes[0].ce=true}
 const UNITS=[
   {n:1,cls:'u1',eyebrow:'Unit 1 · One-point',title:'Foundations',text:'Horizon, vanishing point and your first 3D shapes.',soon:[]},
   {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner']},
@@ -1131,7 +1180,7 @@ function treehouse(){const hy=70,V=[315,hy],t=.3,d=p=>lerp(p,V,t);
     {title:'The roof front',text:'Mark the middle above the square and draw the roof: one line from the peak to each top corner.',tip:'',shapes:[D(Pk,''),L(Pk,A),L(Pk,B)]},
     {title:'Lines to the VP',text:'Put your ruler on the VP and draw light lines to the roof peak, the top right corner and the bottom right corner.',tip:'',shapes:[G(V,Pk),G(V,B),G(V,C)]},
     {title:'Depth of the house',text:'Choose the depth. Draw the back edge of the roof from the peak, the back roof edge and the back wall edge straight down. Ink the edges that go back.',tip:'',shapes:[L(Pk,Pk2),L(Pk2,B2),L(B2,C2),L(B,B2),L(C,C2)]},
-    {title:'The trunk',text:'Under the house, draw the tree trunk: two lines going down, a little wider at the bottom.',tip:'trees are not perfectly straight',shapes:[L(tr0,trb0),L(tr1,trb1)]},
+    {title:'The trunk and the ground',text:'Under the house, draw the tree trunk: two lines going down, a little wider at the bottom. Then draw a flat ground line under the tree.',tip:'trees are not perfectly straight',shapes:[L(tr0,trb0),L(tr1,trb1),Th([78,292],[226,292])]},
     {title:'Door and window',text:'Draw a door on the front wall and a small square window next to it.',tip:'',shapes:[L([135,190],[135,150]),L([135,150],[158,150]),L([158,150],[158,190]),...rectL([180,140],[205,140],[205,162],[180,162])]},
     {title:'The ladder',text:'Draw two straight lines for the ladder, from the ground up to the door, then the steps across.',tip:'',shapes:[L([96,292],[132,190]),L([118,292],[154,190]),...[272,250,228,206].map(y=>{const f=(292-y)/102;return Th([96+36*f,y],[118+36*f,y])})]},
     {title:'Leaves',text:'Draw big round leaf shapes around the house and above the roof.',tip:'',shapes:[E([82,110],34,26,'thin'),E([300,222],34,24,'thin'),E([96,60],30,22,'thin'),E([255,60],30,20,'thin')]},
@@ -1171,7 +1220,8 @@ function street(){const hy=125,V=[200,hy];
     out.near=[L(b0,top)];
     out.top1=[G(V,top),L(top,tp(x2))];
     out.v1=[L(bot(x2),tp(x2))];
-    out.top2=[L(t2,tp2(x3)),L(bot(x3),tp2(x3))];
+    out.top2=[L(t2,tp2(x3)),L(bot(x3),tp2(x3)),L(b0,bot(x3))];
+    out.far=bot(x3);out.close=[Th([X(0),hy],[X(42),hy]),L(b0,ext(V,b0))];
     const rows=[.25,.45,.65].map(f=>lerp(top,b0,f));
     out.win=rows.map(r=>G(V,r));
     const cols=[[52,64],[78,90]].map(([a,b])=>[X(a),X(b)]);
@@ -1188,10 +1238,10 @@ function street(){const hy=125,V=[200,hy];
     {title:'The nearest building edges',text:'On each side, draw one tall vertical line standing on the pavement line. These are the edges of the buildings closest to you.',tip:'',shapes:[...Lf.near,...Rt.near]},
     {title:'Roof lines to the VP',text:'From the VP, draw a light line to the top of each edge. Ink the roof line along it, a little way back.',tip:'',shapes:[...Lf.top1,...Rt.top1]},
     {title:'Where the building ends',text:'Draw a vertical line at the end of each first building, from the pavement up to the roof line.',tip:'',shapes:[...Lf.v1,...Rt.v1]},
-    {title:'Lower buildings behind',text:'Behind each first building, draw a lower one: a short vertical, a roof line toward the VP and the far edge.',tip:'all roof lines still meet at the VP',shapes:[...Lf.top2,...Rt.top2]},
+    {title:'Lower buildings behind',text:'Behind each first building, draw a lower one: a roof line toward the VP and the far edge. Then ink the bottom of both buildings along the pavement line.',tip:'all roof lines still meet at the VP',shapes:[...Lf.top2,...Rt.top2]},
     {title:'Window guide lines',text:'From the VP, draw light lines to three points on each near edge. Every row of windows sits on these lines.',tip:'',shapes:[...Lf.win,...Rt.win]},
     {title:'The windows',text:'Draw the windows along the guide lines. Their sides are vertical. They get narrower toward the VP.',tip:'narrower = further away',shapes:[...Lf.wi,...Rt.wi]},
-    {title:'Road markings and shade',text:'Dash the centre line, making each dash shorter near the VP. Tone the left buildings. Your street is done.',tip:'',shapes:[...dash,...Lf.shade]}
+    {title:'Close the street and finish',text:'Ink the horizon where you can see it: between the last buildings, and beside the nearest buildings. Ink the pavement lines out to the edge of the page. Then dash the centre line and tone the left buildings.',tip:'the street ends at the horizon',shapes:[Th([Lf.far[0],hy],[Rt.far[0],hy]),...Lf.close,...Rt.close,...dash,...Lf.shade]}
   ]}
 
 const LIB=[
@@ -1247,7 +1297,7 @@ Object.assign(KIDS,{
     ['The roof','Put a dot above the middle and draw the roof to both top corners.',''],
     ['Soft lines','Draw soft lines from the magic dot to the roof tip and two corners.','start at the dot'],
     ['Make it deep','Draw the back of the roof and the side wall along the soft lines.',''],
-    ['The tree trunk','Draw the trunk under the house, a bit wider at the bottom.',''],
+    ['Trunk and ground','Draw the trunk under the house, a bit wider at the bottom, and a flat ground line.',''],
     ['Door and window','Draw a door and a small window on the front.',''],
     ['The ladder','Draw a ladder from the ground up to the door.',''],
     ['Leaves','Draw big round leaf clouds all around.',''],
@@ -1259,10 +1309,10 @@ Object.assign(KIDS,{
     ['Tall edges','Draw a tall straight line on each side. Those are the buildings.',''],
     ['Roof lines','Draw soft lines from the dot to the top of each building, then ink the roof.',''],
     ['End of the building','Draw a straight line where each building ends.',''],
-    ['Smaller buildings','Draw a smaller building behind each one.',''],
+    ['Smaller buildings','Draw a smaller building behind each one, and a line at the bottom of the buildings.',''],
     ['Window lines','Draw soft lines from the dot for the rows of windows.',''],
     ['Windows','Draw the windows on the lines. They get thinner near the dot.',''],
-    ['Road stripes','Draw stripes on the road and color one side. Beep beep!','']]},
+    ['Finish the street','Draw the sky line where you can see it, and the sidewalk lines out to the edge. Then draw road stripes. Beep beep!','']]},
   cafe:{title:'Little Café',steps:[
     ['Line and two dots','Draw the sky line and put a magic dot at each end.',''],
     ['The corner','Draw one tall straight line. That is the corner of the café.',''],
@@ -1311,7 +1361,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=8');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=9');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 /* line types: every new line is named as vertical, horizontal (parallel to the horizon), going to a VP, or slanted */
 function lineKinds(l,i){
@@ -1339,6 +1389,24 @@ function kindList(l,i,kid,spoken){
   if(c.round)out.push({k:'r',t:`${nm(c.round)} ${pl(c.round,'round shape')}`});
   return out}
 const has3=l=>l.steps.some(st=>st.shapes.some(sh=>sh.t==='d'&&sh.label==='VP3'));
+/* what each lesson teaches (shown on step 1) */
+const GOALS={
+  road:['How the horizon and one vanishing point create depth, and how to space equal objects (poles) correctly.','The sky line, the magic dot, and how far things get smaller.'],
+  box1:['How to turn a flat square into a 3D box with one vanishing point.','How to turn a square into a magic 3D box.'],
+  room:['How to build a whole room around one vanishing point: walls, floor, ceiling, a door and a window.','How to draw a room you could walk into!'],
+  stairs:['How a side profile plus lines to the VP becomes a staircase.','How to make stairs from a zigzag.'],
+  box2:['How two vanishing points create a box seen from its corner.','How two magic dots make a corner box.'],
+  house:['How to find the true centre in perspective and build a roof on a two-point box.','How to put a pointy roof on a box house.'],
+  glass:['How to space equal columns and floors on a building that goes back in depth.','How to draw lots of windows that get smaller far away.'],
+  tower:['How a third vanishing point makes buildings look tall when you look up.','How a dot in the sky makes a giant tower.'],
+  birdseye:['How a third vanishing point below makes a bird’s-eye view.','How to draw a building like a bird sees it.'],
+  robot:['How to build a character from boxes and measure every part against another part.','How to build a robot from boxes and measure its parts.'],
+  train:['How a long object uses two vanishing points, with windows, wheels and rails.','How to draw a long train with two magic dots.'],
+  rocket:['How to find the centre of the top in perspective and raise a pointed nose from it.','How to put a pointy nose on a rocket.'],
+  treehouse:['How to put a one-point house with a gable roof on top of a tree.','How to draw a little house up in a tree.'],
+  street:['How one vanishing point controls a whole street: road, buildings and windows.','How a whole street runs into one magic dot.'],
+  cafe:['How each wall uses its own vanishing point, and how an awning sticks out from a wall.','How to draw a café with a striped roof cover.']
+};
 function lineRule(l,kid){
   if(kid)return has3(l)?'Remember: flat lines stay like the sky line, and lines going far away run to a magic dot. Here even the standing-up lines lean to the third dot!':'Remember: standing-up lines go straight up and down, flat lines stay like the sky line, and lines going far away run to the magic dot.';
   return has3(l)?'Three kinds of lines: horizontal lines stay parallel to the horizon, lines going into the distance meet at VP1 or VP2, and in three-point perspective even the vertical edges lean toward VP3.':'Three kinds of lines: vertical lines go straight up and down, horizontal lines stay parallel to the horizon, and lines going into the distance all meet at a vanishing point.'}
@@ -1498,7 +1566,7 @@ async function loadMine(quiet){
       if(r.featured&&S.rewarded[r.id]!=='f'){add+=10;S.rewarded[r.id]='f';S.featuredN=(S.featuredN||0)+1}}
     if(fresh||add){S.gems+=add;save();
       toast(add?`Arda reviewed your drawing · +${add} gems`:'Arda reviewed your drawing');badgeToast(newBadges(before))}
-    if(view.name==='mine'||((fresh||add)&&['learn','profile'].includes(view.name)))render();
+    if(view.name==='mine'||view.name==='profile'||((fresh||add)&&view.name==='learn'))render();
   }catch(e){mine.loading=false;mine.err='Could not load your drawings. Check your connection.';if(!quiet&&view.name==='mine')render()}
 }
 const stars=n=>`<span class="stars" role="img" aria-label="${n} out of 5">${[1,2,3,4,5].map(i=>`<span class="${i<=n?'on':''}">${I.star}</span>`).join('')}</span>`;
@@ -1521,7 +1589,7 @@ function vColor(){const l=curL();
   <div class="paper colorwrap" id="cw"><canvas id="cc" width="800" height="600"></canvas>${art(l,l.steps.length-1,'color')}</div>
   <div class="cpanel"><p class="eyebrow">Colors</p><div class="pal" role="radiogroup" aria-label="Colors">${PAL.map(c=>`<button class="sw2${c===col.color?' on':''}" data-act="pick" data-c="${c}" style="background:${c}" aria-label="Color ${c}" aria-checked="${c===col.color}" role="radio"></button>`).join('')}</div>
   <p class="eyebrow">Tools</p><div class="ctools"><div class="seg2">${[['fill','Fill','<svg class="ico" viewBox="0 0 24 24"><path d="M5 11l7-7 7 7-7 7z"/><path d="M19 15s2 2.4 2 3.6a2 2 0 0 1-4 0c0-1.2 2-3.6 2-3.6z"/></svg>'],['brush','Brush',I.pencil],['erase','Eraser','<svg class="ico" viewBox="0 0 24 24"><path d="M8 20h12M5 15l8-8 6 6-6 6H9z"/></svg>']].map(([k,t,ic])=>`<button data-act="ctool" data-t="${k}" aria-pressed="${col.tool===k}">${ic}${t}</button>`).join('')}</div>
-  <div class="row2"><button class="btn ghost small" data-act="cundo">${I.replay}Undo</button><button class="btn ghost small" data-act="cclear">Clear</button><button class="btn primary small" data-act="csave">${I.dl}Save picture</button></div></div></div>`}
+  <div class="row2"><button class="btn ghost small" data-act="cundo">${I.replay}Undo</button><button class="btn ghost small" data-act="credo"><svg class="ico" viewBox="0 0 24 24" style="transform:scaleX(-1)"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4v4.5H9"/></svg>Redo</button><button class="btn ghost small" data-act="cclear">Clear</button><button class="btn primary small" data-act="csave">${I.dl}Save picture</button></div></div></div>`}
 function colorLinesSVG(stroke,w){const sv=document.querySelector('#cw svg');if(!sv)return '';const c=sv.cloneNode(true);c.setAttribute('width','800');c.setAttribute('height','600');c.setAttribute('xmlns','http://www.w3.org/2000/svg');
   c.querySelectorAll('path').forEach(p=>{p.setAttribute('fill','none');p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',p.classList.contains('thin')?w*.7:w);p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');p.removeAttribute('class');p.removeAttribute('pathLength')});
   return new XMLSerializer().serializeToString(c)}
@@ -1538,7 +1606,7 @@ async function colorInit(){const cv=document.getElementById('cc');if(!cv)return;
 function stroke(ctx,a,b){ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=col.tool==='erase'?34:18;
   if(col.tool==='erase')ctx.globalCompositeOperation='destination-out';else{ctx.strokeStyle=col.color;ctx.globalAlpha=.85}
   ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0]+.01,b[1]);ctx.stroke();ctx.restore()}
-function pushUndo(){const cv=document.getElementById('cc');col.undo.push(cv.getContext('2d').getImageData(0,0,800,600));if(col.undo.length>15)col.undo.shift()}
+function pushUndo(){const cv=document.getElementById('cc');col.redo=[];col.undo.push(cv.getContext('2d').getImageData(0,0,800,600));if(col.undo.length>15)col.undo.shift()}
 function flood(ctx,x0,y0,hex){if(x0<0||y0<0||x0>=800||y0>=600)return;
   const img=ctx.getImageData(0,0,800,600),d=img.data,wall=col.wall,Wd=800,Ht=600;
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
@@ -1581,7 +1649,7 @@ function art(lesson,upto,mode){
       if(s.t==='m'){if(mode!=='step'||upto-i>1)continue;const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],ln=Math.hypot(dx,dy)||1,nx=-dy/ln*5,ny=dx/ln*5;
         lines+=`<path d="M${f(s.a)}L${f(s.b)}M${(s.a[0]+nx).toFixed(1)} ${(s.a[1]+ny).toFixed(1)}L${(s.a[0]-nx).toFixed(1)} ${(s.a[1]-ny).toFixed(1)}M${(s.b[0]+nx).toFixed(1)} ${(s.b[1]+ny).toFixed(1)}L${(s.b[0]-nx).toFixed(1)} ${(s.b[1]-ny).toFixed(1)}" class="sh measure${cls}"${st}/>`;
         if(s.s&&mode==='step'){const mx=(s.a[0]+s.b[0])/2,my=(s.a[1]+s.b[1])/2,vert=Math.abs(dx)<Math.abs(dy);top+=`<text class="mlab${cls}" x="${(mx+(vert?(mx<200?-6:6):0)).toFixed(1)}" y="${(my+(vert?4:12)).toFixed(1)}" text-anchor="${vert?(mx<200?'end':'start'):'middle'}"${st}>${isKid()?s.s.replace('= width','= wide').replace('width','wide'):s.s}</text>`}continue}
-      if(mode==='color'&&((s.t!=='l'&&s.t!=='e')||s.k==='guide'))continue;
+      if(mode==='color'&&((s.t!=='l'&&s.t!=='e')||(s.k==='guide'&&!s.ce)))continue;
       if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
       else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
@@ -1655,7 +1723,12 @@ function vOnboard(){
   const demo=LESSONS.find(l=>l.id==='box1'),demo2=LESSONS.find(l=>l.id==='house');
   return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
   ${onTrial()?`<section class="banner gift"><p><b>Code ${esc(S.trialCode)} applied.</b> You have 15 days of Pro, free.</p></section>`:''}
-  <div><p class="eyebrow">Welcome</p><h1>Who is learning to draw?</h1></div>
+  <section class="onb-hero"><p class="eyebrow">Welcome</p><h1>Learn perspective drawing, one line at a time</h1>
+  <p class="studio-sub">Draw on real paper. The app shows every line, step by step, with a voice that guides you.</p>
+  <ul class="onb-why"><li><i>${I.pencil}</i><span><b>${LESSONS.length} lessons + ${LIB.length} studio drawings</b>From a simple road to three-point towers.</span></li>
+  <li><i>${I.flame}</i><span><b>Daily mission and a 30-day challenge</b>About 10 minutes a day builds the habit.</span></li>
+  <li><i>${I.star}</i><span><b>Real feedback from Arda</b>Send a photo of your drawing and get a score and a note.</span></li></ul></section>
+  <h2 class="onb-q">Who is learning to draw?</h2>
   <div class="who">
     <button class="whobtn" data-act="mode" data-mode="adult"><div class="paper">${art(demo,demo.steps.length-1,'thumb')}</div><div><b>Me</b><span>Teens and adults. Clear steps, real perspective rules.</span></div></button>
     <button class="whobtn kidpick" data-act="mode" data-mode="kid"><div class="paper">${art(demo2,demo2.steps.length-1,'thumb')}</div><div><b>My child (7–12)</b><span>Simple words, colors and a friendly voice.</span></div></button>
@@ -1667,7 +1740,7 @@ function vLesson(){
   const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
   return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span><button class="iconbtn" data-act="voice" aria-pressed="${S.voice}" aria-label="Voice ${S.voice?'on':'off'}">${S.voice?I.sound:I.mute}</button></div>
   <div class="paper" id="canvas">${art(l,s,'step')}</div>
-  ${kindChips(l,s)}${s===0?`<p class="rule">${esc(lineRule(l,isKid()))}</p>`:''}
+  ${kindChips(l,s)}${s===0?`${GOALS[l.id]?`<div class="goal"><p class="eyebrow">${isKid()?'Today you learn':'You will learn'}</p><p>${esc(GOALS[l.id][isKid()?1:0])}</p></div>`:''}<p class="rule">${esc(lineRule(l,isKid()))}</p>`:''}
   <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
   <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
@@ -1723,28 +1796,52 @@ function vChallenge(){
   <p class="daylegend"><span><i class="lg done"></i>Done</span><span><i class="lg next"></i>Today</span><span><i class="lg pro"></i>Pro</span><span><i class="lg mile"></i>Milestone</span></p></section>`;
 }
 function vProfile(){
-  const lessons=LESSONS.filter(l=>S.done[l.id]).length;
-  return header()+`<h1 style="font-size:28px">Your progress</h1>
-  <div class="grid4"><div class="stat"><b>${S.gems}</b><span>Gems</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
-  <section class="panel"><h3>My drawings</h3><p class="fine2">Drawings you sent to Arda, with his score and notes.</p><button class="btn ghost" data-act="mine">${I.star}Open my drawings</button></section>
+  const lessons=LESSONS.filter(l=>S.done[l.id]).length,libs=LIB.filter(l=>S.done[l.id]).length;
+  const nm=(S.subName||'').trim(),ini=nm?nm[0].toUpperCase():'';
+  const earnedB=BADGES.filter(b=>b.test()).length;
+  if(sbGet()&&mine.rows===null&&!mine.loading&&!mine.err){mine.loading=true;setTimeout(()=>loadMine(false),0)}
+  const unitBars=UNITS.map(u=>{const ls=LESSONS.filter(l=>l.unit===u.n),d=ls.filter(l=>S.done[l.id]).length;const nmU=isKid()?KUNITS[u.n][1]:u.title;
+    return `<div class="pbar"><div class="pb-top"><span>${esc(nmU)}</span><b>${d}/${ls.length}</b></div><div class="ubar"><span style="width:${d/ls.length*100}%"></span></div></div>`}).join('')
+    +`<div class="pbar"><div class="pb-top"><span>${isKid()?'Draw anything':'Draw studio'}</span><b>${libs}/${LIB.length}</b></div><div class="ubar"><span style="width:${libs/LIB.length*100}%"></span></div></div>`
+    +`<div class="pbar"><div class="pb-top"><span>30-day challenge</span><b>${S.days.length}/30</b></div><div class="ubar"><span style="width:${S.days.length/30*100}%"></span></div></div>`;
+  const doneList=[...LESSONS.map(l=>({l,lib:false})),...LIB.map(l=>({l,lib:true}))].filter(x=>S.done[x.l.id])
+    .map(x=>({...x,at:(S.doneAt||{})[x.l.id]||''})).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
+  const fmt=d=>{if(!d)return 'Earlier';const t=today();if(d===t)return 'Today';if(d===dayShift(t,-1))return 'Yesterday';const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString(undefined,{day:'numeric',month:'short'})};
+  const journey=doneList.length?`<div class="jgrid">${doneList.slice(0,8).map(x=>`<button class="jcard" data-act="${x.lib?'lib':'open'}" data-i="${(x.lib?LIB:LESSONS).indexOf(x.l)}" aria-label="${esc(LT(x.l))}, draw again"><div class="paper">${art(x.l,x.l.steps.length-1,'thumb')}</div><b>${esc(LT(x.l))}</b><small>${fmt(x.at)}</small></button>`).join('')}</div>${doneList.length>8?`<p class="fine2">+${doneList.length-8} more</p>`:''}`
+    :`<div class="empty"><p>${isKid()?'Your finished drawings will show up here.':'Every lesson and drawing you finish will appear here, so you can see how far you have come.'}</p><button class="btn primary small" data-act="tab" data-tab="learn">${I.pencil}Start your first lesson</button></div>`;
+  let gallery;
+  if(!sbGet())gallery=`<div class="empty"><p>${isKid()?'Finish a drawing, take a photo and send it to Arda for stars.':'Finish a lesson, add a photo of your paper and send it to Arda. His score and note appear here.'}</p></div>`;
+  else if(mine.err)gallery=`<div class="empty"><p>${esc(mine.err)}</p><button class="btn ghost small" data-act="mine">Try again</button></div>`;
+  else if(mine.rows===null)gallery=`<p class="fine2">Loading your drawings…</p>`;
+  else if(!mine.rows.length)gallery=`<div class="empty"><p>No drawings sent yet.</p></div>`;
+  else gallery=`<div class="ggrid">${mine.rows.slice(0,6).map(r=>{const u=mine.urls[r.image_path];return `<button class="gitem" data-act="mine" aria-label="Open my drawings">${u?`<img src="${esc(u)}" alt="Your drawing" loading="lazy">`:'<span class="ph"></span>'}${r.score?`<span class="gscore">${I.star}${r.score}</span>`:r.status==='pending'?'<span class="gscore wait">…</span>':''}</button>`}).join('')}</div>`;
+  return header()+`<section class="studio-me"><div class="me-av" aria-hidden="true">${ini||I.pencil}</div><div class="me-txt"><p class="eyebrow">${isKid()?'Kids studio':'My studio'}</p><h1>${nm?esc(nm)+"'s studio":(isKid()?'My drawing studio':'My studio')}</h1>
+  <p class="fine2">${isPro()?(onTrial()?`Pro trial · ${daysLeft()} days left`:'Perspective Pro'):'Free plan'} · ${S.streak} day streak</p></div></section>
+  <div class="grid4"><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons</span></div><div class="stat"><b>${libs}/${LIB.length}</b><span>Drawings</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div><div class="stat"><b>${S.gems}</b><span>Gems</span></div></div>
+  <section class="panel"><div class="wk-top"><h3>This week</h3><span class="fine2">${(S.log||[]).filter(d=>d>=weekKey(today())).length} drawing day${(S.log||[]).filter(d=>d>=weekKey(today())).length===1?'':'s'}</span></div><div class="wdots">${weekDots()}</div></section>
+  <section class="panel"><h3>Progress</h3><div class="pbars">${unitBars}</div></section>
+  <section class="panel"><div class="wk-top"><h3>${isKid()?'My drawings so far':'My drawing journey'}</h3><span class="fine2">${doneList.length} finished</span></div>${journey}</section>
+  <section class="panel"><div class="wk-top"><h3>${isKid()?'Sent to Arda':'Reviewed by Arda'}</h3>${sbGet()?`<button class="linkbtn" data-act="mine">See all</button>`:''}</div>${gallery}</section>
+  <section class="panel"><div class="wk-top"><h3>Badges</h3><span class="fine2">${earnedB} of ${BADGES.length}</span></div><div class="badges">${BADGES.map(b=>{const on=b.test();return `<div class="badge${on?' on':''}" title="${esc(b.desc)}"><i>${on?I.medal:I.lock}</i><span>${esc(b.name)}</span></div>`}).join('')}</div></section>
   <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${isPro()?'Perspective Pro':'Free'}</h3></div>${isPro()?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
-  <p style="font-size:14px;color:var(--muted)">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p>
+  <p class="fine2">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box, 2 studio drawings and challenge days 1–7.'}</p>
   ${!isPro()&&!S.trialCode?`<p style="font-size:14px;font-weight:600">Have a code?</p>${codeBox()}`:''}</section>
-  <section class="panel"><h3>Invite a friend</h3><p style="font-size:14px;color:var(--muted)">Your friend gets 15 days of Pro free with your code.</p>
+  <section class="panel"><h3>Invite a friend</h3><p class="fine2">Your friend gets 15 days of Pro free with your code.</p>
   <div class="copyrow"><code id="invtext">${APP_URL}?code=${myCode()}</code><button class="iconbtn" data-act="copyinvite" aria-label="Copy invite link">${I.copy}</button></div>
   <p style="font-size:13px;color:var(--muted)">Your code: <b style="font-family:var(--mono)">${myCode()}</b></p></section>
-  <section class="panel"><h3>Who is learning?</h3><div class="seg2"><button data-act="mode" data-mode="adult" aria-pressed="${!isKid()}">Me</button><button data-act="mode" data-mode="kid" aria-pressed="${isKid()}">My child (7–12)</button></div>
-  <div class="seg2"><button data-act="voice" aria-pressed="${S.voice}">${S.voice?'Voice on':'Voice off'}</button><button data-act="testvoice">Test the voice</button></div></section>
-  <section class="panel"><h3>Badges</h3><div class="badges">${BADGES.map(b=>{const on=b.test();return `<div class="badge${on?' on':''}" title="${esc(b.desc)}"><i>${on?I.medal:I.lock}</i><span>${esc(b.name)}</span></div>`}).join('')}</div></section>
-  <section class="panel"><h3>Paper styles</h3><p style="font-size:14px;color:var(--muted)">Spend gems to change the paper in your lessons.</p>
+  <section class="panel"><h3>Paper styles</h3><p class="fine2">Spend gems to change the paper in your lessons.</p>
   <div class="shop">${PAPERS.map(pp=>{const own=S.owned.includes(pp.id),sel=S.paper===pp.id;return `<button class="shopitem" data-act="paper" data-p="${pp.id}" aria-pressed="${sel}"><span class="sw sw-${pp.id}"></span><b>${pp.name}</b><small>${sel?'In use':own?'Tap to use':`${I.gem}${pp.cost} gems`}</small></button>`}).join('')}</div></section>
-  <section class="panel"><h3>Reset</h3><p style="font-size:14px;color:var(--muted)">This is a working prototype. Progress is saved on this device only.</p>
+  <section class="panel"><h3>Settings</h3><p class="fine2" style="font-weight:600;color:var(--ink-2)">Who is learning?</p><div class="seg2"><button data-act="mode" data-mode="adult" aria-pressed="${!isKid()}">Me</button><button data-act="mode" data-mode="kid" aria-pressed="${isKid()}">My child (7–12)</button></div>
+  <p class="fine2" style="font-weight:600;color:var(--ink-2)">Voice</p><div class="seg2"><button data-act="voice" aria-pressed="${S.voice}">${S.voice?'Voice on':'Voice off'}</button><button data-act="testvoice">Test the voice</button></div>
+  ${isKid()?`<p class="fine2 parent">For grown-ups: kids mode never shows ads or chats. Sending a photo to Arda is optional and only asks for a first name.</p>`:''}</section>
+  <section class="panel"><h3>Reset</h3><p class="fine2">Progress is saved on this device only.</p>
   <button class="btn ghost" data-act="reset">${resetArm?'Tap again to erase all progress':'Reset progress'}</button></section>`;
 }
 function paywall(){
   return `<div class="scrim" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pw-title" data-stop="1">
   <div class="sheet-top"><div><p class="eyebrow">Perspective Pro</p><h2 id="pw-title">Draw anything in perspective</h2></div><button class="iconbtn" data-act="closesheet" aria-label="Close">${I.x}</button></div>
-  <ul class="feat"><li>${I.check}<span>Every lesson: two-point houses, streets, three-point towers</span></li><li>${I.check}<span>All 30 days of the challenge</span></li><li>${I.check}<span>A new lesson every week</span></li><li>${I.check}<span>Printable practice workbooks (PDF)</span></li></ul>
+  <div class="cmp"><div class="cmp-col"><p class="eyebrow">Free</p><ul><li>${LESSONS.filter(l=>!l.pro).length} lessons (Unit 1 + the two-point box)</li><li>${LIB.filter(l=>!l.pro).length} studio drawings</li><li>Challenge days 1–7</li><li>Daily mission and badges</li><li>Send drawings to Arda</li></ul></div>
+  <div class="cmp-col pro"><p class="eyebrow">Pro adds</p><ul><li>All ${LESSONS.length} lessons, up to three-point</li><li>All ${LIB.length} studio drawings</li><li>All 30 challenge days</li><li>New lessons every week</li><li>Printable practice sheets (PDF)</li></ul></div></div>
   <div class="plans"><button class="planopt" aria-pressed="true" data-act="plan"><span class="save">Save 50%</span><small>Yearly</small><b>$29.99</b><small>$2.50 / month</small></button><button class="planopt" aria-pressed="false" data-act="plan"><small>Monthly</small><b>$4.99</b><small>billed monthly</small></button></div>
   <button class="btn primary wide" data-act="gopro">Continue with Pro</button>
   ${!S.trialCode&&!S.pro?`<div style="display:flex;flex-direction:column;gap:8px"><p style="font-size:14px;font-weight:600">Have a code? Get 15 days free</p>${codeBox()}</div>`:''}
@@ -1796,7 +1893,7 @@ document.addEventListener('click',e=>{
   if(a==='replay'){const c=document.getElementById('canvas');const l=curL();c.innerHTML=art(l,view.s,'step');narrate(l,view.s);return}
   if(a==='next'){const l=curL();
     if(view.s<l.steps.length-1){view.s++;render();return}
-    const before=earned();let gained=0,g=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained;g=gemsFor(l);S.gems+=g}
+    const before=earned();let gained=0,g=0;S.doneAt=S.doneAt||{};S.doneAt[l.id]=today();if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained;g=gemsFor(l);S.gems+=g}
     bumpStreak();const qd=questDone(view.lib?'lib':'lesson',l.id);save();track('done/'+l.id);view={name:'complete',i:view.i,lib:view.lib,gained,gems:g,quest:qd,badges:newBadges(before)};render(true);return}
   if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
     const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
@@ -1814,7 +1911,8 @@ document.addEventListener('click',e=>{
   if(a==='colorback'){view=Object.assign({},view,{name:'complete'});render(true);return}
   if(a==='pick'){col.color=el.dataset.c;if(col.tool==='erase')col.tool='fill';document.querySelectorAll('.sw2').forEach(b=>{const on=b===el;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===col.tool));return}
   if(a==='ctool'){col.tool=el.dataset.t;document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b===el));return}
-  if(a==='cundo'){const cv=document.getElementById('cc');const u=col.undo.pop();if(u&&cv)cv.getContext('2d').putImageData(u,0,0);return}
+  if(a==='cundo'){const cv=document.getElementById('cc');const u=col.undo.pop();if(u&&cv){const x=cv.getContext('2d');(col.redo=col.redo||[]).push(x.getImageData(0,0,800,600));x.putImageData(u,0,0)}return}
+  if(a==='credo'){const cv=document.getElementById('cc');const r=(col.redo||[]).pop();if(r&&cv){const x=cv.getContext('2d');col.undo.push(x.getImageData(0,0,800,600));x.putImageData(r,0,0)}return}
   if(a==='cclear'){const cv=document.getElementById('cc');if(cv){pushUndo();cv.getContext('2d').clearRect(0,0,800,600)}return}
   if(a==='csave'){colorSave();return}
   if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
