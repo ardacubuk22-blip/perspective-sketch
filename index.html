@@ -532,6 +532,81 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
   .app{max-width:720px}
   .libgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 }
+/* ================= Learn screen v2 ================= */
+.app.learnv{gap:18px}
+/* next up */
+.nextup{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:14px;position:relative;overflow:hidden}
+.nextup::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--accent)}
+.nu-art{border-radius:var(--r-md);align-self:stretch;display:flex;align-items:center}
+.nu-art .art{height:100%}
+.nu-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.nu-body h2{font-size:21px;line-height:1.15}
+.nu-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--muted);font-weight:600}
+.nu-meta span{display:inline-flex;align-items:center;gap:4px}
+.nu-meta span+span::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--line-2);margin-right:6px}
+.nu-meta .ico{width:13px;height:13px;stroke:var(--accent)}
+.nu-cta{margin-top:6px;min-height:46px}
+@media (max-width:400px){.nextup{grid-template-columns:1fr}.nu-art{max-height:150px;overflow:hidden}}
+/* unit header */
+.unit{gap:12px}
+.unit-head{display:grid;grid-template-columns:1fr 96px;gap:14px;align-items:center}
+.uh-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.unit-head h2{margin-top:0}
+.uh-art{border-radius:12px;opacity:.95}
+.uprog{display:flex;align-items:center;gap:10px;margin-top:8px}
+.ubar{flex:1;height:6px;border-radius:99px;background:var(--lock);overflow:hidden}
+.ubar span{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .4s ease}
+.ucount{font:700 12px var(--mono);color:var(--ink-2);font-variant-numeric:tabular-nums}
+/* journey list */
+.journey{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;position:relative}
+.jrow{position:relative}
+.jrow:not(:last-child)::after{content:"";position:absolute;left:31px;top:52px;bottom:-12px;width:2px;background:var(--line-2);border-radius:2px}
+.jrow.done:not(:last-child)::after{background:var(--ok)}
+.jbtn{width:100%;display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:10px 12px;box-shadow:var(--sh-1);transition:border-color .15s ease,box-shadow .15s ease,transform .12s ease;color:var(--ink)}
+.jbtn:hover{border-color:var(--line-2);box-shadow:var(--sh-2)}
+.jbtn:active{transform:translateY(1px)}
+.jdot{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font:800 16px var(--display);position:relative;z-index:1}
+.jdot .ico{width:19px;height:19px;stroke-width:2.4}
+.jtxt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.jtxt b{font-size:15.5px;font-weight:650;line-height:1.25;letter-spacing:-.01em}
+.jtxt small{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:12.5px;color:var(--muted);font-weight:500}
+.jgem{display:inline-flex;align-items:center;gap:2px}.jgem .ico{width:12px;height:12px;stroke:var(--accent)}
+.jcta{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:999px;white-space:nowrap}
+.jcta .ico{width:15px;height:15px}
+/* states */
+.jrow.done .jdot{background:var(--ok);color:#fff}
+.jrow.done .jcta{color:var(--ok);background:var(--ok-soft)}
+.jrow.current .jbtn{border:1.5px solid var(--accent);box-shadow:0 0 0 4px var(--accent-soft),var(--sh-2);padding:14px 12px}
+.jrow.current .jdot{background:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 4px var(--accent-soft)}
+.jrow.current .jtxt b{font-size:16.5px}
+.jrow.current .jcta{background:var(--accent);color:var(--accent-ink);padding:8px 12px}
+.jrow.current:not(:last-child)::after{top:62px}
+.jrow.locked .jbtn,.jrow.soon .jbtn{background:var(--surface-2);box-shadow:none}
+.jrow.locked .jdot,.jrow.soon .jdot{background:var(--surface);border:1px solid var(--line-2);color:var(--muted)}
+.jrow.locked .jtxt b,.jrow.soon .jtxt b{color:var(--ink-2)}
+.jrow.locked .jcta,.jrow.soon .jcta{color:var(--muted);background:transparent;border:1px solid var(--line-2)}
+.jrow.locked .jdot .ico{stroke:var(--muted)}
+.foot-note{padding:4px 8px 8px}
+/* lesson screen: controls always visible next to the drawing */
+.lactions{position:sticky;bottom:0;z-index:4;margin-inline:-16px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.app.lessonv{padding-bottom:0}
+.app.lessonv .lbar{position:sticky;top:0;z-index:4;margin-inline:-16px;padding:10px 16px;background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+@media (max-height:760px){.app.lessonv .lbody p.txt{font-size:15.5px}.app.lessonv .lbody h2{font-size:22px}.app.lessonv{gap:14px}}
+@media (min-width:720px){
+  .nextup{grid-template-columns:220px 1fr;padding:16px;gap:20px}
+  .nu-body h2{font-size:24px}
+  .btn.nu-cta{align-self:flex-start;width:auto;min-width:220px}
+  .unit-head{grid-template-columns:1fr 132px}
+  .jrow:not(:last-child)::after{left:33px}
+  .jbtn{padding:12px 14px;grid-template-columns:40px 1fr auto}
+}
+@media (min-width:960px){
+  .app.lessonv{max-width:1040px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);column-gap:32px;row-gap:16px;align-content:start}
+  .app.lessonv > *{grid-column:2}
+  .app.lessonv > .lbar{grid-column:1 / -1}
+  .app.lessonv > #canvas{grid-column:1;grid-row:2 / span 8;align-self:start;position:sticky;top:76px}
+  .app.lessonv .lactions{margin-inline:0;padding:14px 0;border-top:0;background:transparent;backdrop-filter:none;position:static}
+}
 </style>
 </head>
 <body>
@@ -1336,18 +1411,29 @@ function setTabs(name){
 /* ---------- views ---------- */
 function vLearn(){
   const ni=nextIdx();let cont;
-  if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
-  else{const l=LESSONS[ni],locked=l.pro&&!isPro();
-    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">${isNew(l)?'<span class="newpill">NEW</span> ':''}Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
-  const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
+  const doneN=LESSONS.filter(l=>S.done[l.id]).length;
+  if(ni<0)cont=`<section class="nextup"><div class="nu-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="nu-body"><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><p class="nu-meta">${doneN} of ${LESSONS.length} lessons finished</p><button class="btn ghost wide" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
+  else{const l=LESSONS[ni],locked=l.pro&&!isPro(),u=UNITS.find(x=>x.n===l.unit),ue=isKid()?KUNITS[u.n][0]:u.eyebrow;
+    cont=`<section class="nextup"><div class="nu-art paper">${art(l,l.steps.length-1,'thumb')}</div><div class="nu-body">
+      <p class="eyebrow">${isNew(l)?'<span class="newpill">NEW</span> ':''}Next up · Lesson ${ni+1}</p>
+      <h2>${esc(LT(l))}</h2>
+      <p class="nu-meta"><span>${esc(ue)}</span><span>${l.steps.length} steps</span><span>${l.mins} min</span><span class="nu-gem">${I.gem}+${gemsFor(l)}</span></p>
+      <button class="btn primary wide nu-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+  let num=0;
   const units=UNITS.map(u=>{
-    const items=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n).map(({l,i})=>{
-      const st=S.done[l.id]?'done':(i===ni?'current':'locked');const x=offs[k++%offs.length];
-      const inner=st==='done'?I.check:st==='current'?(i+1):I.lock;
-      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!isPro()?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span><span class="meta">${isNew(l)?'<span class="newpill">NEW</span>':''}${I.gem}+${gemsFor(l)}</span></li>`}).join('');
-    const soon=u.soon.map(s=>{const x=offs[k++%offs.length];return `<li class="node soon" style="--x:${x}px"><button class="nb" data-act="soon" aria-label="${esc(s)}: coming soon">${I.lock}</button><span class="lbl">${esc(s)} · soon</span></li>`}).join('');
+    const list=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);
+    const ud=list.filter(x=>S.done[x.l.id]).length,total=list.length;
+    const items=list.map(({l,i})=>{num++;
+      const st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
+      const dot=st==='done'?I.check:st==='current'?(i+1):(pro?I.gem:I.lock);
+      const cta=st==='done'?`<span class="jcta jdone">${I.check}Done</span>`:st==='current'?`<span class="jcta jgo">${ni===0&&i===0?'Start':'Continue'}${I.next}</span>`:`<span class="jcta jlock">${pro?'Pro':'Locked'}</span>`;
+      return `<li class="jrow ${st}"><button class="jbtn" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})"><span class="jdot">${dot}</span><span class="jtxt"><b>${esc(LT(l))}</b><small>Lesson ${i+1} · ${l.mins} min · <span class="jgem">${I.gem}+${gemsFor(l)}</span>${isNew(l)?' <span class="newpill">NEW</span>':''}</small></span>${cta}</button></li>`}).join('');
+    const soon=u.soon.map(s=>`<li class="jrow soon"><button class="jbtn" data-act="soon" aria-label="${esc(s)}: coming soon"><span class="jdot">${I.lock}</span><span class="jtxt"><b>${esc(s)}</b><small>Coming soon</small></span><span class="jcta jlock">Soon</span></button></li>`).join('');
     const [ue,ut,ux]=isKid()?KUNITS[u.n]:[u.eyebrow,u.title,u.text];
-    return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
+    const sample=list[list.length-1].l;
+    return `<section class="unit ${u.cls}"><div class="unit-head"><div class="uh-txt"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p>
+      <div class="uprog"><div class="ubar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${ud}" aria-label="${ud} of ${total} lessons done"><span style="width:${total?ud/total*100:0}%"></span></div><span class="ucount">${ud}/${total}</span></div></div>
+      <div class="uh-art paper" aria-hidden="true">${art(sample,sample.steps.length-1,'thumb')}</div></div><ol class="journey">${items}${soon}</ol></section>`}).join('');
   return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
 function vDraw(){
@@ -1446,6 +1532,7 @@ function render(scrollTop,quiet){
   document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
   app.classList.toggle('full',name==='lesson'||name==='complete'||name==='color');
+  app.classList.toggle('lessonv',name==='lesson');app.classList.toggle('learnv',name==='learn');
   setTabs(name==='mine'?'profile':name);
   app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='draw'?vDraw():name==='challenge'?vChallenge():name==='mine'?vMine():name==='color'?vColor():vProfile();
   if(name==='lesson'&&!quiet)narrate(curL(),view.s);
