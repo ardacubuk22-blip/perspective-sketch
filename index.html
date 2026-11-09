@@ -128,7 +128,7 @@ p{margin:0}
 
 /* tabs */
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));z-index:5}
-.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tabs div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .tabs button{background:none;border:0;border-radius:12px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted)}
 .tabs button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
 
@@ -274,6 +274,16 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;animation-iteration-count:1!important}
 }
+/* draw anything library */
+.libsec{display:flex;flex-direction:column;gap:12px}
+.libsec h2{font-size:22px}
+.libgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.libcard{display:flex;flex-direction:column;gap:6px;text-align:start;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:8px 8px 10px;box-shadow:0 4px 0 var(--line)}
+.libcard:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+.lc-t{font-family:var(--display);font-weight:700;font-size:16px;line-height:1.15;padding-inline:2px}
+.lc-m{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:12.5px;color:var(--muted);padding-inline:2px}
+.lc-m .ico{width:14px;height:14px}
+.lc-done{color:var(--ok);display:inline-flex}.lc-lock{display:inline-flex;align-items:center;gap:2px;color:var(--accent);font-weight:700}
 /* submissions */
 .field{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:600}
 .field input{font:inherit;font-weight:500;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
@@ -307,6 +317,7 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
 <nav class="tabs" id="tabs" aria-label="Main">
   <div>
     <button id="tab-learn" data-act="tab" data-tab="learn"><svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Learn</button>
+    <button id="tab-draw" data-act="tab" data-tab="draw"><svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>Draw</button>
     <button id="tab-challenge" data-act="tab" data-tab="challenge"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>30 days</button>
     <button id="tab-profile" data-act="tab" data-tab="profile"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Profile</button>
   </div>
@@ -487,9 +498,10 @@ const LESSONS=[
   {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()},
   {id:'birdseye',unit:3,added:'2026-11-09',title:'Building from above',mins:8,pro:true,steps:birdseye()}
 ];
-(function orient(){for(const l of LESSONS){const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
+function orient(list){for(const l of list){const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
   const near=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1])<1.5,isVP=p=>vps.some(v=>near(p,v));
-  l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='l'&&isVP(sh.b)&&!isVP(sh.a)){const t=sh.a;sh.a=sh.b;sh.b=t}}))}})();
+  l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='l'&&isVP(sh.b)&&!isVP(sh.a)){const t=sh.a;sh.a=sh.b;sh.b=t}}))}}
+orient(LESSONS);
 const UNITS=[
   {n:1,cls:'u1',eyebrow:'Unit 1 · One-point',title:'Foundations',text:'Horizon, vanishing point and your first 3D shapes.',soon:[]},
   {n:2,cls:'u2',eyebrow:'Unit 2 · Two-point',title:'Corners and buildings',text:'Two vanishing points for boxes, houses and streets.',soon:['Street corner']},
@@ -573,6 +585,231 @@ const KIDS={
     ['The top','Connect the top corners toward the two dots.',''],
     ['Floors','Draw floor lines and color one side. It touches the clouds!','']]}
 };
+/* ---------- Draw anything: free-choice library ---------- */
+const E=(c,rx,ry,k='ink')=>({t:'e',c,rx,ry,k});
+const away=(V,p,s)=>[p[0]+(p[0]-V[0])*s,p[1]+(p[1]-V[1])*s];
+const rectL=(a,b,c,d)=>[L(a,b),L(b,c),L(c,d),L(d,a)];
+
+function robot(){const hy=40,V=[310,hy],t=.28;
+  const A=[120,150],B=[235,150],C=[235,232],Dd=[120,232];
+  const H0=[150,150],H1=[150,92],H2=[205,92],H3=[205,150];
+  const d=p=>lerp(p,V,t);
+  const H1b=d(H1),H2b=d(H2),H3b=d(H3),B2=d(B),C2=d(C);
+  const Acut=atX(A,d(A),H0[0]);
+  const leg=(x0,x1)=>{const b0=[x0,276],b1=[x1,276],tp=[x1,232],bb=lerp(b1,V,.12);return [L([x0,232],b0),L(b0,b1),L(b1,tp),L(b1,bb),L(bb,[bb[0],232])]};
+  const top=lerp(lerp(H1,H2,.5),V,t/2),ant=[top[0],top[1]-26];
+  return [
+    {title:'Eye level and VP',text:'Draw the horizon high on the page and put the vanishing point on the right. We look down at the robot from a little above.',tip:'VP on the right = we see the right side',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'The body',text:'Draw a big rectangle facing you, one side at a time. This is the front of the robot body.',tip:'front faces stay flat',shapes:rectL(A,B,C,Dd)},
+    {title:'The head',text:'On top of the body, draw a smaller square: up, across, and back down. Its bottom sits on the top edge of the body.',tip:'',shapes:[L(H0,H1),L(H1,H2),L(H2,H3)]},
+    {title:'Head lines to the VP',text:'Put your ruler on the VP and draw light lines to three corners of the head: top left, top right and bottom right.',tip:'start every guide at the VP',shapes:[G(V,H1),G(V,H2),G(V,H3)]},
+    {title:'Give the head depth',text:'Choose how deep the head is. Draw the back edges: one across at the top, one straight down on the right. Then ink the three depth edges.',tip:'back edges are parallel to the front ones',shapes:[L(H1b,H2b),L(H2b,H3b),L(H1,H1b),L(H2,H2b),L(H3,H3b)]},
+    {title:'Body lines to the VP',text:'Now draw light lines from the VP to the top right and bottom right corners of the body, and to the top left corner.',tip:'',shapes:[G(V,B),G(V,C),G(V,A)]},
+    {title:'Give the body depth',text:'Use the same depth as the head. Draw the back edge across the top and the back edge straight down on the right. Ink the depth edges. The head hides part of the top.',tip:'stop the line where the head covers it',shapes:[L(H3b,B2),L(B2,C2),L(B,B2),L(C,C2),L(A,Acut)]},
+    {title:'Legs',text:'Under the body, draw two short legs. Each one is a small rectangle with a little side that points to the VP.',tip:'',shapes:[...leg(140,165),...leg(190,215)]},
+    {title:'The face',text:'Draw two square eyes and a straight mouth on the front of the head.',tip:'faces on the front stay flat too',shapes:[...rectL([160,106],[173,106],[173,119],[160,119]),...rectL([182,106],[195,106],[195,119],[182,119]),L([163,136],[192,136])]},
+    {title:'Antenna and buttons',text:'From the middle of the head top, draw a straight antenna with a small ball. Add a panel with buttons on the body.',tip:'',shapes:[L(top,ant),E([ant[0],ant[1]-5],5,5),...rectL([140,168],[215,168],[215,214],[140,214]).map(x=>({...x,k:'thin'})),E([158,191],7,7,'thin'),E([178,191],7,7,'thin'),E([198,191],7,7,'thin')]},
+    {title:'Shade it',text:'Shade the right sides and give the tops a light tone. Your box robot is ready!',tip:'light comes from the left',shapes:[P([H2,H2b,H3b,H3]),P([B,B2,C2,C]),P([H1,H2,H2b,H1b],'shadeLight'),P([H3,H3b,B2,B],'shadeLight')]}
+  ]}
+
+function train(){const hy=105,V1=[6,hy],V2=[394,hy],F0=[292,130],F1=[292,196];
+  const L0=atX(F0,V1,110),L1=atX(F1,V1,110),R0=atX(F0,V2,350),R1=atX(F1,V2,350);
+  const K=inter(L0,V2,R0,V1);
+  const M=lerp(F0,R0,.5),cc=atX(M,V1,M[0]-34),chB=[cc[0],cc[1]],chT=[cc[0],cc[1]-30];
+  const wt=lerp(F0,F1,.18),wb=lerp(F0,F1,.52),wins=[[264,244],[230,212],[198,182],[168,154]];
+  const wl=wins.flatMap(([a,b])=>{const p=atX(wt,V1,a),q=atX(wt,V1,b),p2=atX(wb,V1,a),q2=atX(wb,V1,b);return [Th(p,q),Th(p2,q2),Th(p,p2),Th(q,q2)]});
+  const wheel=x=>{const p=atX(F1,V1,x);return E([p[0],p[1]-3],7*(.55+.45*(x-110)/182),11*(.6+.4*(x-110)/182))};
+  const r1=lerp(F1,R1,.22),r2=lerp(F1,R1,.78),e1=ext(V1,r1),e2=ext(V1,r2);
+  const rails=[L(r1,e1),L(r2,e2)],back=[L(V1,atX(V1,r1,L1[0])),L(V1,atX(V1,r2,L1[0]))];
+  const sl=[.12,.3,.52,.78].map(s=>{const q1=lerp(r1,e1,s),q2=inter(V2,q1,V1,r2);return Th(lerp(q1,q2,-.18),lerp(q1,q2,1.18))});
+  return [
+    {title:'Eye level and two VPs',text:'Draw the horizon and put a vanishing point near each end. The train is long, so it uses both.',tip:'',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The front corner',text:'On the right side of the page, draw one vertical line. This is the corner of the engine closest to you.',tip:'',shapes:[L(F0,F1)]},
+    {title:'Lines to both VPs',text:'Put your ruler on VP1 and draw light lines to the top and the bottom of the corner. Do the same from VP2.',tip:'start every guide at a VP',shapes:[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]},
+    {title:'Long side and front',text:'Far to the left, draw a vertical line to end the long side. On the right, draw a short one for the front. Ink the top and bottom edges.',tip:'the long side goes to VP1',shapes:[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'Close the roof',text:'From VP2 draw a light line to the far top corner, and from VP1 one to the front top corner. Where they cross, the roof closes.',tip:'',shapes:[G(V2,K),G(V1,K),L(L0,K),L(R0,K)]},
+    {title:'The chimney',text:'Near the front of the roof, draw two short vertical lines and a flat oval on top. That is the chimney.',tip:'',shapes:[L([chB[0]-7,chB[1]],[chT[0]-7,chT[1]]),L([chB[0]+7,chB[1]],[chT[0]+7,chT[1]]),E(chT,7,3)]},
+    {title:'Window guide lines',text:'Mark two points on the front corner and draw light lines from VP1 to them. All the windows sit between these lines.',tip:'',shapes:[G(V1,wt),G(V1,wb)]},
+    {title:'The windows',text:'Draw the windows between the guide lines. Their sides are vertical. They get narrower toward VP1.',tip:'narrower = further away',shapes:wl},
+    {title:'Wheels and a light',text:'Draw round wheels along the bottom of the long side, smaller toward the back. Add a round light on the front.',tip:'',shapes:[...[272,236,200,166,136].map(wheel),E(lerp(lerp(F0,R1,.5),lerp(R0,F1,.5),.5),9,10)]},
+    {title:'The rails',text:'The rails go the same way as the long side. From VP1, draw them in front of the train and behind it, then add the wooden sleepers in front.',tip:'sleepers point to VP2',shapes:[...back,...rails,...sl]},
+    {title:'Shade it',text:'Shade the front and give the roof a light tone. Choo choo, your train is ready!',tip:'',shapes:[P([F0,R0,R1,F1]),P([F0,L0,K,R0],'shadeLight')]}
+  ]}
+
+function rocket(){const hy=238,V1=[8,hy],V2=[392,hy],F0=[200,120],F1=[200,262];
+  const L0=atX(F0,V1,160),L1=atX(F1,V1,160),R0=atX(F0,V2,250),R1=atX(F1,V2,250);
+  const K=inter(L0,V2,R0,V1),Ct=inter(L0,R0,F0,K),Ap=[Ct[0],Ct[1]-82];
+  const fy=.62,lf=lerp(L1,L0,1-fy+.35),rf=lerp(R1,R0,1-fy+.35);
+  const wc=lerp(lerp(R0,R1,.32),lerp(F0,F1,.32),.5);
+  const fl=[[180,262],[188,292],[196,272],[204,296],[212,272],[222,290],[226,262]];
+  return [
+    {title:'A low horizon',text:'Draw the horizon low on the page and put two vanishing points far apart, near the ends. We look up at the rocket.',tip:'low horizon = looking up',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The front edge',text:'Draw one tall vertical line. This is the corner of the rocket closest to you.',tip:'',shapes:[L(F0,F1)]},
+    {title:'Lines to both VPs',text:'From VP1, draw light lines to the top and the bottom of the line. Do the same from VP2.',tip:'start every guide at a VP',shapes:[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]},
+    {title:'The two sides',text:'Draw a vertical line on the left and one on the right to make the rocket narrow and tall. Ink the top and bottom edges.',tip:'',shapes:[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'Find the back corner',text:'From VP2 draw a light line to the top left corner. From VP1 draw one to the top right corner. They cross at the hidden back corner.',tip:'',shapes:[G(V2,L0),G(V1,R0),D(K,'')]},
+    {title:'Find the centre of the top',text:'Draw an X: one light line from left corner to right corner, one from the front corner to the back corner. They cross at the centre.',tip:'never guess the middle',shapes:[G(L0,R0),G(F0,K),D(Ct,'')]},
+    {title:'The nose point',text:'From the centre, draw a light line straight up and mark the tip of the nose.',tip:'taller tip = sharper nose',shapes:[G(Ct,[Ap[0],Ap[1]-10]),D(Ap,'')]},
+    {title:'The nose',text:'Connect the tip to the three top corners you can see: left, front and right.',tip:'',shapes:[L(Ap,L0),L(Ap,F0),L(Ap,R0)]},
+    {title:'Window and fins',text:'Draw a round window on the right side. Then draw a triangle fin on the left and on the right edge, near the bottom.',tip:'',shapes:[E(wc,9,13),L(lf,[lf[0]-28,L1[1]+16]),L([lf[0]-28,L1[1]+16],L1),L(rf,[rf[0]+28,R1[1]+16]),L([rf[0]+28,R1[1]+16],R1)]},
+    {title:'Flames and shade',text:'Draw zigzag flames under the rocket and shade the right side. Three, two, one, lift off!',tip:'',shapes:[...fl.slice(1).map((p,i)=>L(fl[i],p)),P([F0,R0,R1,F1]),P([Ap,F0,R0],'shadeLight')]}
+  ]}
+
+function treehouse(){const hy=70,V=[315,hy],t=.3,d=p=>lerp(p,V,t);
+  const A=[120,120],B=[220,120],C=[220,190],Dd=[120,190],Pk=[170,72];
+  const Pk2=d(Pk),B2=d(B),C2=d(C);
+  const tr0=[150,190],tr1=[188,190],trb0=[140,292],trb1=[198,292];
+  return [
+    {title:'Eye level and VP',text:'Draw the horizon high up and put the vanishing point on the right. We look at the treehouse from the side a little.',tip:'',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'The house front',text:'Draw a square facing you, one side at a time. This is the front wall of the little house.',tip:'',shapes:rectL(A,B,C,Dd)},
+    {title:'The roof front',text:'Mark the middle above the square and draw the roof: one line from the peak to each top corner.',tip:'',shapes:[D(Pk,''),L(Pk,A),L(Pk,B)]},
+    {title:'Lines to the VP',text:'Put your ruler on the VP and draw light lines to the roof peak, the top right corner and the bottom right corner.',tip:'',shapes:[G(V,Pk),G(V,B),G(V,C)]},
+    {title:'Depth of the house',text:'Choose the depth. Draw the back edge of the roof from the peak, the back roof edge and the back wall edge straight down. Ink the edges that go back.',tip:'',shapes:[L(Pk,Pk2),L(Pk2,B2),L(B2,C2),L(B,B2),L(C,C2)]},
+    {title:'The trunk',text:'Under the house, draw the tree trunk: two lines going down, a little wider at the bottom.',tip:'trees are not perfectly straight',shapes:[L(tr0,trb0),L(tr1,trb1)]},
+    {title:'Door and window',text:'Draw a door on the front wall and a small square window next to it.',tip:'',shapes:[L([135,190],[135,150]),L([135,150],[158,150]),L([158,150],[158,190]),...rectL([180,140],[205,140],[205,162],[180,162])]},
+    {title:'The ladder',text:'Draw two straight lines for the ladder, from the ground up to the door, then the steps across.',tip:'',shapes:[L([96,292],[132,190]),L([118,292],[154,190]),...[272,250,228,206].map(y=>{const f=(292-y)/102;return Th([96+36*f,y],[118+36*f,y])})]},
+    {title:'Leaves',text:'Draw big round leaf shapes around the house and above the roof.',tip:'',shapes:[E([82,110],34,26,'thin'),E([300,222],34,24,'thin'),E([96,60],30,22,'thin'),E([255,60],30,20,'thin')]},
+    {title:'Shade it',text:'Shade the side wall and the roof. Your treehouse is done!',tip:'',shapes:[P([B,B2,C2,C]),P([Pk,Pk2,B2,B],'shadeLight')]}
+  ]}
+
+function cafe(){const hy=205,V1=[2,hy],V2=[398,hy],F0=[140,70],F1=[140,262];
+  const L0=atX(F0,V1,70),L1=atX(F1,V1,70),R0=atX(F0,V2,322),R1=atX(F1,V2,322);
+  const at=(p,x)=>atX(p,V2,x),cH=y=>[140,y];
+  const dt=cH(165),dtt=at(dt,158),db=at(F1,158),dtr=at(dt,186),dbr=at(F1,186);
+  const wt=cH(165),wbb=cH(232),wtl=at(wt,202),wbl=at(wbb,202),wtr=at(wt,300),wbr=at(wbb,300);
+  const a1=cH(120),c1=cH(154),a2=at(a1,306),c2=at(c1,306);
+  const b1=away(V1,c1,.15),b2=inter(b1,V2,c2,away(V1,c2,1));
+  const stripes=[.2,.4,.6,.8].map(s=>Th(lerp(a1,a2,s),lerp(b1,b2,s)));
+  const s1=cH(82),s2=cH(108),sa=at(s1,172),sb=at(s2,172),sc=at(s1,300),sd=at(s2,300);
+  const lw0=cH(118),lw1=cH(190),lx0=atX(lw0,V1,122),lx1=atX(lw1,V1,122),lx2=atX(lw0,V1,92),lx3=atX(lw1,V1,92);
+  return [
+    {title:'Eye level and two VPs',text:'Draw the horizon low, at the height of your eyes when you stand in the street. Put VP1 and VP2 near the ends.',tip:'',shapes:[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]},
+    {title:'The corner of the building',text:'Draw one tall vertical line on the left part of the page. This is the corner of the café.',tip:'',shapes:[L(F0,F1)]},
+    {title:'Top and bottom edges',text:'Put your ruler on VP1 and draw light lines to the top and bottom of the corner. Do the same from VP2.',tip:'start every guide at a VP',shapes:[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]},
+    {title:'Close the walls',text:'Draw a vertical line for the end of each wall. Ink the top and the bottom edges.',tip:'',shapes:[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]},
+    {title:'The door',text:'Mark the door height on the corner and draw a light line from VP2 to it. Draw the two sides of the door up to that line, then the top.',tip:'door tops point to VP2',shapes:[G(V2,dt),L(db,dtt),L(dbr,dtr),L(dtt,dtr)]},
+    {title:'The shop window',text:'Mark the bottom of the window on the corner and draw a light line from VP2. Draw the two sides of the window, then the top and the bottom.',tip:'',shapes:[G(V2,wbb),L(wbl,wtl),L(wbr,wtr),L(wtl,wtr),L(wbl,wbr)]},
+    {title:'Awning: the wall line',text:'Above the door and window, mark a point on the corner and draw a line toward VP2. This is where the awning is fixed to the wall.',tip:'',shapes:[L(a1,a2)]},
+    {title:'Awning: the front edge',text:'The awning sticks out over the street. Draw a light line from VP1 through a point a little lower on the corner, and keep going past it. Do the same at the far end.',tip:'out from the wall = away from VP1',shapes:[G(V1,b1),G(V1,b2),D(b1,''),D(b2,'')]},
+    {title:'Ink the awning',text:'Connect the two points with a line toward VP2. Close the sides and add stripes from the wall to the front edge.',tip:'',shapes:[L(b1,b2),L(a1,b1),L(a2,b2),...stripes]},
+    {title:'Sign and side window',text:'Draw the sign board above the awning with edges toward VP2. On the short wall, add a window with edges toward VP1.',tip:'each wall uses its own VP',shapes:[L(sa,sc),L(sb,sd),L(sa,sb),L(sc,sd),L(lx0,lx1),L(lx2,lx3),L(lx0,lx2),L(lx1,lx3)]},
+    {title:'Shade and finish',text:'Shade the short wall and tone the awning. Your café is open!',tip:'',shapes:[P([F0,L0,L1,F1]),P([a1,a2,b2,b1],'shadeLight')]}
+  ]}
+
+function street(){const hy=125,V=[200,hy];
+  const side=s=>{const X=v=>s<0?v:400-v;
+    const b0=atX(V,[X(0),262],X(42)),top=[X(42),14],x2=X(108),x3=X(150);
+    const bot=p=>atX(V,b0,p),tp=p=>atX(V,top,p),t2=[x2,72],tp2=p=>atX(V,t2,p);
+    const out={};
+    out.base=[G(V,ext(V,b0))];
+    out.near=[L(b0,top)];
+    out.top1=[G(V,top),L(top,tp(x2))];
+    out.v1=[L(bot(x2),tp(x2))];
+    out.top2=[L(t2,tp2(x3)),L(bot(x3),tp2(x3))];
+    const rows=[.25,.45,.65].map(f=>lerp(top,b0,f));
+    out.win=rows.map(r=>G(V,r));
+    const cols=[[52,64],[78,90]].map(([a,b])=>[X(a),X(b)]);
+    out.wi=rows.flatMap(r=>{const r2=[r[0],r[1]+18];return cols.flatMap(([a,b])=>{const p=atX(V,r,a),q=atX(V,r,b),p2=atX(V,r2,a),q2=atX(V,r2,b);return [Th(p,q),Th(p2,q2),Th(p,p2),Th(q,q2)]})});
+    out.shade=[P([b0,top,tp(x2),bot(x2)],'shadeLight')];
+    return out};
+  const Lf=side(-1),Rt=side(1);
+  const rl=[150,300],rr=[250,300];
+  const dash=[[.18,.24],[.32,.42],[.52,.66],[.76,.96]].map(([a,b])=>L(lerp(V,[200,300],a),lerp(V,[200,300],b)));
+  return [
+    {title:'Horizon and VP',text:'Draw the horizon a little above the middle and put one vanishing point in the centre.',tip:'one VP for the whole street',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
+    {title:'The road',text:'From the VP, draw two lines down to the bottom of the page. That is the road.',tip:'start at the VP',shapes:[L(V,rl),L(V,rr)]},
+    {title:'The pavements',text:'From the VP, draw two more lines further out. Between them and the road are the pavements. The buildings stand on these lines.',tip:'',shapes:[...Lf.base,...Rt.base]},
+    {title:'The nearest building edges',text:'On each side, draw one tall vertical line standing on the pavement line. These are the edges of the buildings closest to you.',tip:'',shapes:[...Lf.near,...Rt.near]},
+    {title:'Roof lines to the VP',text:'From the VP, draw a light line to the top of each edge. Ink the roof line along it, a little way back.',tip:'',shapes:[...Lf.top1,...Rt.top1]},
+    {title:'Where the building ends',text:'Draw a vertical line at the end of each first building, from the pavement up to the roof line.',tip:'',shapes:[...Lf.v1,...Rt.v1]},
+    {title:'Lower buildings behind',text:'Behind each first building, draw a lower one: a short vertical, a roof line toward the VP and the far edge.',tip:'all roof lines still meet at the VP',shapes:[...Lf.top2,...Rt.top2]},
+    {title:'Window guide lines',text:'From the VP, draw light lines to three points on each near edge. Every row of windows sits on these lines.',tip:'',shapes:[...Lf.win,...Rt.win]},
+    {title:'The windows',text:'Draw the windows along the guide lines. Their sides are vertical. They get narrower toward the VP.',tip:'narrower = further away',shapes:[...Lf.wi,...Rt.wi]},
+    {title:'Road markings and shade',text:'Dash the centre line, making each dash shorter near the VP. Tone the left buildings. Your street is done.',tip:'',shapes:[...dash,...Lf.shade]}
+  ]}
+
+const LIB=[
+  {id:'robot',lib:'fun',unit:1,title:'Box robot',mins:6,added:'2026-11-09',steps:robot()},
+  {id:'train',lib:'fun',unit:2,title:'Train on the tracks',mins:7,pro:true,added:'2026-11-09',steps:train()},
+  {id:'rocket',lib:'fun',unit:2,title:'Rocket',mins:6,pro:true,added:'2026-11-09',steps:rocket()},
+  {id:'treehouse',lib:'fun',unit:2,title:'Treehouse',mins:7,pro:true,added:'2026-11-09',steps:treehouse()},
+  {id:'street',lib:'place',unit:2,title:'City street',mins:9,added:'2026-11-09',steps:street()},
+  {id:'cafe',lib:'place',unit:3,title:'Corner café',mins:10,pro:true,added:'2026-11-09',steps:cafe()}
+];
+const LIBCATS=[['fun','Fun things','Robots, trains, rockets and more.'],['place','Places','Streets, cafés and buildings.']];
+Object.assign(KIDS,{
+  robot:{title:'Box Robot',steps:[
+    ['Line and dot','Draw the sky line up high and put the magic dot on the right side.','we look down at the robot'],
+    ['The tummy','Draw a big box shape facing you, one side at a time. That is the robot tummy!',''],
+    ['The head','On top, draw a smaller square for the head: up, across and down.',''],
+    ['Head lines','Put your ruler on the magic dot. Draw soft lines to three corners of the head.','start at the dot'],
+    ['Make the head fat','Draw the back of the head along the soft lines. Now the head is a real box!',''],
+    ['Tummy lines','Draw soft lines from the magic dot to three corners of the tummy.',''],
+    ['Make the tummy fat','Draw the back of the tummy the same way. The head hides a little bit of it.','stop where the head is'],
+    ['Legs','Draw two little legs under the tummy. Each one gets a tiny side too.',''],
+    ['A happy face','Draw two square eyes and a mouth.',''],
+    ['Antenna and buttons','Add an antenna with a ball on top, and three round buttons on the tummy.','beep boop!'],
+    ['Color it','Color the right sides darker. Your robot is alive!','']]},
+  train:{title:'Choo Choo Train',steps:[
+    ['Line and two dots','Draw the sky line and put a magic dot near each end.',''],
+    ['The front corner','Draw one straight line standing up, on the right side.',''],
+    ['Soft lines','Draw soft lines from both dots to the top and bottom of the line.','start at a dot'],
+    ['Long and short sides','Draw a line far to the left and a short one on the right. Ink the edges.','the long side goes to the left dot'],
+    ['The roof','Draw two soft lines from the dots to close the roof.',''],
+    ['The chimney','Draw a little chimney with an oval on top.',''],
+    ['Window lines','Draw two soft lines from the left dot for the windows.',''],
+    ['Windows','Draw the windows between the lines. They get thinner far away.',''],
+    ['Wheels and a light','Draw round wheels and a light on the front.',''],
+    ['The rails','Draw the rails from the left dot, and little wood pieces in front.',''],
+    ['Color it','Color the front. Choo choo!','']]},
+  rocket:{title:'Space Rocket',steps:[
+    ['Low line, two dots','Draw the sky line low and put two magic dots far apart. We look up at the rocket!',''],
+    ['The front edge','Draw one tall straight line standing up.',''],
+    ['Soft lines','Draw soft lines from both magic dots to the top and the bottom of the line.','start at a dot'],
+    ['The sides','Draw a line on each side to make the rocket tall and thin.',''],
+    ['The hidden corner','Draw two soft lines from the dots across the top. Where they cross is the hidden corner.',''],
+    ['Find the middle','Draw a soft X across the top. The middle is where it crosses.',''],
+    ['The tip','Draw a soft line straight up from the middle and put a dot for the tip.',''],
+    ['The nose','Connect the tip to the three corners you can see.',''],
+    ['Window and fins','Draw a round window and two fins at the bottom.',''],
+    ['Blast off','Draw zigzag fire under it and color one side. Three, two, one, go!','']]},
+  treehouse:{title:'Treehouse',steps:[
+    ['Line and dot','Draw the sky line up high and put the magic dot on the right.',''],
+    ['The little house','Draw a square for the front of the house.',''],
+    ['The roof','Put a dot above the middle and draw the roof to both top corners.',''],
+    ['Soft lines','Draw soft lines from the magic dot to the roof tip and two corners.','start at the dot'],
+    ['Make it deep','Draw the back of the roof and the side wall along the soft lines.',''],
+    ['The tree trunk','Draw the trunk under the house, a bit wider at the bottom.',''],
+    ['Door and window','Draw a door and a small window on the front.',''],
+    ['The ladder','Draw a ladder from the ground up to the door.',''],
+    ['Leaves','Draw big round leaf clouds all around.',''],
+    ['Color it','Color the side and the roof. Climb up!','']]},
+  street:{title:'City Street',steps:[
+    ['Line and dot','Draw the sky line and put the magic dot in the middle.',''],
+    ['The road','Draw two lines from the dot down to the bottom.','start at the dot'],
+    ['The sidewalks','Draw two more lines from the dot, further out.',''],
+    ['Tall edges','Draw a tall straight line on each side. Those are the buildings.',''],
+    ['Roof lines','Draw soft lines from the dot to the top of each building, then ink the roof.',''],
+    ['End of the building','Draw a straight line where each building ends.',''],
+    ['Smaller buildings','Draw a smaller building behind each one.',''],
+    ['Window lines','Draw soft lines from the dot for the rows of windows.',''],
+    ['Windows','Draw the windows on the lines. They get thinner near the dot.',''],
+    ['Road stripes','Draw stripes on the road and color one side. Beep beep!','']]},
+  cafe:{title:'Little Café',steps:[
+    ['Line and two dots','Draw the sky line and put a magic dot at each end.',''],
+    ['The corner','Draw one tall straight line. That is the corner of the café.',''],
+    ['Soft lines','Draw soft lines from both dots to the top and bottom of the corner.',''],
+    ['The walls','Draw the ends of both walls and ink the top and bottom.',''],
+    ['The door','Draw a door near the corner. Its top points to the right dot.',''],
+    ['The big window','Draw a big shop window next to the door.',''],
+    ['Roof cover line','Draw a line on the wall above the window, toward the right dot.',''],
+    ['Pull it out','Draw soft lines from the left dot past the corner. The cover sticks out!',''],
+    ['Stripes','Close the cover and give it stripes, like a candy shop.',''],
+    ['Sign and window','Draw a sign on top and a window on the short wall.',''],
+    ['Color it','Color the short wall. The café is open!','']]}
+});
+
+orient(LIB);
 const KUNITS={1:['Level 1 · One magic dot','The magic dot','Roads, boxes and rooms with one dot.'],2:['Level 2 · Two magic dots','Blocks and houses','Two dots make blocks and houses.'],3:['Level 3 · The sky dot','Super tall','A dot in the sky for giant towers.']};
 const isKid=()=>S.mode==='kid';
 const LT=l=>isKid()?KIDS[l.id].title:l.title;
@@ -731,6 +968,7 @@ function art(lesson,upto,mode){
     for(const s of lesson.steps[i].shapes){
       const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
       if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
+      else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
       else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
@@ -738,14 +976,15 @@ function art(lesson,upto,mode){
   }
   return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
 }
+const curL=()=>(view.lib?LIB:LESSONS)[view.i];
 function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
 function header(){
   return `<header class="top"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
   <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip gemc" title="Gems">${I.gem}${S.gems}</span>${onTrial()?`<span class="chip pro" title="Pro trial days left">PRO ${daysLeft()}d</span>`:''}</div></header>`;
 }
 function setTabs(name){
-  document.getElementById('tabs').hidden=!['learn','challenge','profile'].includes(name);
-  for(const t of ['learn','challenge','profile']){const b=document.getElementById('tab-'+t);if(t===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')}
+  document.getElementById('tabs').hidden=!['learn','draw','challenge','profile'].includes(name);
+  for(const t of ['learn','draw','challenge','profile']){const b=document.getElementById('tab-'+t);if(t===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')}
 }
 
 /* ---------- views ---------- */
@@ -765,6 +1004,15 @@ function vLearn(){
     return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
   return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
+function vDraw(){
+  const card=(l,i)=>{const locked=l.pro&&!isPro(),done=S.done[l.id];
+    return `<button class="libcard" data-act="lib" data-i="${i}" aria-label="${esc(LT(l))}${locked?', Pro':''}${done?', done':''}"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div>
+    <span class="lc-t">${esc(LT(l))}</span><span class="lc-m">${isNew(l)?'<span class="newpill">NEW</span>':''}${l.mins} min · ${I.gem}+${gemsFor(l)}${done?` <span class="lc-done">${I.check}</span>`:''}${locked?` <span class="lc-lock">${I.lock}Pro</span>`:''}</span></button>`};
+  const order=isKid()?['fun','place']:['place','fun'];
+  const secs=order.map(c=>{const [id,t,x]=LIBCATS.find(z=>z[0]===c);const items=LIB.map((l,i)=>({l,i})).filter(z=>z.l.lib===id);
+    return `<section class="libsec"><div><h2>${t}</h2><p class="fine2">${x}</p></div><div class="libgrid">${items.map(z=>card(z.l,z.i)).join('')}</div></section>`}).join('');
+  return header()+`<section class="hero-c"><p class="eyebrow">Draw anything</p><h1>${isKid()?'What do you want to draw today?':'Pick what you want to draw'}</h1><p>${isKid()?'Tap a picture. The app shows you every line!':'Every drawing is built step by step with real perspective. New ones every week.'}</p></section>`+secs;
+}
 function vOnboard(){
   const demo=LESSONS.find(l=>l.id==='box1'),demo2=LESSONS.find(l=>l.id==='house');
   return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
@@ -777,17 +1025,17 @@ function vOnboard(){
   <p class="foot-note">You can change this later in Profile.</p></div>`;
 }
 function vLesson(){
-  const l=LESSONS[view.i],n=l.steps.length,s=view.s,st=ST(l,s);
+  const l=curL(),n=l.steps.length,s=view.s,st=ST(l,s);
   const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
   return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span><button class="iconbtn" data-act="voice" aria-pressed="${S.voice}" aria-label="Voice ${S.voice?'on':'off'}">${S.voice?I.sound:I.mute}</button></div>
   <div class="paper" id="canvas">${art(l,s,'step')}</div>
   <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
   <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
-  <div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`;
+  ${l.lib?'':`<div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`}`;
 }
 function vComplete(){
-  const l=LESSONS[view.i];const gained=view.gained;
+  const l=curL();const gained=view.gained;
   const ni=nextIdx();
   return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${view.gems?`<span class="chip gemc">${I.gem}+${view.gems} gem${view.gems>1?'s':''}</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
   <div class="paper">${art(l,l.steps.length-1,'final')}</div>
@@ -796,10 +1044,10 @@ function vComplete(){
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
   ${sendPanel(l)}
-  <section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>
+  ${l.lib?'':`<section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>`}
   <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
-  <button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`;
+  ${l.lib?`<button class="btn primary wide" data-act="tab" data-tab="draw">${I.pencil}Pick another drawing</button>`:`<button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`}`;
 }
 function vChallenge(){
   const doneN=S.days.length,next=doneN+1;if(selDay===null)selDay=Math.min(next,30);
@@ -816,7 +1064,7 @@ function vChallenge(){
   <section class="panel"><p class="eyebrow">Day ${d}</p><p class="prompt">${esc(PROMPTS[d-1])}</p><p style="color:var(--muted);font-size:14px">About 10 minutes. Pencil, ruler and any paper.</p>${action}</section>`;
 }
 function vProfile(){
-  const lessons=Object.keys(S.done).length;
+  const lessons=LESSONS.filter(l=>S.done[l.id]).length;
   return header()+`<h1 style="font-size:28px">Your progress</h1>
   <div class="grid4"><div class="stat"><b>${S.gems}</b><span>Gems</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
   <section class="panel"><h3>My drawings</h3><p class="fine2">Drawings you sent to Arda, with his score and notes.</p><button class="btn ghost" data-act="mine">${I.star}Open my drawings</button></section>
@@ -851,8 +1099,8 @@ function render(scrollTop,quiet){
   const name=S.mode?view.name:'onboard';
   app.classList.toggle('full',name==='lesson'||name==='complete');
   setTabs(name==='mine'?'profile':name);
-  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='challenge'?vChallenge():name==='mine'?vMine():vProfile();
-  if(name==='lesson'&&!quiet)narrate(LESSONS[view.i],view.s);
+  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='draw'?vDraw():name==='challenge'?vChallenge():name==='mine'?vMine():vProfile();
+  if(name==='lesson'&&!quiet)narrate(curL(),view.s);
   if(scrollTop)window.scrollTo(0,0);
 }
 let toastT;
@@ -862,10 +1110,10 @@ function openPaywall(focusCode){sheet.innerHTML=paywall();sheet.hidden=false;con
 function doApply(){const inp=document.getElementById('codein');if(!inp)return;const r=applyCode(inp.value);toast(CODE_MSG[r]);if(r==='ok'){closePaywall();render()}}
 function closePaywall(){sheet.hidden=true;sheet.innerHTML=''}
 
-function openLesson(i){
-  const l=LESSONS[i];
+function openLesson(i,lib){
+  const l=(lib?LIB:LESSONS)[i];
   if(l.pro&&!isPro()){openPaywall();return}
-  photoURL=null;view={name:'lesson',i,s:0};render(true);
+  photoURL=null;track('open/'+l.id);view={name:'lesson',i,s:0,lib:!!lib};render(true);
 }
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]');if(!el)return;
@@ -877,17 +1125,18 @@ document.addEventListener('click',e=>{
     if(S.done[l.id]||i===nextIdx())openLesson(i);
     else toast(`Finish “${LESSONS[nextIdx()].title}” first`);return}
   if(a==='soon'){toast('Coming soon');return}
+  if(a==='lib'){openLesson(+el.dataset.i,true);return}
   if(a==='close'||a==='home'){hush();view={name:'learn'};render(true);return}
   if(a==='mode'){S.mode=el.dataset.mode;save();if(view.name==='profile'){render();return}view={name:'learn'};render(true);
     toast(isKid()?'Kids mode: simple words and a fun voice':'Welcome! Start with lesson 1');return}
   if(a==='voice'){S.voice=!S.voice;save();if(!S.voice)hush();render(false,!S.voice);return}
   if(a==='testvoice'){play(isKid()?'k-test':'a-test',true);return}
   if(a==='prev'){view.s=Math.max(0,view.s-1);render();return}
-  if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');narrate(l,view.s);return}
-  if(a==='next'){const l=LESSONS[view.i];
+  if(a==='replay'){const c=document.getElementById('canvas');const l=curL();c.innerHTML=art(l,view.s,'step');narrate(l,view.s);return}
+  if(a==='next'){const l=curL();
     if(view.s<l.steps.length-1){view.s++;render();return}
     const before=earned();let gained=0,g=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained;g=gemsFor(l);S.gems+=g}
-    bumpStreak();save();view={name:'complete',i:view.i,gained,gems:g,badges:newBadges(before)};render(true);return}
+    bumpStreak();save();track('done/'+l.id);view={name:'complete',i:view.i,lib:view.lib,gained,gems:g,badges:newBadges(before)};render(true);return}
   if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
     const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
     try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
@@ -914,7 +1163,7 @@ document.addEventListener('change',e=>{
   const r=new FileReader();r.onload=()=>{const before=earned();photoURL=r.result;view.sent=false;S.photos++;save();render();badgeToast(newBadges(before))};r.readAsDataURL(file);
 });
 async function doSend(){
-  if(view.sending||!photoURL)return;const l=LESSONS[view.i];
+  if(view.sending||!photoURL)return;const l=curL();
   const ni=document.getElementById('subname'),ii=document.getElementById('subig');
   const name=(ni&&ni.value||'').trim().slice(0,40),ig=(ii&&ii.value||'').trim().replace(/^@+/,'').slice(0,40);
   if(!name){toast(isKid()?'Write your first name first':'Add your name first');ni&&ni.focus();return}
