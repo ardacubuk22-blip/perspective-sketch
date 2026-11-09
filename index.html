@@ -607,6 +607,33 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
   .app.lessonv > #canvas{grid-column:1;grid-row:2 / span 8;align-self:start;position:sticky;top:76px}
   .app.lessonv .lactions{margin-inline:0;padding:14px 0;border-top:0;background:transparent;backdrop-filter:none;position:static}
 }
+
+/* Learn screen v2.1: tighter top of screen */
+.learnv .banner{flex-wrap:nowrap;padding:10px 10px 10px 14px;gap:10px}
+.learnv .banner p{font-size:13.5px;line-height:1.35;flex:1 1 auto}
+.learnv .banner .btn{min-height:36px;padding:6px 12px;font-size:13px;flex:none}
+.nextup{grid-template-columns:116px 1fr;grid-template-rows:auto auto;row-gap:12px;column-gap:14px;padding:12px}
+.nu-art{grid-row:1;align-self:center}
+.nu-body{grid-row:1;gap:4px}
+.nu-body h2{font-size:19px}
+.nu-meta{font-size:12px;gap:2px 8px}
+.btn.nu-cta{grid-column:1 / -1;grid-row:2;margin-top:0;min-height:48px;font-size:15.5px}
+@media (max-width:400px){.nextup{grid-template-columns:108px 1fr}.nu-art{max-height:none;overflow:hidden}}
+@media (max-width:330px){.nextup{grid-template-columns:1fr}.nu-art{grid-row:auto}.nu-body{grid-row:auto}.btn.nu-cta{grid-row:auto}}
+.unit-head{padding:14px 16px 14px 18px;grid-template-columns:1fr 84px}
+.unit-head h2{font-size:20px}
+.unit-head p{font-size:13.5px;line-height:1.45}
+.uprog{margin-top:6px}
+@media (min-width:720px){
+  .nextup{grid-template-columns:220px 1fr;grid-template-rows:1fr auto;column-gap:22px;padding:16px}
+  .nu-art{grid-row:1 / span 2;align-self:stretch}
+  .nu-body{grid-row:1;align-self:end}
+  .nu-body h2{font-size:24px}
+  .btn.nu-cta{grid-column:2;grid-row:2;align-self:start;justify-self:start;width:auto;min-width:220px}
+  .unit-head{grid-template-columns:1fr 132px;padding:18px 20px 18px 22px}
+  .unit-head h2{font-size:22px}
+}
+@media (max-width:719px){.nu-meta span:first-child{display:none}.nu-meta span:nth-child(2)::before{display:none}}
 </style>
 </head>
 <body>
@@ -1412,13 +1439,14 @@ function setTabs(name){
 function vLearn(){
   const ni=nextIdx();let cont;
   const doneN=LESSONS.filter(l=>S.done[l.id]).length;
-  if(ni<0)cont=`<section class="nextup"><div class="nu-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="nu-body"><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><p class="nu-meta">${doneN} of ${LESSONS.length} lessons finished</p><button class="btn ghost wide" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
+  if(ni<0)cont=`<section class="nextup"><div class="nu-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="nu-body"><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><p class="nu-meta">${doneN} of ${LESSONS.length} lessons finished</p></div><button class="btn ghost wide nu-cta" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></section>`;
   else{const l=LESSONS[ni],locked=l.pro&&!isPro(),u=UNITS.find(x=>x.n===l.unit),ue=isKid()?KUNITS[u.n][0]:u.eyebrow;
     cont=`<section class="nextup"><div class="nu-art paper">${art(l,l.steps.length-1,'thumb')}</div><div class="nu-body">
       <p class="eyebrow">${isNew(l)?'<span class="newpill">NEW</span> ':''}Next up · Lesson ${ni+1}</p>
       <h2>${esc(LT(l))}</h2>
       <p class="nu-meta"><span>${esc(ue)}</span><span>${l.steps.length} steps</span><span>${l.mins} min</span><span class="nu-gem">${I.gem}+${gemsFor(l)}</span></p>
-      <button class="btn primary wide nu-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+</div>
+      <button class="btn primary wide nu-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></section>`}
   let num=0;
   const units=UNITS.map(u=>{
     const list=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);
