@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Review Panel · Perspective Sketch</title>
+<style>
+:root{--bg:#E8ECF1;--surface:#fff;--paper:#FBFCFE;--ink:#1E2228;--muted:#5B6573;--line:#D3DAE3;--accent:#2D5BFF;--accent-soft:#DDE5FF;--ok:#17996A;--bad:#C2410C;--marker:#F5A800}
+@media (prefers-color-scheme:dark){:root{--bg:#101318;--surface:#191D24;--paper:#1F242C;--ink:#E8ECF1;--muted:#9CA6B3;--line:#2C343F;--accent:#6F8CFF;--accent-soft:#232C4A;--ok:#36C48A;--bad:#FB923C;--marker:#FFC53D;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Tahoma,"Segoe UI",system-ui,sans-serif;padding:16px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:22px;margin:0}
+button,input,textarea{font:inherit;color:inherit}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:14px}
+input,textarea{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);width:100%}
+textarea{min-height:80px;resize:vertical}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--surface);border:1.5px solid var(--line)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.btn.bad{color:var(--bad);border-color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:600;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sub{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:560px){.sub{grid-template-columns:1fr}}
+.sub img{width:100%;border-radius:12px;border:1px solid var(--line);background:var(--paper);cursor:zoom-in;display:block}
+.meta{font-size:13.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-size:16px}
+.stars{display:flex;gap:4px;direction:ltr;justify-content:flex-end}
+.stars button{width:42px;height:42px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);font-size:22px;line-height:1;cursor:pointer;color:var(--line)}
+.stars button.on{color:var(--marker);border-color:var(--marker)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chk{flex-direction:row;align-items:center;gap:8px;font-weight:600}
+.chk input{width:20px;height:20px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--ok);color:#fff}.pill.bad{background:var(--bad);color:#fff}.pill.feat{background:var(--marker);color:#1E2228}
+.empty,.msg{color:var(--muted);text-align:center;padding:24px 0}
+.err{color:var(--bad);font-weight:600}
+.ltr{direction:ltr;text-align:left}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;padding:12px;z-index:9;cursor:zoom-out}
+#zoom img{max-width:100%;max-height:100%;border-radius:8px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap" id="root"></div>
+<div id="zoom" hidden><img alt=""></div>
+<script>
+const SB_URL='https://qrbojitoclgqulokyobf.supabase.co',SB_KEY='sb_publishable_pjbLqnnn_GpmSglIsFrmZw_jeHyRi6B',K='ps-review-session';
+const LESSON={road:'Road to the horizon',box1:'Box in one-point',room:'Your first room',stairs:'Stairs in one-point',box2:'Box in two-point',house:'A simple house',glass:'Glass tower',tower:'Tower looking up',birdseye:'Building from above'};
+const root=document.getElementById('root');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let sess=null,tab='pending',rows=[],urls={},draft={},busy={},err='',loading=false;
+try{sess=JSON.parse(sessionStorage.getItem(K)||'null')}catch(e){}
+function keep(d){sess={at:d.access_token,rt:d.refresh_token,exp:d.expires_at||(Date.now()/1000+3600),email:d.user&&d.user.email};try{sessionStorage.setItem(K,JSON.stringify(sess))}catch(e){}}
+async function req(path,opt={}){
+  const h=Object.assign({apikey:SB_KEY},opt.headers||{});if(sess&&!opt.noauth)h.Authorization='Bearer '+sess.at;
+  const r=await fetch(SB_URL+path,Object.assign({},opt,{headers:h}));const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}
+  if(!r.ok)throw new Error((j&&(j.message||j.msg||j.error_description||j.error))||t||('HTTP '+r.status));return j}
+async function fresh(){if(!sess)return;if(sess.exp*1000>Date.now()+60000)return;
+  try{keep(await req('/auth/v1/token?grant_type=refresh_token',{method:'POST',noauth:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:sess.rt})}))}catch(e){logout();throw e}}
+function logout(){sess=null;try{sessionStorage.removeItem(K)}catch(e){}render()}
+function vLogin(){return `<div class="card"><h1>پنل داوری نقاشی‌ها</h1><p class="meta">با همون ایمیل و رمزی که در Supabase برای حساب داور ساختی وارد شو.</p>
+  <form id="login" class="card" style="padding:0;border:0"><label>ایمیل<input id="em" type="email" class="ltr" autocomplete="username" required></label>
+  <label>رمز<input id="pw" type="password" class="ltr" autocomplete="current-password" required></label>
+  ${err?`<p class="err">${esc(err)}</p>`:''}<button class="btn primary" type="submit">ورود</button></form></div>`}
+function vPanel(){
+  const t=[['pending','در انتظار'],['approved','تأییدشده'],['featured','نقاشی هفته'],['rejected','ردشده']];
+  let list;
+  if(loading)list='<p class="msg">در حال بارگذاری…</p>';
+  else if(err)list=`<p class="err">${esc(err)}</p>`;
+  else if(!rows.length)list=`<p class="empty">${tab==='pending'?'نقاشی جدیدی برای بررسی نیست.':'چیزی اینجا نیست.'}</p>`;
+  else list=rows.map(card).join('');
+  return `<div class="top"><h1>پنل داوری</h1><div class="row"><span class="meta ltr">${esc(sess.email||'')}</span><button class="btn" data-a="reload">تازه‌سازی</button><button class="btn" data-a="logout">خروج</button></div></div>
+  <div class="tabs">${t.map(([k,v])=>`<button data-a="tab" data-t="${k}" aria-pressed="${tab===k}">${v}</button>`).join('')}</div>${list}`}
+function card(r){
+  const d=draft[r.id]||(draft[r.id]={score:r.score||0,note:r.note||'',featured:!!r.featured});
+  const pill=r.featured?'<span class="pill feat">نقاشی هفته</span>':r.status==='approved'?'<span class="pill ok">تأییدشده</span>':r.status==='rejected'?'<span class="pill bad">ردشده</span>':'<span class="pill">در انتظار</span>';
+  const ig=r.instagram?String(r.instagram).replace(/^@+/,''):'';
+  const igLink=ig&&/^[A-Za-z0-9._]{1,30}$/.test(ig)?`<a class="ltr" href="https://instagram.com/${esc(ig)}" target="_blank" rel="noopener">@${esc(ig)}</a>`:esc(r.instagram||'');
+  const u=urls[r.image_path];
+  return `<div class="card" id="c-${r.id}"><div class="sub"><div>${u?`<img src="${esc(u)}" alt="نقاشی" data-a="zoom" data-u="${esc(u)}">`:'<p class="meta">عکس بارگذاری نشد</p>'}</div>
+  <div style="display:flex;flex-direction:column;gap:10px">${pill}
+  <div class="meta"><b>${esc(r.name)}</b> ${igLink?'· '+igLink:''}<br>درس: <span class="ltr">${esc(LESSON[r.lesson_id]||r.lesson_id)}</span><br>${new Date(r.created_at).toLocaleString('fa-IR')}</div>
+  <div><div class="meta" style="margin-bottom:4px">امتیاز</div><div class="stars">${[1,2,3,4,5].map(i=>`<button data-a="star" data-id="${r.id}" data-s="${i}" class="${i<=d.score?'on':''}" aria-label="${i} از ۵">★</button>`).join('')}</div></div>
+  <label>یادداشت برای کاربر (به انگلیسی)<textarea class="ltr" data-a="note" data-id="${r.id}" maxlength="1000" placeholder="Great vanishing point! Next time keep the vertical lines straight.">${esc(d.note)}</textarea></label>
+  <label class="chk"><input type="checkbox" data-a="feat" data-id="${r.id}" ${d.featured?'checked':''}>نقاشی هفته (+۱۰ الماس)</label>
+  <div class="row"><button class="btn ok" data-a="approve" data-id="${r.id}" ${busy[r.id]?'disabled':''}>تأیید و ثبت امتیاز</button><button class="btn bad" data-a="reject" data-id="${r.id}" ${busy[r.id]?'disabled':''}>رد</button></div>
+  </div></div></div>`}
+function render(){root.innerHTML=sess?vPanel():vLogin();const f=document.getElementById('login');if(f)f.addEventListener('submit',login)}
+async function login(e){e.preventDefault();err='';
+  const em=document.getElementById('em').value.trim(),pw=document.getElementById('pw').value;
+  try{keep(await req('/auth/v1/token?grant_type=password',{method:'POST',noauth:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})}));load()}
+  catch(x){err=/invalid/i.test(x.message)?'ایمیل یا رمز اشتباه است.':'ورود ناموفق بود: '+x.message;render()}}
+async function load(){loading=true;err='';render();
+  try{await fresh();
+    const q=tab==='featured'?'featured=is.true&order=created_at.desc':tab==='pending'?'status=eq.pending&order=created_at.asc':`status=eq.${tab}&order=reviewed_at.desc`;
+    rows=await req('/rest/v1/submissions?select=*&'+q+'&limit=60')||[];draft={};urls={};
+    const paths=rows.map(r=>r.image_path);
+    if(paths.length){const sg=await req('/storage/v1/object/sign/drawings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:3600,paths})})||[];for(const x of sg)if(x.signedURL)urls[x.path]=SB_URL+'/storage/v1'+x.signedURL}
+  }catch(x){err='خطا در بارگذاری: '+x.message}
+  loading=false;if(sess)render()}
+async function decide(id,status){
+  const d=draft[id];if(status==='approved'&&!d.score){alert('اول امتیاز (ستاره) بده.');return}
+  busy[id]=true;render();
+  try{await fresh();
+    const body={status,score:d.score||null,note:d.note.trim()||null,featured:status==='approved'&&d.featured,reviewed_at:new Date().toISOString()};
+    const out=await req('/rest/v1/submissions?id=eq.'+id,{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(body)});
+    if(!out||!out.length)throw new Error('اجازه‌ی ویرایش نداری (حساب داور درست نیست).');
+    const i=rows.findIndex(r=>r.id===id);
+    const stays=tab==='featured'?out[0].featured:out[0].status===tab;
+    if(stays){rows[i]=out[0];delete draft[id]}else rows.splice(i,1);
+  }catch(x){alert('ثبت نشد: '+x.message)}
+  busy[id]=false;render()}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id;
+  if(a==='logout')return logout();
+  if(a==='reload')return load();
+  if(a==='tab'){tab=el.dataset.t;return load()}
+  if(a==='star'){draft[id].score=+el.dataset.s;const c=document.getElementById('c-'+id);c.querySelectorAll('.stars button').forEach(b=>b.classList.toggle('on',+b.dataset.s<=draft[id].score));return}
+  if(a==='approve')return decide(id,'approved');
+  if(a==='reject')return decide(id,'rejected');
+  if(a==='zoom'){const z=document.getElementById('zoom');z.querySelector('img').src=el.dataset.u;z.hidden=false;return}
+});
+document.getElementById('zoom').addEventListener('click',e=>{e.currentTarget.hidden=true});
+document.addEventListener('input',e=>{const el=e.target;if(el.dataset.a==='note')draft[el.dataset.id].note=el.value});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset.a==='feat')draft[el.dataset.id].featured=el.checked});
+render();if(sess)load();
+</script>
+</body>
+</html>
