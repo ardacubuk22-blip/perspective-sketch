@@ -66,6 +66,13 @@ p{margin:0}
 .art .ink{stroke:var(--art-ink,var(--ink));stroke-width:2.4}
 .art .thin{stroke:var(--art-ink,var(--ink));stroke-width:1.4}
 .art .guide{stroke:var(--art-guide,var(--guide));stroke-width:1.3}
+.art .measure{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:4 3;stroke-linecap:round}
+.art .mlab{font-family:var(--mono);font-size:10px;font-weight:700;fill:var(--accent)}
+.art .guide.dash{stroke-dasharray:5 4}
+.art path.new.guide.dash,.art path.new.measure{stroke-dashoffset:0;opacity:0;animation:fade .7s ease forwards;animation-delay:calc(var(--i)*.85s)}
+.art path.new.guide.dash{stroke-dasharray:5 4}
+.art path.new.measure{stroke-dasharray:4 3}
+.art .new.mlab{opacity:0;animation:fade .5s ease forwards;animation-delay:calc(var(--i)*.85s)}
 .art .shade{fill:url(#hatch);stroke:none}
 .art .shadeLight{fill:url(#hatchLight);stroke:none}
 .hl{stroke:var(--art-ink,var(--ink));stroke-width:1.1}
@@ -289,6 +296,17 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
 .lc-m{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:12.5px;color:var(--muted);padding-inline:2px}
 .lc-m .ico{width:14px;height:14px}
 .lc-done{color:var(--ok);display:inline-flex}.lc-lock{display:inline-flex;align-items:center;gap:2px;color:var(--accent);font-weight:700}
+/* coloring */
+.colorwrap{position:relative;touch-action:none}
+.colorwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.colorwrap svg{position:relative;pointer-events:none}
+.colorart .ink,.colorart .thin{stroke:var(--ink)}
+.pal{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.sw2{aspect-ratio:1;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--line)}
+.sw2.on{box-shadow:0 0 0 3px var(--ink)}
+.ctools{display:flex;flex-direction:column;gap:10px}
+.ctools .seg2{grid-template-columns:repeat(3,1fr)}
+.row2{display:flex;flex-wrap:wrap;gap:8px}
 /* submissions */
 .field{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:600}
 .field input{font:inherit;font-weight:500;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
@@ -593,26 +611,33 @@ const KIDS={
 /* ---------- Draw anything: free-choice library ---------- */
 const E=(c,rx,ry,k='ink')=>({t:'e',c,rx,ry,k});
 const away=(V,p,s)=>[p[0]+(p[0]-V[0])*s,p[1]+(p[1]-V[1])*s];
+const M=(a,b,s='')=>({t:'m',a,b,s});
 const rectL=(a,b,c,d)=>[L(a,b),L(b,c),L(c,d),L(d,a)];
 
 function robot(){const hy=40,V=[310,hy],t=.28;
-  const A=[120,150],B=[235,150],C=[235,232],Dd=[120,232];
-  const H0=[150,150],H1=[150,92],H2=[205,92],H3=[205,150];
+  const A=[120,150],B=[235,150],C=[235,232],Dd=[120,232],q=(B[0]-A[0])/4;
+  const hx0=A[0]+q,hx1=A[0]+3*q,hs=hx1-hx0;
+  const H0=[hx0,150],H1=[hx0,150-hs],H2=[hx1,150-hs],H3=[hx1,150];
   const d=p=>lerp(p,V,t);
   const H1b=d(H1),H2b=d(H2),H3b=d(H3),B2=d(B),C2=d(C);
   const Acut=atX(A,d(A),H0[0]);
-  const leg=(x0,x1)=>{const b0=[x0,276],b1=[x1,276],tp=[x1,232],bb=lerp(b1,V,.12);return [L([x0,232],b0),L(b0,b1),L(b1,tp),L(b1,bb),L(bb,[bb[0],232])]};
+  const ly=232+hs,lw=24,lc=[A[0]+q/2,A[0]+3.5*q];
+  const leg=cx=>{const x0=cx-lw/2,x1=cx+lw/2,b0=[x0,ly],b1=[x1,ly],bb=lerp(b1,V,.12);return [L([x0,232],b0),L(b0,b1),L(b1,[x1,232]),L(b1,bb),L(bb,[bb[0],232])]};
+  const ticks=[0,1,2,3,4].map(k=>M([A[0]+k*q,143],[A[0]+k*q,157]));
   const top=lerp(lerp(H1,H2,.5),V,t/2),ant=[top[0],top[1]-26];
+  const ex=k=>hx0+hs*k,ey=k=>H1[1]+hs*k;
   return [
     {title:'Eye level and VP',text:'Draw the horizon high on the page and put the vanishing point on the right. We look down at the robot from a little above.',tip:'VP on the right = we see the right side',shapes:[G([10,hy],[390,hy]),D(V,'VP')]},
-    {title:'The body',text:'Draw a big rectangle facing you, one side at a time. This is the front of the robot body.',tip:'front faces stay flat',shapes:rectL(A,B,C,Dd)},
-    {title:'The head',text:'On top of the body, draw a smaller square: up, across, and back down. Its bottom sits on the top edge of the body.',tip:'',shapes:[L(H0,H1),L(H1,H2),L(H2,H3)]},
+    {title:'The body',text:'Draw a big rectangle facing you, one side at a time. This is the front of the robot body. Everything else is measured from it.',tip:'front faces stay flat',shapes:rectL(A,B,C,Dd)},
+    {title:'Measure: 4 equal parts',text:'Find the middle of the top edge, then the middle of each half. Now the top edge is in 4 equal parts. The head will sit on the 2 middle parts.',tip:'measure, do not guess',shapes:ticks},
+    {title:'The head is a square',text:'The head is as wide as 2 parts. Measure that width with your ruler and mark the same height above the body. Then draw the head: up, across and back down.',tip:'height = width',shapes:[M([hx0,163],[hx1,163],'width'),M([hx0-12,150],[hx0-12,150-hs],'= width'),L(H0,H1),L(H1,H2),L(H2,H3)]},
     {title:'Head lines to the VP',text:'Put your ruler on the VP and draw light lines to three corners of the head: top left, top right and bottom right.',tip:'start every guide at the VP',shapes:[G(V,H1),G(V,H2),G(V,H3)]},
-    {title:'Give the head depth',text:'Choose how deep the head is. Draw the back edges: one across at the top, one straight down on the right. Then ink the three depth edges.',tip:'back edges are parallel to the front ones',shapes:[L(H1b,H2b),L(H2b,H3b),L(H1,H1b),L(H2,H2b),L(H3,H3b)]},
+    {title:'Give the head depth',text:'Choose how deep the head is. Draw the back edges: one across at the top, one straight down on the right. Then ink the three depth edges along the guide lines.',tip:'back edges are parallel to the front ones',shapes:[L(H1b,H2b),L(H2b,H3b),L(H1,H1b),L(H2,H2b),L(H3,H3b)]},
     {title:'Body lines to the VP',text:'Now draw light lines from the VP to the top right and bottom right corners of the body, and to the top left corner.',tip:'',shapes:[G(V,B),G(V,C),G(V,A)]},
     {title:'Give the body depth',text:'Use the same depth as the head. Draw the back edge across the top and the back edge straight down on the right. Ink the depth edges. The head hides part of the top.',tip:'stop the line where the head covers it',shapes:[L(H3b,B2),L(B2,C2),L(B,B2),L(C,C2),L(A,Acut)]},
-    {title:'Legs',text:'Under the body, draw two short legs. Each one is a small rectangle with a little side that points to the VP.',tip:'',shapes:[...leg(140,165),...leg(190,215)]},
-    {title:'The face',text:'Draw two square eyes and a straight mouth on the front of the head.',tip:'faces on the front stay flat too',shapes:[...rectL([160,106],[173,106],[173,119],[160,119]),...rectL([182,106],[195,106],[195,119],[182,119]),L([163,136],[192,136])]},
+    {title:'Measure the legs',text:'The legs are as long as the head is tall. Measure the head height and mark the same length under the body. Each leg sits in the middle of an outer part of the body.',tip:'leg = 1 head',shapes:[M([hx0-12,150-hs],[hx0-12,150],'1 head'),M([A[0]-12,232],[A[0]-12,ly],'1 head'),...[1,4].map(k=>M([A[0]+(k-.5)*q,226],[A[0]+(k-.5)*q,238]))]},
+    {title:'Draw the legs',text:'Draw each leg as a small rectangle facing you. Its bottom edge on the right side goes toward the VP: follow the dashed line from the VP.',tip:'every edge that goes back points to the VP',shapes:[...leg(lc[0]),...leg(lc[1])]},
+    {title:'The face',text:'Divide the head into thirds with light marks. Put two square eyes on the top third and a straight mouth on the bottom third.',tip:'faces on the front stay flat too',shapes:[...rectL([ex(.2),ey(.24)],[ex(.42),ey(.24)],[ex(.42),ey(.46)],[ex(.2),ey(.46)]),...rectL([ex(.58),ey(.24)],[ex(.8),ey(.24)],[ex(.8),ey(.46)],[ex(.58),ey(.46)]),L([ex(.25),ey(.75)],[ex(.75),ey(.75)])]},
     {title:'Antenna and buttons',text:'From the middle of the head top, draw a straight antenna with a small ball. Add a panel with buttons on the body.',tip:'',shapes:[L(top,ant),E([ant[0],ant[1]-5],5,5),...rectL([140,168],[215,168],[215,214],[140,214]).map(x=>({...x,k:'thin'})),E([158,191],7,7,'thin'),E([178,191],7,7,'thin'),E([198,191],7,7,'thin')]},
     {title:'Shade it',text:'Shade the right sides and give the tops a light tone. Your box robot is ready!',tip:'light comes from the left',shapes:[P([H2,H2b,H3b,H3]),P([B,B2,C2,C]),P([H1,H2,H2b,H1b],'shadeLight'),P([H3,H3b,B2,B],'shadeLight')]}
   ]}
@@ -746,13 +771,15 @@ Object.assign(KIDS,{
   robot:{title:'Box Robot',steps:[
     ['Line and dot','Draw the sky line up high and put the magic dot on the right side.','we look down at the robot'],
     ['The tummy','Draw a big box shape facing you, one side at a time. That is the robot tummy!',''],
-    ['The head','On top, draw a smaller square for the head: up, across and down.',''],
+    ['Cut it in 4','Find the middle of the top line, then the middle of each half. Now it has 4 equal parts.','measure, do not guess'],
+    ['A square head','The head is 2 parts wide, and just as tall as it is wide. Draw it on top!','tall = wide'],
     ['Head lines','Put your ruler on the magic dot. Draw soft lines to three corners of the head.','start at the dot'],
     ['Make the head fat','Draw the back of the head along the soft lines. Now the head is a real box!',''],
     ['Tummy lines','Draw soft lines from the magic dot to three corners of the tummy.',''],
     ['Make the tummy fat','Draw the back of the tummy the same way. The head hides a little bit of it.','stop where the head is'],
-    ['Legs','Draw two little legs under the tummy. Each one gets a tiny side too.',''],
-    ['A happy face','Draw two square eyes and a mouth.',''],
+    ['Measure the legs','The legs are as long as the head is tall. Measure the head and mark the same size under the tummy.','leg = 1 head'],
+    ['Draw the legs','Draw two little legs. The bottom line on the side goes to the magic dot. Follow the dotted line!',''],
+    ['A happy face','Draw two square eyes near the top of the head and a mouth near the bottom.',''],
     ['Antenna and buttons','Add an antenna with a ball on top, and three round buttons on the tummy.','beep boop!'],
     ['Color it','Color the right sides darker. Your robot is alive!','']]},
   train:{title:'Choo Choo Train',steps:[
@@ -815,6 +842,28 @@ Object.assign(KIDS,{
 });
 
 orient(LIB);
+/* every edge that goes back in depth gets a dashed guide from its VP, unless one is already drawn */
+function autoGuides(list){for(const l of list){
+  const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
+  const seen=[];
+  l.steps.forEach(st=>{const add=[];
+    for(const sh of st.shapes){if(sh.t!=='l')continue;seen.push(sh);if(sh.k==='guide')continue;
+      const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
+      if(Math.abs(dy)<.6&&len>300)continue;
+      for(const v of vps){
+        if(Math.abs(dx*(v[1]-sh.a[1])-dy*(v[0]-sh.a[0]))/len>=1.6)continue;
+        const da=Math.hypot(sh.a[0]-v[0],sh.a[1]-v[1]),db=Math.hypot(sh.b[0]-v[0],sh.b[1]-v[1]);if(Math.min(da,db)<1.5)break;
+        const near=da<db?sh.a:sh.b,target=Math.min(da,db);
+        const iv=[];for(const o of seen.concat(add)){const odx=o.b[0]-o.a[0],ody=o.b[1]-o.a[1],ol=Math.hypot(odx,ody);if(ol<1)continue;
+          const on=p=>Math.abs(dx*(p[1]-sh.a[1])-dy*(p[0]-sh.a[0]))/len<1.6;if(!on(o.a)||!on(o.b))continue;
+          const sd=p=>{const d=Math.hypot(p[0]-v[0],p[1]-v[1]);return ((p[0]-v[0])*(near[0]-v[0])+(p[1]-v[1])*(near[1]-v[1]))<-1?-d:d};
+          const x1=sd(o.a),x2=sd(o.b);iv.push([Math.min(x1,x2),Math.max(x1,x2)])}
+        iv.sort((p,q)=>p[0]-q[0]);let reach=1.5;for(const [a0,b0] of iv){if(a0<=reach+40)reach=Math.max(reach,b0)}
+        if(reach<target-2)add.push(Object.assign(G(v,near),{auto:true}));
+        break}}
+    if(add.length)st.shapes.unshift(...add)})}}
+autoGuides(LESSONS);autoGuides(LIB);
+
 const KUNITS={1:['Level 1 · One magic dot','The magic dot','Roads, boxes and rooms with one dot.'],2:['Level 2 · Two magic dots','Blocks and houses','Two dots make blocks and houses.'],3:['Level 3 · The sky dot','Super tall','A dot in the sky for giant towers.']};
 const isKid=()=>S.mode==='kid';
 const LT=l=>isKid()?KIDS[l.id].title:l.title;
@@ -826,7 +875,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=7');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=8');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 /* line types: every new line is named as vertical, horizontal (parallel to the horizon), going to a VP, or slanted */
 function lineKinds(l,i){
@@ -834,7 +883,7 @@ function lineKinds(l,i){
   const c={horizon:0,vert:0,hor:0,vp:{},slant:0,round:0};
   for(const sh of l.steps[i].shapes){
     if(sh.t==='e'){c.round++;continue}
-    if(sh.t!=='l')continue;
+    if(sh.t!=='l'||sh.auto)continue;
     const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
     if(Math.abs(dy)<.6&&sh.k==='guide'&&len>300){c.horizon++;continue}
     const hit=vps.find(v=>Math.abs(dx*(v.p[1]-sh.a[1])-dy*(v.p[0]-sh.a[0]))/len<1.6);
@@ -987,6 +1036,52 @@ function sendPanel(l){
   <p class="fine2">${isKid()?'Ask a grown-up before you send. ':''}Only Arda sees your photo. If it is picked as the drawing of the week, it may be shown in the app.</p>
   <button class="btn primary wide" data-act="send"${view.sending?' disabled':''}>${view.sending?'Sending…':'Send for review'}</button></section>`;
 }
+/* ---------- optional coloring: kids pick their own colors ---------- */
+const PAL=['#FF5A5F','#FF9F1C','#FFD23F','#3BCEAC','#0EAD69','#4D96FF','#2D5BFF','#9B5DE5','#F15BB5','#8D6E63','#B0BEC5','#1E2228'];
+let col={tool:'fill',color:PAL[3],undo:[],wall:null};
+function vColor(){const l=curL();
+  return `<div class="mhead"><button class="iconbtn" data-act="colorback" aria-label="Back">${I.back}</button><h1>${isKid()?'Color it your way':'Color your drawing'}</h1></div>
+  <p class="fine2">${isKid()?'Pick any color you like and tap a part to fill it. There is no wrong color!':'Optional: pick colors and tap an area to fill it, or switch to the brush.'}</p>
+  <div class="paper colorwrap" id="cw"><canvas id="cc" width="800" height="600"></canvas>${art(l,l.steps.length-1,'color')}</div>
+  <div class="pal" role="radiogroup" aria-label="Colors">${PAL.map(c=>`<button class="sw2${c===col.color?' on':''}" data-act="pick" data-c="${c}" style="background:${c}" aria-label="Color ${c}" aria-checked="${c===col.color}" role="radio"></button>`).join('')}</div>
+  <div class="ctools"><div class="seg2">${[['fill','Fill'],['brush','Brush'],['erase','Eraser']].map(([k,t])=>`<button data-act="ctool" data-t="${k}" aria-pressed="${col.tool===k}">${t}</button>`).join('')}</div>
+  <div class="row2"><button class="btn ghost small" data-act="cundo">${I.replay}Undo</button><button class="btn ghost small" data-act="cclear">Clear</button><button class="btn primary small" data-act="csave">${I.dl}Save picture</button></div></div>`}
+function colorLinesSVG(stroke,w){const sv=document.querySelector('#cw svg');if(!sv)return '';const c=sv.cloneNode(true);c.setAttribute('width','800');c.setAttribute('height','600');c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  c.querySelectorAll('path').forEach(p=>{p.setAttribute('fill','none');p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',p.classList.contains('thin')?w*.7:w);p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');p.removeAttribute('class');p.removeAttribute('pathLength')});
+  return new XMLSerializer().serializeToString(c)}
+function svgImg(str){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(str)})}
+async function colorInit(){const cv=document.getElementById('cc');if(!cv)return;col.undo=[];
+  try{const im=await svgImg(colorLinesSVG('#000',2.2));const w=document.createElement('canvas');w.width=800;w.height=600;const x=w.getContext('2d');x.drawImage(im,0,0,800,600);col.wall=x.getImageData(0,0,800,600).data}catch(e){col.wall=null}
+  let drawing=false,last=null;const ctx=cv.getContext('2d');
+  const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)*800/r.width,(e.clientY-r.top)*600/r.height]};
+  cv.onpointerdown=e=>{e.preventDefault();pushUndo();const p=pos(e);
+    if(col.tool==='fill'){flood(ctx,Math.floor(p[0]),Math.floor(p[1]),col.color);return}
+    drawing=true;last=p;cv.setPointerCapture(e.pointerId);stroke(ctx,p,p)};
+  cv.onpointermove=e=>{if(!drawing)return;const p=pos(e);stroke(ctx,last,p);last=p};
+  cv.onpointerup=cv.onpointercancel=()=>{drawing=false}}
+function stroke(ctx,a,b){ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=col.tool==='erase'?34:18;
+  if(col.tool==='erase')ctx.globalCompositeOperation='destination-out';else{ctx.strokeStyle=col.color;ctx.globalAlpha=.85}
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0]+.01,b[1]);ctx.stroke();ctx.restore()}
+function pushUndo(){const cv=document.getElementById('cc');col.undo.push(cv.getContext('2d').getImageData(0,0,800,600));if(col.undo.length>15)col.undo.shift()}
+function flood(ctx,x0,y0,hex){if(x0<0||y0<0||x0>=800||y0>=600)return;
+  const img=ctx.getImageData(0,0,800,600),d=img.data,wall=col.wall,Wd=800,Ht=600;
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  const i0=(y0*Wd+x0)*4;if(wall&&wall[i0+3]>90)return;
+  const tr=d[i0],tg=d[i0+1],tb=d[i0+2],ta=d[i0+3];if(ta>200&&Math.abs(tr-r)<4&&Math.abs(tg-g)<4&&Math.abs(tb-b)<4)return;
+  const same=i=>(!wall||wall[i+3]<=90)&&Math.abs(d[i]-tr)<30&&Math.abs(d[i+1]-tg)<30&&Math.abs(d[i+2]-tb)<30&&Math.abs(d[i+3]-ta)<60;
+  const seen=new Uint8Array(Wd*Ht),st=[[x0,y0]];
+  while(st.length){let [x,y]=st.pop();let i=y*Wd+x;while(x>=0&&!seen[i]&&same(i*4)){x--;i--}x++;i++;let up=false,dn=false;
+    while(x<Wd&&!seen[i]&&same(i*4)){seen[i]=1;const k=i*4;d[k]=r;d[k+1]=g;d[k+2]=b;d[k+3]=255;
+      if(y>0){const j=i-Wd;if(!seen[j]&&same(j*4)){if(!up){st.push([x,y-1]);up=true}}else up=false}
+      if(y<Ht-1){const j=i+Wd;if(!seen[j]&&same(j*4)){if(!dn){st.push([x,y+1]);dn=true}}else dn=false}
+      x++;i++}}
+  /* grow 2px under the lines so no white halo is left */
+  for(let pass=0;pass<2;pass++){const add=[];for(let y=1;y<Ht-1;y++)for(let x=1;x<Wd-1;x++){const i=y*Wd+x;if(seen[i])continue;if(!(wall&&wall[i*4+3]>90))continue;if(seen[i-1]||seen[i+1]||seen[i-Wd]||seen[i+Wd])add.push(i)}
+    for(const i of add){seen[i]=1;const k=i*4;d[k]=r;d[k+1]=g;d[k+2]=b;d[k+3]=255}}
+  ctx.putImageData(img,0,0)}
+async function colorSave(){try{const cv=document.getElementById('cc');const out=document.createElement('canvas');out.width=800;out.height=600;const x=out.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,800,600);x.drawImage(cv,0,0);const im=await svgImg(colorLinesSVG('#1E2228',2.4));x.drawImage(im,0,0,800,600);
+  out.toBlob(b=>{if(!b){toast('Could not save the picture');return}const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(curL().id||'drawing')+'-colored.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('Picture saved')},'image/png')}catch(e){toast('Could not save the picture')}}
 function vMine(){
   const st=r=>r.featured?['feat','Drawing of the week']:r.status==='approved'?['approved','Reviewed']:r.status==='rejected'?['rejected','Try again']:['','Waiting for Arda'];
   let body;
@@ -1007,14 +1102,18 @@ function art(lesson,upto,mode){
     const isNew=mode==='step'&&i===upto;let j=0;
     for(const s of lesson.steps[i].shapes){
       const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
-      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
+      if(s.t==='m'){if(mode!=='step'||upto-i>1)continue;const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],ln=Math.hypot(dx,dy)||1,nx=-dy/ln*5,ny=dx/ln*5;
+        lines+=`<path d="M${f(s.a)}L${f(s.b)}M${(s.a[0]+nx).toFixed(1)} ${(s.a[1]+ny).toFixed(1)}L${(s.a[0]-nx).toFixed(1)} ${(s.a[1]-ny).toFixed(1)}M${(s.b[0]+nx).toFixed(1)} ${(s.b[1]+ny).toFixed(1)}L${(s.b[0]-nx).toFixed(1)} ${(s.b[1]-ny).toFixed(1)}" class="sh measure${cls}"${st}/>`;
+        if(s.s&&mode==='step'){const mx=(s.a[0]+s.b[0])/2,my=(s.a[1]+s.b[1])/2,vert=Math.abs(dx)<Math.abs(dy);top+=`<text class="mlab${cls}" x="${(mx+(vert?(mx<200?-6:6):0)).toFixed(1)}" y="${(my+(vert?4:12)).toFixed(1)}" text-anchor="${vert?(mx<200?'end':'start'):'middle'}"${st}>${isKid()?s.s.replace('= width','= wide').replace('width','wide'):s.s}</text>`}continue}
+      if(mode==='color'&&((s.t!=='l'&&s.t!=='e')||s.k==='guide'))continue;
+      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
       else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
       else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
     }
   }
-  return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}${mode==='color'?' colorart':''}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
 }
 const curL=()=>(view.lib?LIB:LESSONS)[view.i];
 function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
@@ -1085,6 +1184,7 @@ function vComplete(){
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
   ${sendPanel(l)}
+  <section class="panel"><h3>${isKid()?'Color it your way':'Color it (optional)'}</h3><p class="fine2">${isKid()?'Pick your own colors for every part. Tap to fill!':'Try colors on the finished drawing, then save the picture.'}</p><button class="btn ghost" data-act="color">${I.pencil}${isKid()?'Start coloring':'Open coloring'}</button></section>
   ${l.lib?'':`<section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>`}
   <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
@@ -1138,10 +1238,11 @@ const app=document.getElementById('app');
 function render(scrollTop,quiet){
   document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
-  app.classList.toggle('full',name==='lesson'||name==='complete');
+  app.classList.toggle('full',name==='lesson'||name==='complete'||name==='color');
   setTabs(name==='mine'?'profile':name);
-  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='draw'?vDraw():name==='challenge'?vChallenge():name==='mine'?vMine():vProfile();
+  app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='draw'?vDraw():name==='challenge'?vChallenge():name==='mine'?vMine():name==='color'?vColor():vProfile();
   if(name==='lesson'&&!quiet)narrate(curL(),view.s);
+  if(name==='color')colorInit();
   if(scrollTop)window.scrollTo(0,0);
 }
 let toastT;
@@ -1189,6 +1290,13 @@ document.addEventListener('click',e=>{
     const before=earned();S.gems-=pp.cost;S.owned.push(pp.id);S.paper=pp.id;save();render();toast(`${pp.name} unlocked`);badgeToast(newBadges(before));return}
   if(a==='mine'){hush();view={name:'mine'};mine.loading=true;mine.err='';render(true);loadMine(false);return}
   if(a==='send'){doSend();return}
+  if(a==='color'){hush();view=Object.assign({},view,{name:'color'});render(true);track('color/'+curL().id);return}
+  if(a==='colorback'){view=Object.assign({},view,{name:'complete'});render(true);return}
+  if(a==='pick'){col.color=el.dataset.c;if(col.tool==='erase')col.tool='fill';document.querySelectorAll('.sw2').forEach(b=>{const on=b===el;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===col.tool));return}
+  if(a==='ctool'){col.tool=el.dataset.t;document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b===el));return}
+  if(a==='cundo'){const cv=document.getElementById('cc');const u=col.undo.pop();if(u&&cv)cv.getContext('2d').putImageData(u,0,0);return}
+  if(a==='cclear'){const cv=document.getElementById('cc');if(cv){pushUndo();cv.getContext('2d').clearRect(0,0,800,600)}return}
+  if(a==='csave'){colorSave();return}
   if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
   if(a==='applycode'){doApply();return}
   if(a==='copyinvite'){const txt=document.getElementById('invtext').textContent;
