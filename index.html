@@ -809,6 +809,60 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .cmp ul{margin:6px 0 0;padding:0 0 0 16px;font-size:13px;line-height:1.45;display:flex;flex-direction:column;gap:4px}
 @media (max-width:360px){.cmp{grid-template-columns:1fr}}
 @media (max-width:360px){.top .chip.pro{display:none}.brand small{display:none}.brand{font-size:14.5px}.brand svg{width:28px;height:28px}.stats{gap:4px}.chip{padding:4px 7px;font-size:12.5px;gap:4px}.top{gap:8px}.brand>div{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+/* ================= Learn v3: image-led, minimal text ================= */
+.app.learnv{gap:16px}
+.hero-next{display:flex;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--sh-2);padding:10px 10px 14px}
+.hn-art{position:relative;display:block;width:100%;padding:0;border-radius:var(--r-lg);cursor:pointer}
+.hn-art .art{width:100%}
+.hn-tag{position:absolute;left:10px;top:10px;background:var(--accent);color:var(--accent-ink);font:700 12px var(--body);padding:4px 10px;border-radius:999px;box-shadow:var(--sh-1)}
+.hn-q{position:absolute;right:10px;top:10px;display:inline-flex;align-items:center;gap:3px;background:var(--surface);color:var(--accent);font:700 12px var(--body);padding:4px 9px;border-radius:999px;box-shadow:var(--sh-1)}
+.hn-q .ico{width:13px;height:13px}
+.hn-body{display:flex;flex-direction:column;gap:10px;padding:0 4px}
+.hn-body h1{font-size:24px;text-align:center}
+.hn-cta{min-height:52px;font-size:16.5px}
+.mtile{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;text-align:start;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--new);border-radius:var(--r-md);padding:8px 12px 8px 8px;box-shadow:var(--sh-1);color:var(--ink);width:100%}
+.mtile.mdone{border-left-color:var(--ok);opacity:.8}
+.mt-art{display:block;border-radius:10px;overflow:hidden;min-height:48px;background:var(--surface-2)}
+.mt-txt{display:flex;flex-direction:column;min-width:0}
+.mt-txt small{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--new) 85%,var(--ink))}
+.mt-txt b{font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt-end{display:inline-flex;align-items:center;gap:3px;font:700 13px var(--body);color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:5px 10px}
+.mt-end .ico{width:14px;height:14px}
+.mtile.mdone .mt-end{color:var(--ok);background:var(--ok-soft)}
+.lunit{display:flex;flex-direction:column;gap:10px}
+.lu-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.lu-head h2{font-size:20px}
+.lu-c{font:700 12px var(--mono);color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.lunit.u1 .lu-head h2::before,.lunit.u2 .lu-head h2::before,.lunit.u3 .lu-head h2::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:middle;background:var(--accent)}
+.lunit.u2 .lu-head h2::before{background:var(--new)}.lunit.u3 .lu-head h2::before{background:var(--pink)}
+.lgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ltile{display:flex;flex-direction:column;gap:6px;background:none;border:0;padding:0;text-align:start;color:var(--ink);min-width:0}
+.lt-art{position:relative;display:block;border-radius:var(--r-md);box-shadow:var(--sh-1);transition:transform .15s ease,box-shadow .15s ease}
+.ltile:hover .lt-art{transform:translateY(-2px);box-shadow:var(--sh-2)}
+.lt-t{font-size:13.5px;font-weight:650;line-height:1.25;padding:0 2px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.lt-b{position:absolute;right:7px;bottom:7px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 13px var(--display);box-shadow:var(--sh-1)}
+.lt-b .ico{width:16px;height:16px;stroke-width:2.4}
+.lt-b.ok{background:var(--ok);color:#fff}
+.lt-b.cur{background:var(--accent);color:var(--accent-ink)}
+.lt-b.lk{background:var(--surface);color:var(--muted);border:1px solid var(--line-2)}
+.lt-new{position:absolute;left:7px;top:7px;background:var(--surface);color:color-mix(in srgb,var(--new) 85%,var(--ink));font:700 9.5px var(--mono);letter-spacing:.06em;padding:2px 6px;border-radius:999px;box-shadow:var(--sh-1)}
+.ltile.current .lt-art{box-shadow:0 0 0 3px var(--accent),var(--sh-2)}
+.ltile.locked .lt-art .art{opacity:.45;filter:grayscale(1)}
+.ltile.locked .lt-t{color:var(--muted)}
+.lt-soon{aspect-ratio:4/3;display:grid;place-items:center;border:1.5px dashed var(--line-2);border-radius:var(--r-md);color:var(--muted);font:700 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;box-shadow:none;background:transparent}
+.codelink{align-self:center;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--accent);font-weight:650;font-size:14px;padding:8px;text-decoration:underline;text-underline-offset:3px}
+.codelink .ico{width:15px;height:15px}
+@media (min-width:720px){
+  .hero-next{display:grid;grid-template-columns:1.3fr 1fr;align-items:center;gap:22px;padding:14px}
+  .hn-body h1{font-size:30px;text-align:start}
+  .lgrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+}
+.onb-art{border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+.onb-hero h1{font-size:28px;max-width:none}
+.onb .who{grid-template-columns:1fr 1fr;gap:10px}
+.onb .whobtn{grid-template-columns:1fr;padding:8px;gap:8px;text-align:center}
+.onb .whobtn span{display:none}
+.onb .whobtn b{font-size:17px;padding-bottom:4px}
 </style>
 </head>
 <body>
@@ -1672,32 +1726,30 @@ function setTabs(name){
 
 /* ---------- views ---------- */
 function vLearn(){
-  const ni=nextIdx();let cont;
-  const doneN=LESSONS.filter(l=>S.done[l.id]).length;
-  if(ni<0)cont=`<section class="nextup"><div class="nu-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="nu-body"><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><p class="nu-meta">${doneN} of ${LESSONS.length} lessons finished</p></div><button class="btn ghost wide nu-cta" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></section>`;
-  else{const l=LESSONS[ni],locked=l.pro&&!isPro(),u=UNITS.find(x=>x.n===l.unit),ue=isKid()?KUNITS[u.n][0]:u.eyebrow;
-    cont=`<section class="nextup"><div class="nu-art paper">${art(l,l.steps.length-1,'thumb')}</div><div class="nu-body">
-      <p class="eyebrow">${isNew(l)?'<span class="newpill">NEW</span> ':''}Next up · Lesson ${ni+1}</p>
-      <h2>${esc(LT(l))}</h2>
-      <p class="nu-meta"><span>${esc(ue)}</span><span>${l.steps.length} steps</span><span>${l.mins} min</span><span class="nu-gem">${I.gem}+${gemsFor(l)}</span></p>
-</div>
-      <button class="btn primary wide nu-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></section>`}
-  let num=0;
+  const ni=nextIdx(),q=quest();
+  const warn=(onTrial()&&daysLeft()<=2)||trialOver()?trialBanner():'';
+  let hero;
+  if(ni<0)hero=`<section class="hero-next"><div class="hn-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="hn-body"><h1>${isKid()?'You finished every lesson!':'Every lesson done'}</h1><button class="btn primary wide hn-cta" data-act="tab" data-tab="draw">${I.pencil}${isKid()?'Pick a new drawing':'Open the drawing studio'}</button></div></section>`;
+  else{const l=LESSONS[ni],locked=l.pro&&!isPro(),isQ=q.kind==='lesson'&&q.id===l.id&&!q.done;
+    hero=`<section class="hero-next"><button class="hn-art paper" data-act="open" data-i="${ni}" aria-label="Open ${esc(LT(l))}">${art(l,l.steps.length-1,'thumb')}<span class="hn-tag">${ni===0?(isKid()?'Start here':'Start here'):'Next'}</span>${isQ?`<span class="hn-q">${I.gem}+${QUEST_GEMS}</span>`:''}</button>
+    <div class="hn-body"><h1>${esc(LT(l))}</h1><button class="btn primary wide hn-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+  let mission='';
+  if(!(q.kind==='lesson'&&q.id===(LESSONS[ni]||{}).id)){
+    const ml=q.kind==='day'?null:(q.kind==='lib'?LIB:LESSONS).find(z=>z.id===q.id);
+    const hl=q.kind==='day'&&DAYHELP[q.d]?[...LESSONS,...LIB].find(z=>z.id===DAYHELP[q.d]):null;
+    const thumb=ml||hl;const go=q.kind==='day'?`data-act="questday" data-d="${q.d}"`:`data-act="${q.kind==='lib'?'lib':'open'}" data-i="${q.i}"`;
+    mission=`<button class="mtile${q.done?' mdone':''}" ${q.done?'disabled':go}><span class="mt-art paper">${thumb?art(thumb,thumb.steps.length-1,'thumb'):''}</span><span class="mt-txt"><small>${isKid()?"Today's mission":"Today's mission"}</small><b>${q.kind==='day'?`Challenge day ${q.d}`:esc(LT(ml))}</b></span><span class="mt-end">${q.done?I.check:`${I.gem}+${QUEST_GEMS}`}</span></button>`}
+  else if(q.done)mission='';
   const units=UNITS.map(u=>{
-    const list=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);
-    const ud=list.filter(x=>S.done[x.l.id]).length,total=list.length;
-    const items=list.map(({l,i})=>{num++;
-      const st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
-      const dot=st==='done'?I.check:st==='current'?(i+1):(pro?I.gem:I.lock);
-      const cta=st==='done'?`<span class="jcta jdone">${I.check}Done</span>`:st==='current'?`<span class="jcta jgo">${ni===0&&i===0?'Start':'Continue'}${I.next}</span>`:`<span class="jcta jlock">${pro?'Pro':'Locked'}</span>`;
-      return `<li class="jrow ${st}"><button class="jbtn" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})"><span class="jdot">${dot}</span><span class="jtxt"><b>${esc(LT(l))}</b><small>Lesson ${i+1} · ${l.mins} min · <span class="jgem">${I.gem}+${gemsFor(l)}</span>${isNew(l)?' <span class="newpill">NEW</span>':''}</small></span>${cta}</button></li>`}).join('');
-    const soon=u.soon.map(s=>`<li class="jrow soon"><button class="jbtn" data-act="soon" aria-label="${esc(s)}: coming soon"><span class="jdot">${I.lock}</span><span class="jtxt"><b>${esc(s)}</b><small>Coming soon</small></span><span class="jcta jlock">Soon</span></button></li>`).join('');
-    const [ue,ut,ux]=isKid()?KUNITS[u.n]:[u.eyebrow,u.title,u.text];
-    const sample=list[list.length-1].l;
-    return `<section class="unit ${u.cls}"><div class="unit-head"><div class="uh-txt"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p>
-      <div class="uprog"><div class="ubar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${ud}" aria-label="${ud} of ${total} lessons done"><span style="width:${total?ud/total*100:0}%"></span></div><span class="ucount">${ud}/${total}</span></div></div>
-      <div class="uh-art paper" aria-hidden="true">${art(sample,sample.steps.length-1,'thumb')}</div></div><ol class="journey">${items}${soon}</ol></section>`}).join('');
-  return header()+questCard()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
+    const list=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);const ud=list.filter(x=>S.done[x.l.id]).length;
+    const cards=list.map(({l,i})=>{const st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
+      const badge=st==='done'?`<span class="lt-b ok">${I.check}</span>`:st==='current'?`<span class="lt-b cur">${i+1}</span>`:`<span class="lt-b lk">${pro?I.gem:I.lock}</span>`;
+      return `<button class="ltile ${st}" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})"><span class="lt-art paper">${art(l,l.steps.length-1,'thumb')}${badge}${isNew(l)?'<span class="lt-new">NEW</span>':''}</span><span class="lt-t">${esc(LT(l))}</span></button>`}).join('');
+    const soon=u.soon.map(s=>`<button class="ltile soon" data-act="soon" aria-label="${esc(s)}: coming soon"><span class="lt-art lt-soon">Soon</span><span class="lt-t">${esc(s)}</span></button>`).join('');
+    const ut=isKid()?KUNITS[u.n][1]:u.title;
+    return `<section class="lunit ${u.cls}"><div class="lu-head"><h2>${ut}</h2><span class="lu-c">${ud}/${list.length}</span></div><div class="lgrid">${cards}${soon}</div></section>`}).join('');
+  const code=!S.pro&&!S.trialCode?`<button class="codelink" data-act="paywall" data-focus="code">${I.gem}${isKid()?'Have a code? Ask a grown-up':'Have a code from Instagram?'}</button>`:'';
+  return header()+warn+hero+mission+units+code;
 }
 function vpCount(l){const s=new Set();l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))s.add(sh.label)}));return s.size}
 function levelOf(l){const n=vpCount(l);return n>=3?{k:3,t:'Advanced',kt:'Hard',p:'3-point'}:n===2?{k:2,t:'Intermediate',kt:'Medium',p:'2-point'}:{k:1,t:'Beginner',kt:'Easy',p:'1-point'}}
@@ -1723,12 +1775,8 @@ function vOnboard(){
   const demo=LESSONS.find(l=>l.id==='box1'),demo2=LESSONS.find(l=>l.id==='house');
   return `<div class="onb"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
   ${onTrial()?`<section class="banner gift"><p><b>Code ${esc(S.trialCode)} applied.</b> You have 15 days of Pro, free.</p></section>`:''}
-  <section class="onb-hero"><p class="eyebrow">Welcome</p><h1>Learn perspective drawing, one line at a time</h1>
-  <p class="studio-sub">Draw on real paper. The app shows every line, step by step, with a voice that guides you.</p>
-  <ul class="onb-why"><li><i>${I.pencil}</i><span><b>${LESSONS.length} lessons + ${LIB.length} studio drawings</b>From a simple road to three-point towers.</span></li>
-  <li><i>${I.flame}</i><span><b>Daily mission and a 30-day challenge</b>About 10 minutes a day builds the habit.</span></li>
-  <li><i>${I.star}</i><span><b>Real feedback from Arda</b>Send a photo of your drawing and get a score and a note.</span></li></ul></section>
-  <h2 class="onb-q">Who is learning to draw?</h2>
+  <section class="onb-hero"><div class="onb-art paper">${art(LIB.find(l=>l.id==='street'),LIB.find(l=>l.id==='street').steps.length-1,'thumb')}</div><h1>Learn to draw in perspective</h1><p class="studio-sub">On real paper, one line at a time.</p></section>
+  <h2 class="onb-q">Who is drawing?</h2>
   <div class="who">
     <button class="whobtn" data-act="mode" data-mode="adult"><div class="paper">${art(demo,demo.steps.length-1,'thumb')}</div><div><b>Me</b><span>Teens and adults. Clear steps, real perspective rules.</span></div></button>
     <button class="whobtn kidpick" data-act="mode" data-mode="kid"><div class="paper">${art(demo2,demo2.steps.length-1,'thumb')}</div><div><b>My child (7–12)</b><span>Simple words, colors and a friendly voice.</span></div></button>
