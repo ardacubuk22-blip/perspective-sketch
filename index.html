@@ -63,12 +63,12 @@ p{margin:0}
 .paper{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;background-position:-1px -1px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .art{display:block;width:100%;height:auto;aspect-ratio:4/3}
 .art .sh{fill:none;stroke-linecap:round;stroke-linejoin:round}
-.art .ink{stroke:var(--ink);stroke-width:2.4}
-.art .thin{stroke:var(--ink);stroke-width:1.4}
-.art .guide{stroke:var(--guide);stroke-width:1.3}
+.art .ink{stroke:var(--art-ink,var(--ink));stroke-width:2.4}
+.art .thin{stroke:var(--art-ink,var(--ink));stroke-width:1.4}
+.art .guide{stroke:var(--art-guide,var(--guide));stroke-width:1.3}
 .art .shade{fill:url(#hatch);stroke:none}
 .art .shadeLight{fill:url(#hatchLight);stroke:none}
-.hl{stroke:var(--ink);stroke-width:1.1}
+.hl{stroke:var(--art-ink,var(--ink));stroke-width:1.1}
 .art .dot circle{fill:var(--vp)}
 .art .lab{font-family:var(--hand);font-size:19px;fill:var(--vp)}
 .art .lab.hor{fill:var(--guide)}
@@ -225,6 +225,36 @@ a.btn{text-decoration:none;color:inherit}
 .brand>div{min-width:0}
 .brand small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:420px){.stats{gap:5px}.chip{padding:5px 8px;font-size:13px}.brand{font-size:15px;gap:8px}.brand svg{width:30px;height:30px}}
+.sw,.paper{position:relative}
+.sw{display:block;width:100%;aspect-ratio:4/3;border-radius:10px;border:1px solid var(--line);background-size:14px 14px}
+.sw-grid,body[data-paper="grid"] .paper{}
+.sw-grid{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px)}
+.sw-dots,body[data-paper="dots"] .paper{background-color:var(--paper);background-image:radial-gradient(var(--line) 1.3px,transparent 1.6px);background-size:16px 16px}
+.sw-kraft,body[data-paper="kraft"] .paper{background-color:#E6D2AA;background-image:linear-gradient(rgba(90,60,20,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(90,60,20,.12) 1px,transparent 1px);border-color:#CDB58A}
+body[data-paper="kraft"] .paper{background-size:20px 20px}
+.sw-blueprint,body[data-paper="blueprint"] .paper{background-color:#1D4F8F;background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);border-color:#163E72}
+body[data-paper="blueprint"] .paper{background-size:20px 20px}
+body[data-paper="kraft"]{--art-ink:#3A2814;--art-guide:#3F78B8}
+body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
+.art .lab.hor{fill:var(--art-guide,var(--guide))}
+.chip.gemc .ico{stroke:var(--accent)}
+.node .meta{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.node .meta .ico{width:13px;height:13px;stroke:var(--accent)}
+.newpill{background:var(--new);color:#fff;font:700 10px var(--mono);letter-spacing:.06em;padding:2px 6px;border-radius:6px}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:11.5px;line-height:1.25;color:var(--muted);min-width:0}
+.badge i{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--lock);color:var(--muted)}
+.badge i .ico{width:24px;height:24px}
+.badge.on{color:var(--ink);font-weight:600}
+.badge.on i{background:var(--marker);color:#3A2A00}
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shopitem{display:flex;flex-direction:column;gap:6px;text-align:left;border:2px solid var(--line);border-radius:14px;padding:8px;background:var(--surface)}
+.shopitem[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.shopitem b{font-size:14px}
+.shopitem small{display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-weight:600}
+.shopitem small .ico{width:13px;height:13px;stroke:var(--accent)}
+.newbadge{display:flex;align-items:center;gap:12px;background:var(--marker);color:#3A2A00;border-radius:16px;padding:12px 14px}
+.newbadge i{width:44px;height:44px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
 .banner{display:flex;gap:10px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-radius:16px;padding:12px 14px;background:var(--accent-soft)}
 .banner p{font-size:14px;flex:1 1 200px;min-width:0}
 .banner b{font-family:var(--display)}
@@ -283,7 +313,8 @@ const I={
   pencil:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg>',
   sound:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
   mute:'<svg class="ico" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
-  dl:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>'
+  dl:'<svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg>',
+  medal:'<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="14.5" r="5.5"/><path d="M8.5 3.5l2 6M15.5 3.5l-2 6M12 12.3l.9 1.6 1.8.3-1.3 1.2.3 1.8-1.7-.9-1.7.9.3-1.8-1.3-1.2 1.8-.3z"/></svg>'
 };
 const WS='https://ardacubuk22-blip.github.io/perspective-sketch/worksheets/';
 const LOGO='<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="9" fill="var(--accent)"/><path d="M4 14h26" stroke="var(--accent-ink)" stroke-opacity=".45" stroke-width="1.5"/><path d="M5 29L17 14l12 15" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linejoin="round"/><path d="M11 29l6-15 6 15" fill="none" stroke="var(--accent-ink)" stroke-opacity=".6" stroke-width="1.6"/><circle cx="17" cy="14" r="2.8" fill="var(--marker)"/></svg>';
@@ -431,12 +462,12 @@ const LESSONS=[
   {id:'road',unit:1,title:'Road to the horizon',mins:5,steps:road()},
   {id:'box1',unit:1,title:'Box in one-point',mins:5,steps:box1()},
   {id:'room',unit:1,title:'Your first room',mins:9,steps:room()},
-  {id:'stairs',unit:1,title:'Stairs in one-point',mins:6,steps:stairs()},
+  {id:'stairs',unit:1,added:'2026-11-09',title:'Stairs in one-point',mins:6,steps:stairs()},
   {id:'box2',unit:2,title:'Box in two-point',mins:5,steps:box2()},
   {id:'house',unit:2,title:'A simple house',mins:8,pro:true,steps:house()},
-  {id:'glass',unit:2,title:'Glass tower with even columns',mins:10,pro:true,steps:glass()},
+  {id:'glass',unit:2,added:'2026-11-09',title:'Glass tower with even columns',mins:10,pro:true,steps:glass()},
   {id:'tower',unit:3,title:'Tower looking up',mins:8,pro:true,steps:tower()},
-  {id:'birdseye',unit:3,title:'Building from above',mins:8,pro:true,steps:birdseye()}
+  {id:'birdseye',unit:3,added:'2026-11-09',title:'Building from above',mins:8,pro:true,steps:birdseye()}
 ];
 (function orient(){for(const l of LESSONS){const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
   const near=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1])<1.5,isVP=p=>vps.some(v=>near(p,v));
@@ -543,14 +574,35 @@ const FREE_DAYS=7;
 
 /* ---------- state ---------- */
 const KEY='ps-proto-v1';
-const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true,trialEnd:0,trialCode:'',myCode:''});
+const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mode:null,voice:true,trialEnd:0,trialCode:'',myCode:'',gems:0,gemsInit:false,owned:['grid'],paper:'grid'});
 let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+if(!S.gemsInit){S.gemsInit=true;S.gems=(S.gems||0)+S.days.length;for(const id in S.done){const l=(typeof LESSONS!=='undefined')&&LESSONS.find(x=>x.id===id);if(l)S.gems+=l.unit}save()}
 const today=()=>new Date().toISOString().slice(0,10);
 function bumpStreak(){const t=today();if(S.last===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
 
 let view={name:'learn'},selDay=null,resetArm=false,photoURL=null;
+
+/* ---------- gems, badges, paper styles ---------- */
+const gemsFor=l=>l.unit;
+const isNew=l=>!!l.added&&(Date.now()-new Date(l.added+'T00:00:00').getTime())<14*864e5;
+const unitDone=n=>LESSONS.filter(l=>l.unit===n).every(l=>S.done[l.id]);
+const BADGES=[
+  {id:'first',name:'First line',desc:'Finish your first lesson',test:()=>Object.keys(S.done).length>=1},
+  {id:'u1',name:'One-point master',desc:'Finish all of Unit 1',test:()=>unitDone(1)},
+  {id:'u2',name:'Two-point pro',desc:'Finish all of Unit 2',test:()=>unitDone(2)},
+  {id:'u3',name:'Three-point hero',desc:'Finish all of Unit 3',test:()=>unitDone(3)},
+  {id:'streak7',name:'7-day streak',desc:'Draw 7 days in a row',test:()=>S.streak>=7},
+  {id:'week',name:'Challenge week',desc:'Finish 7 challenge days',test:()=>S.days.length>=7},
+  {id:'photo',name:'Show your work',desc:'Add a photo of a drawing',test:()=>S.photos>=1},
+  {id:'style',name:'Collector',desc:'Unlock a paper style',test:()=>S.owned.length>1}
+];
+const earned=()=>BADGES.filter(b=>b.test()).map(b=>b.id);
+const PAPERS=[{id:'grid',name:'Graph paper',cost:0},{id:'dots',name:'Dot grid',cost:5},{id:'kraft',name:'Kraft paper',cost:10},{id:'blueprint',name:'Blueprint',cost:15}];
+function newBadges(before){const b=new Set(before);return BADGES.filter(x=>x.test()&&!b.has(x.id))}
+function badgeToast(list){if(list.length)setTimeout(()=>toast('Badge unlocked: '+list.map(b=>b.name).join(', ')),400)}
+
 
 /* ---------- promo codes & 15-day trial ---------- */
 const APP_URL='https://ardacubuk22-blip.github.io/perspective-sketch/';
@@ -602,7 +654,7 @@ function art(lesson,upto,mode){
 function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
 function header(){
   return `<header class="top"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
-  <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip star" title="XP">${I.star}${S.xp}</span>${onTrial()?`<span class="chip pro" title="Pro trial days left">${I.gem}${daysLeft()}d</span>`:''}</div></header>`;
+  <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip gemc" title="Gems">${I.gem}${S.gems}</span>${onTrial()?`<span class="chip pro" title="Pro trial days left">PRO ${daysLeft()}d</span>`:''}</div></header>`;
 }
 function setTabs(name){
   document.getElementById('tabs').hidden=!['learn','challenge','profile'].includes(name);
@@ -614,13 +666,13 @@ function vLearn(){
   const ni=nextIdx();let cont;
   if(ni<0)cont=`<section class="continue"><div class="paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div><p class="eyebrow">All lessons done</p><h2>New lessons every week</h2><button class="btn ghost small" data-act="tab" data-tab="challenge">Open the 30-day challenge</button></div></section>`;
   else{const l=LESSONS[ni],locked=l.pro&&!isPro();
-    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+    cont=`<section class="continue"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div><div><p class="eyebrow">${isNew(l)?'<span class="newpill">NEW</span> ':''}Next up · Lesson ${ni+1} · ${l.mins} min</p><h2>${esc(LT(l))}</h2><button class="btn primary small" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
   const offs=[0,-58,-82,-58,0,58,82,58];let k=0;
   const units=UNITS.map(u=>{
     const items=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n).map(({l,i})=>{
       const st=S.done[l.id]?'done':(i===ni?'current':'locked');const x=offs[k++%offs.length];
       const inner=st==='done'?I.check:st==='current'?(i+1):I.lock;
-      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!isPro()?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span></li>`}).join('');
+      return `<li class="node ${st}" style="--x:${x}px">${st==='current'?'<span class="start">START</span>':''}<button class="nb" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})">${inner}${l.pro&&!isPro()?`<span class="gem">${I.gem}</span>`:''}</button><span class="lbl">${esc(LT(l))}</span><span class="meta">${isNew(l)?'<span class="newpill">NEW</span>':''}${I.gem}+${gemsFor(l)}</span></li>`}).join('');
     const soon=u.soon.map(s=>{const x=offs[k++%offs.length];return `<li class="node soon" style="--x:${x}px"><button class="nb" data-act="soon" aria-label="${esc(s)}: coming soon">${I.lock}</button><span class="lbl">${esc(s)} · soon</span></li>`}).join('');
     const [ue,ut,ux]=isKid()?KUNITS[u.n]:[u.eyebrow,u.title,u.text];
     return `<section class="unit ${u.cls}"><div class="unit-head"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p></div><ol class="path">${items}${soon}</ol></section>`}).join('');
@@ -650,8 +702,9 @@ function vLesson(){
 function vComplete(){
   const l=LESSONS[view.i];const gained=view.gained;
   const ni=nextIdx();
-  return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${gained?`<span class="chip star">${I.star}+${gained} XP</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
+  return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${view.gems?`<span class="chip gemc">${I.gem}+${view.gems} gem${view.gems>1?'s':''}</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
   <div class="paper">${art(l,l.steps.length-1,'final')}</div>
+  ${(view.badges||[]).map(b=>`<section class="newbadge"><i>${I.medal}</i><div><b>Badge unlocked: ${esc(b.name)}</b><p style="font-size:13.5px">${esc(b.desc)}</p></div></section>`).join('')}
   <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper. It stays on this device.</p>
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
@@ -668,7 +721,7 @@ function vChallenge(){
   let action;
   if(isDone)action=`<button class="btn ghost wide" disabled>${I.check}Done</button>`;
   else if(proL)action=`<button class="btn primary wide" data-act="paywall">${I.gem}Unlock days 8–30 with Pro</button>`;
-  else if(isNext)action=`<button class="btn ok wide" data-act="daydone">${I.check}I drew it · +10 XP</button>`;
+  else if(isNext)action=`<button class="btn ok wide" data-act="daydone">${I.check}I drew it · +1 gem</button>`;
   else action=`<button class="btn ghost wide" disabled>${I.lock}Finish day ${next} first</button>`;
   return header()+`<section class="hero-c"><p class="eyebrow">Challenge</p><h1>30-Day Perspective Challenge</h1><p>One small drawing a day. Days 1–7 are free.</p><div class="bar" aria-label="${doneN} of 30 days"><span style="width:${doneN/30*100}%"></span></div><p class="eyebrow" style="opacity:.85">${doneN} / 30 days</p></section>
   <div class="days">${cells}</div>
@@ -677,7 +730,7 @@ function vChallenge(){
 function vProfile(){
   const lessons=Object.keys(S.done).length;
   return header()+`<h1 style="font-size:28px">Your progress</h1>
-  <div class="grid4"><div class="stat"><b>${S.xp}</b><span>XP earned</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
+  <div class="grid4"><div class="stat"><b>${S.gems}</b><span>Gems</span></div><div class="stat"><b>${S.streak}</b><span>Day streak</span></div><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons done</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div></div>
   <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${isPro()?'Perspective Pro':'Free'}</h3></div>${isPro()?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
   <p style="font-size:14px;color:var(--muted)">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box and challenge days 1–7.'}</p>
   ${!isPro()&&!S.trialCode?`<p style="font-size:14px;font-weight:600">Have a code?</p>${codeBox()}`:''}</section>
@@ -686,6 +739,9 @@ function vProfile(){
   <p style="font-size:13px;color:var(--muted)">Your code: <b style="font-family:var(--mono)">${myCode()}</b></p></section>
   <section class="panel"><h3>Who is learning?</h3><div class="seg2"><button data-act="mode" data-mode="adult" aria-pressed="${!isKid()}">Me</button><button data-act="mode" data-mode="kid" aria-pressed="${isKid()}">My child (7–12)</button></div>
   <div class="seg2"><button data-act="voice" aria-pressed="${S.voice}">${S.voice?'Voice on':'Voice off'}</button><button data-act="testvoice">Test the voice</button></div></section>
+  <section class="panel"><h3>Badges</h3><div class="badges">${BADGES.map(b=>{const on=b.test();return `<div class="badge${on?' on':''}" title="${esc(b.desc)}"><i>${on?I.medal:I.lock}</i><span>${esc(b.name)}</span></div>`}).join('')}</div></section>
+  <section class="panel"><h3>Paper styles</h3><p style="font-size:14px;color:var(--muted)">Spend gems to change the paper in your lessons.</p>
+  <div class="shop">${PAPERS.map(pp=>{const own=S.owned.includes(pp.id),sel=S.paper===pp.id;return `<button class="shopitem" data-act="paper" data-p="${pp.id}" aria-pressed="${sel}"><span class="sw sw-${pp.id}"></span><b>${pp.name}</b><small>${sel?'In use':own?'Tap to use':`${I.gem}${pp.cost} gems`}</small></button>`}).join('')}</div></section>
   <section class="panel"><h3>Reset</h3><p style="font-size:14px;color:var(--muted)">This is a working prototype. Progress is saved on this device only.</p>
   <button class="btn ghost" data-act="reset">${resetArm?'Tap again to erase all progress':'Reset progress'}</button></section>`;
 }
@@ -702,7 +758,7 @@ function paywall(){
 /* ---------- render ---------- */
 const app=document.getElementById('app');
 function render(scrollTop,quiet){
-  document.body.classList.toggle('kid',isKid());
+  document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
   app.classList.toggle('full',name==='lesson'||name==='complete');
   setTabs(name);
@@ -741,13 +797,17 @@ document.addEventListener('click',e=>{
   if(a==='replay'){const c=document.getElementById('canvas');const l=LESSONS[view.i];c.innerHTML=art(l,view.s,'step');narrate(l,view.s);return}
   if(a==='next'){const l=LESSONS[view.i];
     if(view.s<l.steps.length-1){view.s++;render();return}
-    let gained=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained}
-    bumpStreak();save();view={name:'complete',i:view.i,gained};render(true);return}
+    const before=earned();let gained=0,g=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained;g=gemsFor(l);S.gems+=g}
+    bumpStreak();save();view={name:'complete',i:view.i,gained,gems:g,badges:newBadges(before)};render(true);return}
   if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
     const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
     try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
   if(a==='day'){selDay=+el.dataset.d;render();return}
-  if(a==='daydone'){const d=S.days.length+1;S.days.push(d);S.xp+=10;bumpStreak();save();selDay=Math.min(d+1,30);toast(`Day ${d} done · +10 XP`);render();return}
+  if(a==='daydone'){const before=earned();const d=S.days.length+1;S.days.push(d);S.xp+=10;S.gems+=1;bumpStreak();save();selDay=Math.min(d+1,30);toast(`Day ${d} done · +1 gem`);render();badgeToast(newBadges(before));return}
+  if(a==='paper'){const pp=PAPERS.find(x=>x.id===el.dataset.p);if(!pp)return;
+    if(S.owned.includes(pp.id)){S.paper=pp.id;save();render();toast(pp.name+' selected');return}
+    if(S.gems<pp.cost){toast(`You need ${pp.cost-S.gems} more gems. Finish lessons to earn them.`);return}
+    const before=earned();S.gems-=pp.cost;S.owned.push(pp.id);S.paper=pp.id;save();render();toast(`${pp.name} unlocked`);badgeToast(newBadges(before));return}
   if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
   if(a==='applycode'){doApply();return}
   if(a==='copyinvite'){const txt=document.getElementById('invtext').textContent;
@@ -755,12 +815,12 @@ document.addEventListener('click',e=>{
     try{navigator.clipboard.writeText(txt).then(()=>toast('Invite link copied'),fb)}catch(err){fb()}return}
   if(a==='plan'){sheet.querySelectorAll('.planopt').forEach(b=>b.setAttribute('aria-pressed',b===el?'true':'false'));return}
   if(a==='gopro'){S.pro=true;save();closePaywall();toast('Pro unlocked on this device');render();return}
-  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S=Object.assign(blank(),{trialEnd:S.trialEnd,trialCode:S.trialCode,myCode:S.myCode});save();resetArm=false;selDay=null;toast('Progress erased');render();return}
+  if(a==='reset'){if(!resetArm){resetArm=true;render();return}S=Object.assign(blank(),{trialEnd:S.trialEnd,trialCode:S.trialCode,myCode:S.myCode,gemsInit:true});save();resetArm=false;selDay=null;toast('Progress erased');render();return}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sheet.hidden)closePaywall();if(e.key==='Enter'&&e.target&&e.target.id==='codein'){e.preventDefault();doApply()}});
 document.addEventListener('change',e=>{
   if(e.target.id!=='photo')return;const file=e.target.files&&e.target.files[0];if(!file)return;
-  const r=new FileReader();r.onload=()=>{photoURL=r.result;S.photos++;save();render()};r.readAsDataURL(file);
+  const r=new FileReader();r.onload=()=>{const before=earned();photoURL=r.result;S.photos++;save();render();badgeToast(newBadges(before))};r.readAsDataURL(file);
 });
 let startMsg='';
 try{const q=new URLSearchParams(location.search).get('code');if(q){startMsg=CODE_MSG[applyCode(q)];history.replaceState(null,'',location.pathname+location.hash)}}catch(e){}
