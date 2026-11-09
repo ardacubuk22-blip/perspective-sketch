@@ -723,6 +723,44 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .quest.qdone::before{background:var(--ok)}
 .quest.qdone .q-prog{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent);background:var(--ok-soft)}
 .chip.qchip{color:var(--ok);background:var(--ok-soft);border-color:transparent}
+/* ================= 30 Days v2 ================= */
+.chhero{gap:10px}
+.chhero h1{font-size:30px}
+.chbar{position:relative;padding-bottom:18px;margin-top:4px}
+.chbar .bar{height:10px}
+.miles{position:absolute;left:0;right:0;top:0;height:10px}
+.mi{position:absolute;top:-3px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.mi::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--surface);border:2px solid var(--line-2);box-sizing:border-box}
+.mi.on::before{background:var(--ok);border-color:var(--ok)}
+.mi:last-child{transform:translateX(-100%)}
+.mi b{font:700 10.5px var(--mono);color:var(--muted);margin-top:2px}
+.mi.on b{color:var(--ok)}
+.chstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chstats div{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.chstats b{font:700 20px var(--display);line-height:1.1}
+.chstats span{font-size:11.5px;color:var(--muted);font-weight:600}
+.wk-top,.dp-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.wdots{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 11px var(--mono);color:var(--muted)}
+.wd i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
+.wd i .ico{width:16px;height:16px;stroke-width:2.6}
+.wd.on i{background:var(--ok);border-color:var(--ok);color:#fff}
+.wd.today i{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--accent)}
+.wd.today{color:var(--accent)}
+.wd.fut i{background:transparent;border-style:dashed}
+.daypanel .prompt{font-size:21px}
+.daypanel .btn+.btn{margin-top:-4px}
+.day.mile:not(.done){border-color:color-mix(in srgb,var(--new) 55%,var(--line-2))}
+.day.mile.done{box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--ok)}
+.daylegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.daylegend span{display:inline-flex;align-items:center;gap:6px}
+.lg{width:12px;height:12px;border-radius:4px;display:inline-block;border:1px solid var(--line-2);background:var(--surface)}
+.lg.done{background:var(--ok);border-color:var(--ok)}
+.lg.next{border:2px solid var(--accent)}
+.lg.pro{border-radius:50%;width:8px;height:8px;background:var(--line-2);border:0}
+.lg.mile{border-color:color-mix(in srgb,var(--new) 55%,var(--line-2))}
+@media (max-width:360px){.chstats{grid-template-columns:repeat(2,1fr)}.wd i{width:30px;height:30px}}
+@media (min-width:720px){.days{grid-template-columns:repeat(10,1fr)}}
 </style>
 </head>
 <body>
@@ -1320,13 +1358,14 @@ const blank=()=>({done:{},xp:0,streak:0,last:null,pro:false,days:[],photos:0,mod
 let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+if(!Array.isArray(S.log))S.log=S.last?[S.last]:[];
 if(!S.gemsInit){S.gemsInit=true;S.gems=(S.gems||0)+S.days.length;for(const id in S.done){const l=(typeof LESSONS!=='undefined')&&LESSONS.find(x=>x.id===id);if(l)S.gems+=l.unit}save()}
 const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 function bumpStreak(){const t=today();if(S.last===t)return;const y=dayShift(t,-1),y2=dayShift(t,-2);
   if(S.last===y)S.streak++;
   else if(S.last===y2&&S.streak>0&&S.restWeek!==weekKey(t)){S.restWeek=weekKey(t);S.streak++;setTimeout(()=>toast('You missed a day, so we used your rest day. Your streak is safe!'),900)}
   else S.streak=1;
-  S.last=t}
+  S.last=t;S.log=(S.log||[]).filter(x=>x>=dayShift(t,-60));if(!S.log.includes(t))S.log.push(t)}
 
 let view={name:'learn'},selDay=null,resetArm=false,photoURL=null;
 
@@ -1343,6 +1382,7 @@ const BADGES=[
   {id:'week',name:'Challenge week',desc:'Finish 7 challenge days',test:()=>S.days.length>=7},
   {id:'photo',name:'Show your work',desc:'Add a photo of a drawing',test:()=>S.photos>=1},
   {id:'style',name:'Collector',desc:'Unlock a paper style',test:()=>S.owned.length>1},
+  {id:'month',name:'30-day finisher',desc:'Finish all 30 challenge days',test:()=>S.days.length>=30},
   {id:'featured',name:'Drawing of the week',desc:'Get picked by Arda',test:()=>S.featuredN>=1}
 ];
 const earned=()=>BADGES.filter(b=>b.test()).map(b=>b.id);
@@ -1649,19 +1689,38 @@ function vComplete(){
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
   ${l.lib?`<button class="btn primary wide" data-act="tab" data-tab="draw">${I.pencil}Pick another drawing</button>`:`<button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`}`;
 }
+/* day -> the lesson that teaches it (only where one really exists) */
+const DAYHELP={1:'box1',2:'road',3:'stairs',4:'room',5:'room',6:'box1',7:'box1',8:'box2',9:'box2',10:'house',11:'cafe',12:'house',13:'stairs',17:'robot',18:'room',19:'room',20:'tower',21:'birdseye',22:'birdseye',26:'street',27:'cafe',28:'room',29:'tower',30:'street'};
+const dayLevel=d=>d<=7?{k:1,t:'Beginner',kt:'Easy'}:d<=19?{k:2,t:'Intermediate',kt:'Medium'}:{k:3,t:'Advanced',kt:'Hard'};
+const MILES=[7,14,21,30];
+function weekDots(){const t=today(),mon=weekKey(t),log=new Set(S.log||[]);const names=['M','T','W','T','F','S','S'];
+  return names.map((n,k)=>{const d=dayShift(mon,k);const on=log.has(d),isT=d===t,fut=d>t;return `<span class="wd${on?' on':''}${isT?' today':''}${fut?' fut':''}" aria-label="${d}${on?', drew':''}"><i>${on?I.check:''}</i>${n}</span>`}).join('')}
 function vChallenge(){
   const doneN=S.days.length,next=doneN+1;if(selDay===null)selDay=Math.min(next,30);
+  const allDone=doneN>=30;
   const cells=PROMPTS.map((_,i)=>{const d=i+1,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!isPro();
-    return `<button class="day ${isDone?'done':isNext?'next':'locked'}${selDay===d?' sel':''}" data-act="day" data-d="${d}" aria-label="Day ${d}${isDone?', done':''}">${isDone?I.check:d}${proL?'<span class="pdot"></span>':''}</button>`}).join('');
-  const d=selDay,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!isPro();
+    return `<button class="day ${isDone?'done':isNext?'next':'locked'}${selDay===d?' sel':''}${MILES.includes(d)?' mile':''}" data-act="day" data-d="${d}" aria-label="Day ${d}${isDone?', done':isNext?', today':''}${proL?', Pro':''}">${isDone?I.check:d}${proL?'<span class="pdot"></span>':''}</button>`}).join('');
+  const d=selDay,isDone=d<=doneN,isNext=d===next,proL=d>FREE_DAYS&&!isPro(),lv=dayLevel(d),help=DAYHELP[d];
   let action;
   if(isDone)action=`<button class="btn ghost wide" disabled>${I.check}Done</button>`;
   else if(proL)action=`<button class="btn primary wide" data-act="paywall">${I.gem}Unlock days 8–30 with Pro</button>`;
   else if(isNext)action=`<button class="btn ok wide" data-act="daydone">${I.check}I drew it · +1 gem</button>`;
   else action=`<button class="btn ghost wide" disabled>${I.lock}Finish day ${next} first</button>`;
-  return header()+`<section class="hero-c"><p class="eyebrow">Challenge</p><h1>30-Day Perspective Challenge</h1><p>One small drawing a day. Days 1–7 are free.</p><div class="bar" aria-label="${doneN} of 30 days"><span style="width:${doneN/30*100}%"></span></div><p class="eyebrow" style="opacity:.85">${doneN} / 30 days</p></section>
-  <div class="days">${cells}</div>
-  <section class="panel"><p class="eyebrow">Day ${d}</p><p class="prompt">${esc(PROMPTS[d-1])}</p><p style="color:var(--muted);font-size:14px">About 10 minutes. Pencil, ruler and any paper.</p>${action}</section>`;
+  let helpBtn='';if(help){const inLib=LIB.findIndex(l=>l.id===help),inL=LESSONS.findIndex(l=>l.id===help),l=inLib>=0?LIB[inLib]:LESSONS[inL];
+    if(l)helpBtn=`<button class="btn ghost wide" data-act="${inLib>=0?'lib':'open'}" data-i="${inLib>=0?inLib:inL}">${I.pencil}${isKid()?'Show me how':'Learn how first'}: ${esc(LT(l))}</button>`}
+  const mileHtml=MILES.map(m=>`<span class="mi${doneN>=m?' on':''}" style="left:${m/30*100}%"><b>${m}</b></span>`).join('');
+  const nextMile=MILES.find(m=>m>doneN);
+  return header()+`<section class="hero-c chhero"><p class="eyebrow">${isKid()?'30-day challenge':'30-Day Perspective Challenge'}</p>
+  <h1>${allDone?(isKid()?'You did all 30 days!':'Challenge complete'):`Day ${Math.min(next,30)} of 30`}</h1>
+  <p>${allDone?'Amazing work. Every day is still here to draw again.':isKid()?'One small drawing a day. Days 1–7 are free.':'One small drawing a day, about 10 minutes. Days 1–7 are free.'}</p>
+  <div class="chbar"><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="${doneN}" aria-label="${doneN} of 30 days"><span style="width:${doneN/30*100}%"></span></div><div class="miles" aria-hidden="true">${mileHtml}</div></div>
+  <div class="chstats"><div><b>${doneN}</b><span>done</span></div><div><b>${30-doneN}</b><span>to go</span></div><div><b>${S.streak}</b><span>day streak</span></div>${nextMile?`<div><b>${nextMile-doneN}</b><span>to day ${nextMile}</span></div>`:''}</div>
+  ${!allDone?`<button class="btn primary wide" data-act="day" data-d="${Math.min(next,30)}" data-scroll="1">${I.pencil}${isKid()?"Today's drawing":"Start today's challenge"}</button>`:''}</section>
+  <section class="panel weekp"><div class="wk-top"><h3>${isKid()?'This week':'This week'}</h3><span class="fine2">${S.restWeek===weekKey(today())?'Rest day used':'1 rest day keeps your streak safe'}</span></div><div class="wdots">${weekDots()}</div></section>
+  <section class="panel daypanel" id="daypanel"><div class="dp-top"><p class="eyebrow">Day ${d}${isNext?(isKid()?' · today':' · today'):''}</p><span class="dlevel"><span class="lvdots lv${lv.k}" aria-hidden="true"><i></i><i></i><i></i></span>${isKid()?lv.kt:lv.t} · about 10 min</span></div>
+  <p class="prompt">${esc(PROMPTS[d-1])}</p><p class="fine2">${isKid()?'You need a pencil, a ruler and any paper.':'Pencil, ruler and any paper. Draw it on paper, then mark it done.'}</p>${action}${helpBtn}</section>
+  <section class="panel"><div class="wk-top"><h3>All 30 days</h3><span class="fine2">${doneN} / 30</span></div><div class="days">${cells}</div>
+  <p class="daylegend"><span><i class="lg done"></i>Done</span><span><i class="lg next"></i>Today</span><span><i class="lg pro"></i>Pro</span><span><i class="lg mile"></i>Milestone</span></p></section>`;
 }
 function vProfile(){
   const lessons=LESSONS.filter(l=>S.done[l.id]).length;
@@ -1742,7 +1801,7 @@ document.addEventListener('click',e=>{
   if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
     const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
     try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
-  if(a==='day'){selDay=+el.dataset.d;render();return}
+  if(a==='day'){selDay=+el.dataset.d;render();if(el.dataset.scroll){const dp=document.getElementById('daypanel');if(dp)dp.scrollIntoView({behavior:'smooth',block:'start'})}return}
   if(a==='daydone'){const before=earned();const d=S.days.length+1;S.days.push(d);S.xp+=10;S.gems+=1;bumpStreak();const qd=questDone('day',d);save();selDay=Math.min(d+1,30);toast(qd?`Day ${d} done · mission complete · +${1+QUEST_GEMS} gems`:`Day ${d} done · +1 gem`);render();badgeToast(newBadges(before));return}
   if(a==='paper'){const pp=PAPERS.find(x=>x.id===el.dataset.p);if(!pp)return;
     if(S.owned.includes(pp.id)){S.paper=pp.id;save();render();toast(pp.name+' selected');return}
