@@ -707,6 +707,22 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
   .dnew{top:6px;left:6px}.ddone{top:6px;right:6px}
 }
 @media (max-width:340px){.dcard{grid-template-columns:100px 1fr}}
+/* daily mission */
+.quest{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.quest::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--new)}
+.q-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.quest .eyebrow{color:color-mix(in srgb,var(--new) 85%,var(--ink))}
+.q-prog{font:700 12px var(--mono);color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.quest h2{font-size:19px}
+.q-sub{font-size:13.5px;color:var(--muted)}
+.q-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:12.5px;color:var(--muted);font-weight:600}
+.q-reward{display:inline-flex;align-items:center;gap:4px;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:3px 9px}
+.q-reward .ico{width:13px;height:13px}
+.quest .btn{margin-top:4px}
+.q-ok{display:flex;align-items:center;gap:8px;font-weight:650;color:var(--ok);background:var(--ok-soft);border-radius:12px;padding:10px 12px;font-size:14px}
+.quest.qdone::before{background:var(--ok)}
+.quest.qdone .q-prog{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent);background:var(--ok-soft)}
+.chip.qchip{color:var(--ok);background:var(--ok-soft);border-color:transparent}
 </style>
 </head>
 <body>
@@ -1305,8 +1321,12 @@ let S=blank();
 try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(blank(),JSON.parse(raw))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 if(!S.gemsInit){S.gemsInit=true;S.gems=(S.gems||0)+S.days.length;for(const id in S.done){const l=(typeof LESSONS!=='undefined')&&LESSONS.find(x=>x.id===id);if(l)S.gems+=l.unit}save()}
-const today=()=>new Date().toISOString().slice(0,10);
-function bumpStreak(){const t=today();if(S.last===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+function bumpStreak(){const t=today();if(S.last===t)return;const y=dayShift(t,-1),y2=dayShift(t,-2);
+  if(S.last===y)S.streak++;
+  else if(S.last===y2&&S.streak>0&&S.restWeek!==weekKey(t)){S.restWeek=weekKey(t);S.streak++;setTimeout(()=>toast('You missed a day, so we used your rest day. Your streak is safe!'),900)}
+  else S.streak=1;
+  S.last=t}
 
 let view={name:'learn'},selDay=null,resetArm=false,photoURL=null;
 
@@ -1360,6 +1380,40 @@ function trialBanner(){
 }
 function codeBox(){return `<div class="coderow"><input id="codein" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. SKETCH15" aria-label="Promo code"><button class="btn ghost small" data-act="applycode">Apply</button></div>`}
 
+
+/* ---------- daily mission + gentle streak (one rest day a week) ---------- */
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const dayShift=(s,n)=>{const [y,m,d]=s.split('-').map(Number);return ymd(new Date(y,m-1,d+n))};
+const weekKey=s=>{const [y,m,d]=s.split('-').map(Number);const t=new Date(y,m-1,d);const mon=new Date(y,m-1,d-((t.getDay()+6)%7));return ymd(mon)};
+const QUEST_GEMS=2;
+function questFor(day){
+  const seed=day.split('-').reduce((a,b)=>a*31+Number(b),7);
+  const ni=nextIdx(),openLib=LIB.map((l,i)=>({l,i})).filter(x=>!x.l.pro||isPro());
+  const fresh=openLib.filter(x=>!S.done[x.l.id]),pool=fresh.length?fresh:openLib;
+  const d=S.days.length+1,dayOk=d<=30&&(d<=FREE_DAYS||isPro());
+  const kinds=[];
+  if(ni>=0&&(!LESSONS[ni].pro||isPro()))kinds.push('lesson');
+  if(pool.length)kinds.push('lib');
+  if(dayOk)kinds.push('day');
+  const k=kinds[seed%kinds.length]||'lib';
+  if(k==='lesson')return {date:day,kind:'lesson',id:LESSONS[ni].id,i:ni,done:false};
+  if(k==='day')return {date:day,kind:'day',d,done:false};
+  const pick=pool[seed%pool.length];return {date:day,kind:'lib',id:pick.l.id,i:pick.i,done:false};
+}
+function quest(){const t=today();if(!S.quest||S.quest.date!==t){S.quest=questFor(t);save()}return S.quest}
+function questText(q){
+  if(q.kind==='day')return {t:isKid()?`Draw challenge day ${q.d}`:`Draw challenge day ${q.d}`,x:PROMPTS[q.d-1]};
+  const l=(q.kind==='lib'?LIB:LESSONS).find(z=>z.id===q.id);return {t:`Draw: ${l?LT(l):''}`,x:l?`${l.steps.length} steps · about ${l.mins} min`:''};
+}
+function questDone(kind,key){const q=S.quest;if(!q||q.date!==today()||q.done)return false;
+  if((q.kind==='day'&&kind==='day'&&q.d===key)||(q.kind!=='day'&&kind===q.kind&&q.id===key)){q.done=true;S.gems+=QUEST_GEMS;S.questN=(S.questN||0)+1;save();track('quest/done');return true}return false}
+function questCard(){const q=quest(),tx=questText(q);
+  const restLeft=S.restWeek!==weekKey(today());
+  const go=q.kind==='day'?`data-act="questday" data-d="${q.d}"`:`data-act="${q.kind==='lib'?'lib':'open'}" data-i="${q.i}"`;
+  return `<section class="quest${q.done?' qdone':''}"><div class="q-top"><p class="eyebrow">${isKid()?"Today's mission":"Today's mission"}</p><span class="q-prog" aria-label="Progress ${q.done?1:0} of 1">${q.done?1:0} / 1</span></div>
+  <h2>${esc(tx.t)}</h2>${tx.x?`<p class="q-sub">${esc(tx.x)}</p>`:''}
+  <div class="q-row"><span class="q-reward">${I.gem}+${QUEST_GEMS} gems</span><span class="q-rest">${restLeft?(isKid()?'Missed a day? Your streak gets 1 free rest day each week.':'1 rest day a week keeps your streak safe'):(isKid()?'Rest day used this week':'Rest day used this week')}</span></div>
+  ${q.done?`<p class="q-ok">${I.check}${isKid()?'Mission done! See you tomorrow.':'Mission complete. Come back tomorrow for a new one.'}</p>`:`<button class="btn primary wide" ${go}>${I.pencil}Start drawing</button>`}</section>`}
 
 /* ---------- drawing reviews (Supabase) ---------- */
 const SB_URL='https://qrbojitoclgqulokyobf.supabase.co',SB_KEY='sb_publishable_pjbLqnnn_GpmSglIsFrmZw_jeHyRi6B',SBK='ps-sb-v1';
@@ -1535,7 +1589,7 @@ function vLearn(){
     return `<section class="unit ${u.cls}"><div class="unit-head"><div class="uh-txt"><p class="eyebrow">${ue}</p><h2>${ut}</h2><p>${ux}</p>
       <div class="uprog"><div class="ubar" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${ud}" aria-label="${ud} of ${total} lessons done"><span style="width:${total?ud/total*100:0}%"></span></div><span class="ucount">${ud}/${total}</span></div></div>
       <div class="uh-art paper" aria-hidden="true">${art(sample,sample.steps.length-1,'thumb')}</div></div><ol class="journey">${items}${soon}</ol></section>`}).join('');
-  return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
+  return header()+questCard()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
 function vpCount(l){const s=new Set();l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))s.add(sh.label)}));return s.size}
 function levelOf(l){const n=vpCount(l);return n>=3?{k:3,t:'Advanced',kt:'Hard',p:'3-point'}:n===2?{k:2,t:'Intermediate',kt:'Medium',p:'2-point'}:{k:1,t:'Beginner',kt:'Easy',p:'1-point'}}
@@ -1582,7 +1636,7 @@ function vLesson(){
 function vComplete(){
   const l=curL();const gained=view.gained;
   const ni=nextIdx();
-  return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${view.gems?`<span class="chip gemc">${I.gem}+${view.gems} gem${view.gems>1?'s':''}</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
+  return `<div class="done-head"><p class="eyebrow">${isKid()?'You did it!':'Lesson complete'}</p><h1>${esc(LT(l))}</h1><div class="reward">${view.gems?`<span class="chip gemc">${I.gem}+${view.gems} gem${view.gems>1?'s':''}</span>`:''}${view.quest?`<span class="chip qchip">${I.check}Mission +${QUEST_GEMS}</span>`:''}<span class="chip flame">${I.flame}${S.streak} day streak</span></div></div>
   <div class="paper">${art(l,l.steps.length-1,'final')}</div>
   ${(view.badges||[]).map(b=>`<section class="newbadge"><i>${I.medal}</i><div><b>Badge unlocked: ${esc(b.name)}</b><p style="font-size:13.5px">${esc(b.desc)}</p></div></section>`).join('')}
   <section class="panel"><h3>Compare with your drawing</h3><p style="color:var(--muted);font-size:14px">Take a photo of your paper to compare. You can send it to Arda for a score.</p>
@@ -1684,17 +1738,18 @@ document.addEventListener('click',e=>{
   if(a==='next'){const l=curL();
     if(view.s<l.steps.length-1){view.s++;render();return}
     const before=earned();let gained=0,g=0;if(!S.done[l.id]){S.done[l.id]=true;gained=20;S.xp+=gained;g=gemsFor(l);S.gems+=g}
-    bumpStreak();save();track('done/'+l.id);view={name:'complete',i:view.i,lib:view.lib,gained,gems:g,badges:newBadges(before)};render(true);return}
+    bumpStreak();const qd=questDone(view.lib?'lib':'lesson',l.id);save();track('done/'+l.id);view={name:'complete',i:view.i,lib:view.lib,gained,gems:g,quest:qd,badges:newBadges(before)};render(true);return}
   if(a==='copy'){const txt=document.getElementById('tagtext').textContent;
     const fallback=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('tagtext'));const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from here.')};
     try{navigator.clipboard.writeText(txt).then(()=>toast('Tags copied'),fallback)}catch(err){fallback()}return}
   if(a==='day'){selDay=+el.dataset.d;render();return}
-  if(a==='daydone'){const before=earned();const d=S.days.length+1;S.days.push(d);S.xp+=10;S.gems+=1;bumpStreak();save();selDay=Math.min(d+1,30);toast(`Day ${d} done · +1 gem`);render();badgeToast(newBadges(before));return}
+  if(a==='daydone'){const before=earned();const d=S.days.length+1;S.days.push(d);S.xp+=10;S.gems+=1;bumpStreak();const qd=questDone('day',d);save();selDay=Math.min(d+1,30);toast(qd?`Day ${d} done · mission complete · +${1+QUEST_GEMS} gems`:`Day ${d} done · +1 gem`);render();badgeToast(newBadges(before));return}
   if(a==='paper'){const pp=PAPERS.find(x=>x.id===el.dataset.p);if(!pp)return;
     if(S.owned.includes(pp.id)){S.paper=pp.id;save();render();toast(pp.name+' selected');return}
     if(S.gems<pp.cost){toast(`You need ${pp.cost-S.gems} more gems. Finish lessons to earn them.`);return}
     const before=earned();S.gems-=pp.cost;S.owned.push(pp.id);S.paper=pp.id;save();render();toast(`${pp.name} unlocked`);badgeToast(newBadges(before));return}
   if(a==='mine'){hush();view={name:'mine'};mine.loading=true;mine.err='';render(true);loadMine(false);return}
+  if(a==='questday'){selDay=+el.dataset.d;view={name:'challenge'};render(true);return}
   if(a==='send'){doSend();return}
   if(a==='color'){hush();view=Object.assign({},view,{name:'color'});render(true);track('color/'+curL().id);return}
   if(a==='colorback'){view=Object.assign({},view,{name:'complete'});render(true);return}
