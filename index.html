@@ -634,6 +634,79 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
   .unit-head h2{font-size:22px}
 }
 @media (max-width:719px){.nu-meta span:first-child{display:none}.nu-meta span:nth-child(2)::before{display:none}}
+/* ================= Draw section v2 ================= */
+.studio{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--sh-2);padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.studio::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent) 60%,var(--new) 60%,var(--new) 80%,var(--pink) 80%)}
+.studio .eyebrow{color:var(--accent)}
+.studio h1{font-size:27px;max-width:18ch}
+.studio-sub{color:var(--muted);font-size:14.5px;max-width:52ch}
+.how{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.how li{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:650;line-height:1.3;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px}
+.how li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font:800 12px var(--display)}
+.studio-stats{display:flex;gap:16px;margin-top:6px;font-size:12.5px;color:var(--muted);font-weight:600}
+.studio-stats b{color:var(--ink);font-family:var(--display);font-size:15px;margin-right:3px}
+.libsec{gap:12px}
+.lshead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.lshead h2{font-size:21px}
+.lscount{font:700 12px var(--mono);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.libgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dcard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:8px;gap:10px;transition:box-shadow .15s ease,transform .15s ease}
+.dcard:hover{box-shadow:var(--sh-3);transform:translateY(-2px)}
+.dprev{position:relative;border:0;padding:0;background:none;display:block;width:100%;border-radius:var(--r-md);cursor:pointer}
+.dprev .paper{border-radius:var(--r-md)}
+.dnew{position:absolute;top:8px;left:8px;box-shadow:var(--sh-1)}
+.ddone{position:absolute;top:8px;right:8px;display:inline-flex;align-items:center;gap:3px;background:var(--ok);color:#fff;font-size:11px;font-weight:700;padding:3px 8px 3px 6px;border-radius:999px}
+.ddone .ico{width:13px;height:13px;stroke-width:2.6}
+.dinfo{display:flex;flex-direction:column;gap:4px;padding:0 4px;flex:1}
+.dinfo h3{font-size:16px;line-height:1.2}
+.dlevel{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:650;color:var(--ink-2)}
+.lvdots{display:inline-flex;gap:2px}
+.lvdots i{width:6px;height:6px;border-radius:50%;background:var(--line-2)}
+.lvdots.lv1 i:nth-child(-n+1),.lvdots.lv2 i:nth-child(-n+2),.lvdots.lv3 i{background:var(--accent)}
+.dmeta{display:flex;flex-wrap:wrap;gap:2px 8px;font-size:12px;color:var(--muted)}
+.dmeta span+span::before{content:"·";margin-right:8px;color:var(--line-2)}
+.dgem{display:inline-flex;align-items:center;gap:2px}.dgem .ico{width:12px;height:12px;stroke:var(--accent)}
+.btn.dcta{min-height:40px;font-size:13.5px;margin-top:auto}
+.dcard.islocked .dprev .paper{filter:saturate(.6);opacity:.85}
+@media (max-width:360px){.libgrid{grid-template-columns:1fr}.how{grid-template-columns:1fr}.how li{flex-direction:row;align-items:center}}
+@media (min-width:720px){
+  .studio{padding:28px}
+  .studio h1{font-size:32px}
+  .libgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .dcard{padding:10px}
+}
+/* coloring studio workspace */
+.app.colorv{gap:14px}
+.colorv .mhead h1{font-size:22px}
+.colorwrap{box-shadow:var(--sh-2);border-radius:var(--r-lg)}
+.cpanel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);padding:14px;display:flex;flex-direction:column;gap:12px}
+.cpanel .eyebrow{margin-bottom:-4px}
+.pal{gap:10px}
+.sw2{border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line-2);transition:transform .12s ease}
+.sw2:hover{transform:scale(1.06)}
+.sw2.on{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink);transform:scale(1.04)}
+.ctools .seg2 button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}
+.row2 .btn{width:100%}
+@media (min-width:960px){
+  .app.colorv{max-width:1040px;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);column-gap:28px;align-content:start}
+  .app.colorv > *{grid-column:2}
+  .app.colorv > .mhead{grid-column:1 / -1}
+  .app.colorv > .colorwrap{grid-column:1;grid-row:2 / span 4;align-self:start}
+}
+
+/* Draw cards on phones: one clear row per drawing */
+@media (max-width:719px){
+  .libgrid{grid-template-columns:1fr;gap:10px}
+  .dcard{display:grid;grid-template-columns:132px 1fr;grid-template-rows:1fr auto;column-gap:12px;row-gap:8px;padding:8px;align-items:start}
+  .dprev{grid-row:1 / span 2;align-self:stretch}
+  .dprev .paper{height:100%;display:flex;align-items:center}
+  .dinfo{padding:4px 0 0;gap:3px}
+  .dinfo h3{font-size:16px}
+  .btn.dcta{grid-column:2;min-height:38px;justify-self:stretch}
+  .dnew{top:6px;left:6px}.ddone{top:6px;right:6px}
+}
+@media (max-width:340px){.dcard{grid-template-columns:100px 1fr}}
 </style>
 </head>
 <body>
@@ -1352,9 +1425,9 @@ function vColor(){const l=curL();
   return `<div class="mhead"><button class="iconbtn" data-act="colorback" aria-label="Back">${I.back}</button><h1>${isKid()?'Color it your way':'Color your drawing'}</h1></div>
   <p class="fine2">${isKid()?'Pick any color you like and tap a part to fill it. There is no wrong color!':'Optional: pick colors and tap an area to fill it, or switch to the brush.'}</p>
   <div class="paper colorwrap" id="cw"><canvas id="cc" width="800" height="600"></canvas>${art(l,l.steps.length-1,'color')}</div>
-  <div class="pal" role="radiogroup" aria-label="Colors">${PAL.map(c=>`<button class="sw2${c===col.color?' on':''}" data-act="pick" data-c="${c}" style="background:${c}" aria-label="Color ${c}" aria-checked="${c===col.color}" role="radio"></button>`).join('')}</div>
-  <div class="ctools"><div class="seg2">${[['fill','Fill'],['brush','Brush'],['erase','Eraser']].map(([k,t])=>`<button data-act="ctool" data-t="${k}" aria-pressed="${col.tool===k}">${t}</button>`).join('')}</div>
-  <div class="row2"><button class="btn ghost small" data-act="cundo">${I.replay}Undo</button><button class="btn ghost small" data-act="cclear">Clear</button><button class="btn primary small" data-act="csave">${I.dl}Save picture</button></div></div>`}
+  <div class="cpanel"><p class="eyebrow">Colors</p><div class="pal" role="radiogroup" aria-label="Colors">${PAL.map(c=>`<button class="sw2${c===col.color?' on':''}" data-act="pick" data-c="${c}" style="background:${c}" aria-label="Color ${c}" aria-checked="${c===col.color}" role="radio"></button>`).join('')}</div>
+  <p class="eyebrow">Tools</p><div class="ctools"><div class="seg2">${[['fill','Fill','<svg class="ico" viewBox="0 0 24 24"><path d="M5 11l7-7 7 7-7 7z"/><path d="M19 15s2 2.4 2 3.6a2 2 0 0 1-4 0c0-1.2 2-3.6 2-3.6z"/></svg>'],['brush','Brush',I.pencil],['erase','Eraser','<svg class="ico" viewBox="0 0 24 24"><path d="M8 20h12M5 15l8-8 6 6-6 6H9z"/></svg>']].map(([k,t,ic])=>`<button data-act="ctool" data-t="${k}" aria-pressed="${col.tool===k}">${ic}${t}</button>`).join('')}</div>
+  <div class="row2"><button class="btn ghost small" data-act="cundo">${I.replay}Undo</button><button class="btn ghost small" data-act="cclear">Clear</button><button class="btn primary small" data-act="csave">${I.dl}Save picture</button></div></div></div>`}
 function colorLinesSVG(stroke,w){const sv=document.querySelector('#cw svg');if(!sv)return '';const c=sv.cloneNode(true);c.setAttribute('width','800');c.setAttribute('height','600');c.setAttribute('xmlns','http://www.w3.org/2000/svg');
   c.querySelectorAll('path').forEach(p=>{p.setAttribute('fill','none');p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',p.classList.contains('thin')?w*.7:w);p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');p.removeAttribute('class');p.removeAttribute('pathLength')});
   return new XMLSerializer().serializeToString(c)}
@@ -1464,14 +1537,25 @@ function vLearn(){
       <div class="uh-art paper" aria-hidden="true">${art(sample,sample.steps.length-1,'thumb')}</div></div><ol class="journey">${items}${soon}</ol></section>`}).join('');
   return header()+trialBanner()+cont+units+`<p class="foot-note">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Draw on real paper. The app shows you each line, one step at a time.'}</p>`;
 }
+function vpCount(l){const s=new Set();l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))s.add(sh.label)}));return s.size}
+function levelOf(l){const n=vpCount(l);return n>=3?{k:3,t:'Advanced',kt:'Hard',p:'3-point'}:n===2?{k:2,t:'Intermediate',kt:'Medium',p:'2-point'}:{k:1,t:'Beginner',kt:'Easy',p:'1-point'}}
 function vDraw(){
-  const card=(l,i)=>{const locked=l.pro&&!isPro(),done=S.done[l.id];
-    return `<button class="libcard" data-act="lib" data-i="${i}" aria-label="${esc(LT(l))}${locked?', Pro':''}${done?', done':''}"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div>
-    <span class="lc-t">${esc(LT(l))}</span><span class="lc-m">${isNew(l)?'<span class="newpill">NEW</span>':''}${l.mins} min · ${I.gem}+${gemsFor(l)}${done?` <span class="lc-done">${I.check}</span>`:''}${locked?` <span class="lc-lock">${I.lock}Pro</span>`:''}</span></button>`};
+  const doneN=LIB.filter(l=>S.done[l.id]).length,freeN=LIB.filter(l=>!l.pro).length;
+  const card=(l,i)=>{const locked=l.pro&&!isPro(),done=S.done[l.id],lv=levelOf(l);
+    const cta=locked?`${I.lock}Unlock · Pro`:done?`${I.replay}Draw again`:`${I.pencil}Start drawing`;
+    return `<article class="dcard${done?' isdone':''}${locked?' islocked':''}"><button class="dprev" data-act="lib" data-i="${i}" tabindex="-1" aria-hidden="true"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div>${isNew(l)?'<span class="newpill dnew">NEW</span>':''}${done?`<span class="ddone">${I.check}Done</span>`:''}</button>
+    <div class="dinfo"><h3>${esc(LT(l))}</h3>
+    <p class="dlevel"><span class="lvdots lv${lv.k}" aria-hidden="true"><i></i><i></i><i></i></span>${isKid()?lv.kt+' · '+lv.k+' magic dot'+(lv.k>1?'s':''):lv.t+' · '+lv.p}</p>
+    <p class="dmeta"><span>${l.steps.length} steps</span><span>${l.mins} min</span><span class="dgem">${I.gem}+${gemsFor(l)}</span></p></div>
+    <button class="btn ${locked?'ghost':done?'ghost':'primary'} small wide dcta" data-act="lib" data-i="${i}" aria-label="${esc(LT(l))}: ${locked?'unlock with Pro':done?'draw again':'start drawing'}">${cta}</button></article>`};
   const order=isKid()?['fun','place']:['place','fun'];
   const secs=order.map(c=>{const [id,t,x]=LIBCATS.find(z=>z[0]===c);const items=LIB.map((l,i)=>({l,i})).filter(z=>z.l.lib===id);
-    return `<section class="libsec"><div><h2>${t}</h2><p class="fine2">${x}</p></div><div class="libgrid">${items.map(z=>card(z.l,z.i)).join('')}</div></section>`}).join('');
-  return header()+`<section class="hero-c"><p class="eyebrow">Draw anything</p><h1>${isKid()?'What do you want to draw today?':'Pick what you want to draw'}</h1><p>${isKid()?'Tap a picture. The app shows you every line!':'Every drawing is built step by step with real perspective. New ones every week.'}</p></section>`+secs;
+    return `<section class="libsec"><div class="lshead"><div><h2>${t}</h2><p class="fine2">${x}</p></div><span class="lscount">${items.length}</span></div><div class="libgrid">${items.map(z=>card(z.l,z.i)).join('')}</div></section>`}).join('');
+  const how=isKid()?['Pick a picture','Draw each line','Color it your way']:['Pick a drawing','Follow it line by line','Color it and share'];
+  return header()+`<section class="studio"><p class="eyebrow">Drawing studio</p><h1>${isKid()?'What do you want to draw today?':'Welcome to your drawing studio'}</h1>
+  <p class="studio-sub">${isKid()?'Grab a pencil and paper. The app shows you every line!':'Choose a subject. Every drawing is built step by step with real perspective, on your own paper.'}</p>
+  <ol class="how">${how.map((h,k)=>`<li><span>${k+1}</span>${h}</li>`).join('')}</ol>
+  <div class="studio-stats"><span><b>${LIB.length}</b> drawings</span><span><b>${freeN}</b> free</span><span><b>${doneN}</b> done</span></div></section>`+secs+`<p class="foot-note">New drawings are added every week.</p>`;
 }
 function vOnboard(){
   const demo=LESSONS.find(l=>l.id==='box1'),demo2=LESSONS.find(l=>l.id==='house');
@@ -1560,7 +1644,7 @@ function render(scrollTop,quiet){
   document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
   app.classList.toggle('full',name==='lesson'||name==='complete'||name==='color');
-  app.classList.toggle('lessonv',name==='lesson');app.classList.toggle('learnv',name==='learn');
+  app.classList.toggle('lessonv',name==='lesson');app.classList.toggle('colorv',name==='color');app.classList.toggle('learnv',name==='learn');
   setTabs(name==='mine'?'profile':name);
   app.innerHTML=name==='onboard'?vOnboard():name==='learn'?vLearn():name==='lesson'?vLesson():name==='complete'?vComplete():name==='draw'?vDraw():name==='challenge'?vChallenge():name==='mine'?vMine():name==='color'?vColor():vProfile();
   if(name==='lesson'&&!quiet)narrate(curL(),view.s);
