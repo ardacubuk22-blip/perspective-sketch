@@ -144,6 +144,11 @@ p{margin:0}
 .lbody h2{font-size:26px}
 .lbody p.txt{font-size:16.5px;max-width:60ch}
 .tip{font-family:var(--hand);font-size:22px;color:var(--new);line-height:1.15}
+.rule{font-size:13.5px;background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px}
+.kinds{display:flex;flex-wrap:wrap;gap:6px}
+.kchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-weight:600}
+.kchip i{font-style:normal;font-family:var(--mono);font-weight:700;color:var(--new)}
+.kchip.k-vp i{color:var(--vp)}
 .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend b{display:inline-block;width:18px;height:3px;border-radius:2px}
@@ -821,8 +826,43 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=6');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=7');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
+/* line types: every new line is named as vertical, horizontal (parallel to the horizon), going to a VP, or slanted */
+function lineKinds(l,i){
+  const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push({p:sh.p,n:sh.label})}));
+  const c={horizon:0,vert:0,hor:0,vp:{},slant:0,round:0};
+  for(const sh of l.steps[i].shapes){
+    if(sh.t==='e'){c.round++;continue}
+    if(sh.t!=='l')continue;
+    const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
+    if(Math.abs(dy)<.6&&sh.k==='guide'&&len>300){c.horizon++;continue}
+    const hit=vps.find(v=>Math.abs(dx*(v.p[1]-sh.a[1])-dy*(v.p[0]-sh.a[0]))/len<1.6);
+    if(hit&&!(Math.abs(dy)<.6&&vps.length>1&&vps.every(v=>Math.abs(v.p[1]-vps[0].p[1])<1)&&Math.abs(sh.a[1]-hit.p[1])<1&&len>300)){c.vp[hit.n]=(c.vp[hit.n]||0)+1;continue}
+    if(Math.abs(dx)<.6)c.vert++;else if(Math.abs(dy)<.6)c.hor++;else c.slant++;
+  }
+  return c}
+const NUMW=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+function kindList(l,i,kid,spoken){
+  const c=lineKinds(l,i),out=[],nm=n=>spoken?(NUMW[n]||n):n,pl=(n,w)=>n===1?w:w+'s';
+  const vpName=n=>kid?(n==='VP'?'the magic dot':n.replace('VP','magic dot ')):(spoken?n.replace(/^VP(\d?)$/,(m,d)=>'vanishing point'+(d?' '+NUMW[d]:'')):n);
+  if(c.horizon)out.push({k:'hz',t:kid?'the sky line':'the horizon line'});
+  if(c.vert)out.push({k:'v',t:`${nm(c.vert)} ${kid?pl(c.vert,'standing-up line'):pl(c.vert,'vertical line')}`});
+  if(c.hor)out.push({k:'h',t:`${nm(c.hor)} ${kid?pl(c.hor,'flat line')+' (like the sky line)':pl(c.hor,'horizontal line')+', parallel to the horizon'}`});
+  for(const n of Object.keys(c.vp).sort())out.push({k:'vp',t:`${nm(c.vp[n])} ${pl(c.vp[n],'line')} to ${vpName(n)}`});
+  if(c.slant)out.push({k:'s',t:`${nm(c.slant)} ${pl(c.slant,kid?'slanted line':'slanted line')}`});
+  if(c.round)out.push({k:'r',t:`${nm(c.round)} ${pl(c.round,'round shape')}`});
+  return out}
+const has3=l=>l.steps.some(st=>st.shapes.some(sh=>sh.t==='d'&&sh.label==='VP3'));
+function lineRule(l,kid){
+  if(kid)return has3(l)?'Remember: flat lines stay like the sky line, and lines going far away run to a magic dot. Here even the standing-up lines lean to the third dot!':'Remember: standing-up lines go straight up and down, flat lines stay like the sky line, and lines going far away run to the magic dot.';
+  return has3(l)?'Three kinds of lines: horizontal lines stay parallel to the horizon, lines going into the distance meet at VP1 or VP2, and in three-point perspective even the vertical edges lean toward VP3.':'Three kinds of lines: vertical lines go straight up and down, horizontal lines stay parallel to the horizon, and lines going into the distance all meet at a vanishing point.'}
+function kindSpoken(l,i,kid){const ks=kindList(l,i,kid,true).map(x=>x.t);if(!ks.length)return '';
+  const j=ks.length>1?ks.slice(0,-1).join(', ')+' and '+ks[ks.length-1]:ks[0];
+  return (kid?'Lines in this step: ':'In this step: ')+j+'.'}
+function kindChips(l,i){const ks=kindList(l,i,isKid(),false);if(!ks.length)return '';
+  const ic={hz:'—',v:'│',h:'―',vp:'→',s:'╱',r:'○'};
+  return `<div class="kinds" aria-label="Lines in this step">${ks.map(x=>`<span class="kchip k-${x.k}"><i aria-hidden="true">${ic[x.k]}</i>${esc(x.t)}</span>`).join('')}</div>`}
 const narrate=(l,i)=>play((isKid()?'k-':'a-')+l.id+'-'+i);
 const PROMPTS=['A horizon line with 5 boxes: above, on and below it','A road to the horizon with telephone poles','Stairs made of stacked one-point boxes','A simple room with a door','A long hallway with 3 doors on each side','Your initials as 3D one-point letters','A table and a chair in one-point','Three two-point boxes of different heights','Five boxes floating above and below the horizon','A simple house in two-point','A street corner with two buildings','Windows and doors on a two-point building','Stairs in two-point','A can sitting on a box (cylinders)','A cup and a bottle in perspective','A bookshelf full of books','A car built from boxes','Your desk from your own eye level','The corner of your bedroom','A three-point tower looking up','A three-point tower looking down','A city block from a bird’s-eye view','A bridge over a river','Cast the shadow of a box','A spiral staircase','Your street, drawn from a photo','A shop front with signs','A furnished living room','A fantasy castle tower','Final piece: your own city scene'];
 const FREE_DAYS=7;
@@ -1029,6 +1069,7 @@ function vLesson(){
   const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
   return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span><button class="iconbtn" data-act="voice" aria-pressed="${S.voice}" aria-label="Voice ${S.voice?'on':'off'}">${S.voice?I.sound:I.mute}</button></div>
   <div class="paper" id="canvas">${art(l,s,'step')}</div>
+  ${kindChips(l,s)}${s===0?`<p class="rule">${esc(lineRule(l,isKid()))}</p>`:''}
   <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
   <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
