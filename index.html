@@ -694,7 +694,7 @@ async function loadMine(quiet){
     for(const r of rows){if(r.status==='pending')continue;const k=S.rewarded[r.id];
       if(!k){fresh++;if(r.status==='approved')add+=3;S.rewarded[r.id]=r.status==='approved'?'a':'r'}
       if(r.featured&&S.rewarded[r.id]!=='f'){add+=10;S.rewarded[r.id]='f';S.featuredN=(S.featuredN||0)+1}}
-    if(fresh||add){save();
+    if(fresh||add){S.gems+=add;save();
       toast(add?`Arda reviewed your drawing · +${add} gems`:'Arda reviewed your drawing');badgeToast(newBadges(before))}
     if(view.name==='mine'||((fresh||add)&&['learn','profile'].includes(view.name)))render();
   }catch(e){mine.loading=false;mine.err='Could not load your drawings. Check your connection.';if(!quiet&&view.name==='mine')render()}
