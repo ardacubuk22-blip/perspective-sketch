@@ -863,6 +863,19 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .onb .whobtn{grid-template-columns:1fr;padding:8px;gap:8px;text-align:center}
 .onb .whobtn span{display:none}
 .onb .whobtn b{font-size:17px;padding-bottom:4px}
+/* ================= lesson player v2: pencil, ruler, erase ================= */
+.art .pen{opacity:0;pointer-events:none;animation:penmove .8s cubic-bezier(.5,0,.3,1) forwards;animation-delay:calc(var(--i)*.85s)}
+@keyframes penmove{0%{transform:translate(var(--ax),var(--ay));opacity:1}90%{opacity:1}100%{transform:translate(var(--bx),var(--by));opacity:0}}
+.pn-b{fill:var(--accent)}.pn-e{fill:var(--pink)}.pn-w{fill:#E9CDA3}.pn-t{fill:var(--ink)}
+.art .rul{opacity:0;pointer-events:none;animation:rulshow .85s ease forwards;animation-delay:calc(var(--i)*.85s)}
+@keyframes rulshow{0%{opacity:0}14%{opacity:1}80%{opacity:1}100%{opacity:0}}
+.rul rect{fill:color-mix(in srgb,var(--marker) 20%,var(--surface));stroke:color-mix(in srgb,var(--marker) 70%,var(--ink));stroke-width:.8;fill-opacity:.82}
+.rul .rt{fill:none;stroke:color-mix(in srgb,var(--marker) 55%,var(--ink));stroke-width:.7}
+.art .erase{stroke:var(--new);stroke-width:3.2;stroke-dasharray:.04 .05;stroke-linecap:butt;opacity:.95}
+.art path.new.erase{stroke-dashoffset:0;animation:eraseout 1.3s ease forwards;animation-delay:calc(var(--i)*.85s)}
+@keyframes eraseout{0%{opacity:.95}60%{opacity:.95}100%{opacity:.12}}
+.art.m-final .lns{filter:url(#rough)}
+.app.lessonv #canvas{box-shadow:var(--sh-2),inset 0 0 44px rgba(120,96,52,.07)}
 </style>
 </head>
 <body>
@@ -870,6 +883,7 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 <svg class="defs" aria-hidden="true">
   <defs>
     <pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="hl"/></pattern>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G"/></filter>
     <pattern id="hatchLight" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="9" class="hl" style="opacity:.6"/></pattern>
   </defs>
 </svg>
@@ -1298,7 +1312,34 @@ function street(){const hy=125,V=[200,hy];
     {title:'Close the street and finish',text:'Ink the horizon where you can see it: between the last buildings, and beside the nearest buildings. Ink the pavement lines out to the edge of the page. Then dash the centre line and tone the left buildings.',tip:'the street ends at the horizon',shapes:[Th([Lf.far[0],hy],[Rt.far[0],hy]),...Lf.close,...Rt.close,...dash,...Lf.shade]}
   ]}
 
+function bedroom(){const hy=130,V=[240,hy],ER=8;
+  const p1=[120,70],p2=[300,70],p3=[300,190],p4=[120,190];
+  const U=s=>Object.assign(s,{until:ER}),Sx=s=>Object.assign(s,{silent:true}),X=(a,b)=>({t:'l',a,b,k:'erase'});
+  const tx=x=>M([x,184],[x,196]),ty=y=>M([114,y],[126,y]);
+  const bw0=[120,160],bw1=[210,160],bw2=[210,190],ft=p=>lerp(V,p,1.7);
+  const ftr=ft(bw1),fbr=ft(bw2),ftl=ft(bw0),fbl=ft(p4);
+  const wl=232.5,wr=277.5;
+  const dt=[300,100],dn=1.5,df=2.2,d1b=lerp(V,p3,dn),d1t=lerp(V,dt,dn),d2b=lerp(V,p3,df),d2t=lerp(V,dt,df),knob=lerp(V,[300,145],2.05);
+  const r1=[wl,190],r2=[wr,190],a1=lerp(V,r1,1.35),a2=lerp(V,r2,1.35),b1=lerp(V,r1,2.2),b2=lerp(V,r2,2.2);
+  const fl=lerp(V,bw0,1.3),fr=lerp(V,bw1,1.3);
+  return [
+    {title:'Eye level and VP',text:'Draw the horizon across the middle of the page and put the vanishing point a little right of the centre. You are standing in the doorway, looking into the room.',tip:'the horizon is the height of your eyes',shapes:[G([10,hy],[390,hy]),T([22,hy-8],'horizon','hor'),D(V,'VP')]},
+    {title:'The back wall',text:'Draw a rectangle around the vanishing point, one side at a time: top, right, bottom, left. Two sides are horizontal, two are vertical. This is the far wall of the bedroom.',tip:'the VP sits inside the wall',shapes:[L(p1,p2),L(p2,p3),U(L(p3,p4)),U(L(p4,p1))]},
+    {title:'Walls, floor and ceiling',text:'Put your ruler on the VP and on one corner of the wall. Draw a light line from the VP to the corner, then keep going in ink to the edge of the page. Do this for all four corners.',tip:'start at the VP, pass the corner, keep going',shapes:[G(V,p1),L(p1,ext(V,p1)),G(V,p2),L(p2,ext(V,p2)),G(V,p3),L(p3,ext(V,p3)),G(V,p4),U(L(p4,ext(V,p4)))]},
+    {title:'Measure the wall',text:'Everything in this room is measured from the back wall. Find the middle of the bottom edge, then the middle of each half: 4 equal parts. Do the same on the left edge.',tip:'halve, then halve again',shapes:[...[120,165,210,255,300].map(tx),...[70,100,130,160,190].map(ty)]},
+    {title:'The bed against the wall',text:'The bed is 2 parts wide and 1 part high. On the back wall, draw a horizontal line at the first mark from the floor, 2 parts long. Then a vertical line down to the floor.',tip:'2 parts wide, 1 part high',shapes:[M([120,202],[210,202],'2 parts'),M([106,160],[106,190],'1 part'),L(bw0,bw1),L(bw1,bw2)]},
+    {title:'Bed lines from the VP',text:'Put your ruler on the VP. Draw three light lines through the three corners of the bed and out into the room. The bed will grow along these lines.',tip:'everything that goes back runs to the VP',shapes:[G(V,lerp(V,bw1,1.95)),G(V,lerp(V,bw2,1.95)),G(V,lerp(V,bw0,1.95))]},
+    {title:'The foot of the bed',text:'Choose how long the bed is. Draw a vertical line between the two right-hand guide lines. From its top and its bottom, draw horizontal lines to the left wall. Close the foot with a vertical line.',tip:'verticals stay vertical, horizontals stay parallel to the horizon',shapes:[L(ftr,fbr),L(ftr,ftl),L(fbr,fbl),L(ftl,fbl)]},
+    {title:'Ink the sides of the bed',text:'Ink the three edges that run back to the wall, along the guide lines: the top right edge, the bottom right edge and the top edge on the left wall.',tip:'three edges, all pointing to the VP',shapes:[L(bw1,ftr),L(bw2,fbr),L(bw0,ftl)]},
+    {title:'Erase what the bed hides',text:'The bed stands in front of the wall. Erase the lines you can no longer see: the floor line behind the bed, the bottom of the wall corner, and the floor line of the left wall beside the bed.',tip:'what is behind disappears',shapes:[X([120,190],[210,190]),X([120,160],[120,190]),X(p4,fbl),Sx(L([210,190],p3)),Sx(L(p1,[120,160])),Sx(L(fbl,ext(V,p4)))]},
+    {title:'The window',text:'On the floor line, find the middle of part 3 and the middle of part 4. Go straight up from both marks. The window starts at the top quarter mark and ends at the bottom quarter mark: two vertical and two horizontal lines.',tip:'the wall faces you, so no VP here',shapes:[tx(wl),tx(wr),ty(100),ty(160),L([wl,160],[wl,100]),L([wl,100],[wr,100]),L([wr,100],[wr,160]),L([wr,160],[wl,160])]},
+    {title:'Window bars',text:'Draw a vertical bar straight up from the middle of the window. The horizontal bar sits exactly on the horizon, because the horizon is at half the wall.',tip:'the cross is on the marks you measured',shapes:[Th([255,100],[255,160]),Th([wl,130],[wr,130])]},
+    {title:'The door on the right wall',text:'A door is three quarters of the wall high. From the VP, draw a light line through the top quarter mark on the right corner and along the right wall. Draw two vertical lines from the floor line up to it, then ink the top of the door. Add a small handle.',tip:'the door gets taller as it comes closer',shapes:[M([294,100],[306,100]),G(V,lerp(V,dt,2.45)),L(d1b,d1t),L(d2b,d2t),L(d1t,d2t),E(knob,2.6,3.6)]},
+    {title:'The rug',text:'The rug is as wide as the window. From the VP, draw two light lines through the same two marks on the floor line. Draw two horizontal lines between them for the far and the near end, then ink the two sides.',tip:'same marks, same width',shapes:[tx(wl),tx(wr),G(V,lerp(V,r1,2.3)),G(V,lerp(V,r2,2.3)),L(a1,a2),L(b1,b2),L(a1,b1),L(a2,b2)]},
+    {title:'Headboard, blanket and shade',text:'On the wall, draw the headboard: half a part high and as wide as the bed, one vertical and one horizontal line. Draw a horizontal line across the bed for the folded blanket. Then shade the side of the bed and give the rug a light tone.',tip:'light comes from the window',shapes:[M([218,145],[218,160],'half'),L([210,160],[210,145]),L([210,145],[120,145]),Th(fl,fr),P([bw1,ftr,fbr,bw2]),P([a1,a2,b2,b1],'shadeLight')]}
+  ]}
 const LIB=[
+  {id:'bedroom',lib:'place',unit:3,lv:2,title:'Cozy bedroom',mins:12,added:'2026-11-10',steps:bedroom()},
   {id:'robot',lib:'fun',unit:1,title:'Box robot',mins:6,added:'2026-11-09',steps:robot()},
   {id:'train',lib:'fun',unit:2,title:'Train on the tracks',mins:7,pro:true,added:'2026-11-09',steps:train()},
   {id:'rocket',lib:'fun',unit:2,title:'Rocket',mins:6,pro:true,added:'2026-11-09',steps:rocket()},
@@ -1308,6 +1349,21 @@ const LIB=[
 ];
 const LIBCATS=[['fun','Fun things','Robots, trains, rockets and more.'],['place','Places','Streets, cafés and buildings.']];
 Object.assign(KIDS,{
+  bedroom:{title:'My Cozy Bedroom',steps:[
+    ['Line and dot','Draw the sky line across the middle. Put the magic dot a little to the right.','you are looking into the room'],
+    ['The back wall','Draw a big box around the dot: top, side, bottom, side. That is the far wall.',''],
+    ['The room','Put your ruler on the dot. Draw a line through each corner of the wall, all the way to the edge of the paper.','start at the dot'],
+    ['Measure the wall','Find the middle of the bottom line. Then the middle of each half. Now it has 4 equal parts! Do the same on the left side.','measure, do not guess'],
+    ['The bed on the wall','The bed is 2 parts wide and 1 part tall. Draw a flat line and a standing-up line on the wall.','2 wide, 1 tall'],
+    ['Bed lines','Draw three soft lines from the dot through the corners of the bed, out into the room.','start at the dot'],
+    ['The end of the bed','Draw a standing-up line between the soft lines. Draw flat lines over to the left wall, and close the end of the bed.',''],
+    ['The sides of the bed','Draw over the three soft lines between the wall and the end of the bed.','they all point to the dot'],
+    ['Rub out','The bed is in front now. Rub out the lines hiding behind the bed.','what is behind disappears'],
+    ['The window','Find the middle of part 3 and part 4. Go straight up and draw the window between the quarter marks.',''],
+    ['Window cross','Draw a line up the middle and a flat line across. The flat one sits on the sky line!',''],
+    ['The door','Draw a soft line from the dot along the right wall. Draw two standing-up lines up to it, then the top of the door. Add a little handle.','the door looks bigger near you'],
+    ['The rug','Draw two soft lines from the dot through the window marks. Draw two flat lines between them and you have a rug.','as wide as the window'],
+    ['Headboard and blanket','Draw the headboard on the wall behind the bed. Draw a flat line on the bed for the blanket and color the side of the bed. Good night!','']]},
   robot:{title:'Box Robot',steps:[
     ['Line and dot','Draw the sky line up high and put the magic dot on the right side.','we look down at the robot'],
     ['The tummy','Draw a big box shape facing you, one side at a time. That is the robot tummy!',''],
@@ -1387,7 +1443,7 @@ function autoGuides(list){for(const l of list){
   const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push(sh.p)}));
   const seen=[];
   l.steps.forEach(st=>{const add=[];
-    for(const sh of st.shapes){if(sh.t!=='l')continue;seen.push(sh);if(sh.k==='guide')continue;
+    for(const sh of st.shapes){if(sh.t!=='l'||sh.k==='erase')continue;seen.push(sh);if(sh.k==='guide'||sh.silent)continue;
       const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
       if(Math.abs(dy)<.6&&len>300)continue;
       for(const v of vps){
@@ -1403,6 +1459,88 @@ function autoGuides(list){for(const l of list){
         break}}
     if(add.length)st.shapes.unshift(...add)})}}
 autoGuides(LESSONS);autoGuides(LIB);
+/* ---------- kids path: short lessons (4-7 steps, about 5 min) ---------- */
+const K=(t,x,tip,shapes)=>({title:t,text:x,tip:tip||'',shapes});
+function kroad(){const hy=120,V=[200,hy];
+  const tree=(x,y,h)=>{const top=[x,y-h];return [L([x,y],top),E([x,y-h-h*.35],h*.42,h*.38)]};
+  const t1=[[70,262],70],t2=atY(V,[70,262],190),f2=(190-hy)/(262-hy);
+  const t3=[[330,262],70];const t4=atY(V,[330,262],190);
+  return [
+    K('Line and dot','Draw the sky line across your paper. Put the magic dot in the middle of it.','press softly',[G([10,hy],[390,hy]),D(V,'VP')]),
+    K('The road','Put your ruler on the magic dot. Draw two lines from the dot down to the bottom of the paper.','start at the dot',[L(V,[110,300]),L(V,[290,300])]),
+    K('Road stripes','Draw stripes in the middle of the road. They get shorter near the dot.','far away = small',[[.2,.27],[.36,.47],[.58,.74],[.82,1]].map(([a,b])=>L(lerp(V,[200,300],a),lerp(V,[200,300],b)))),
+    K('Two trees, near and far','Draw a big tree near you. Draw a soft line from its top to the dot. The far tree touches that line, so it is smaller.','same tree, further away',[...tree(70,262,70),G(V,[70,192]),...tree(t2[0],190,70*f2),...tree(330,262,70),G(V,[330,192]),...tree(t4[0],190,70*f2)])
+  ]}
+function kgift(){const hy=80,V=[310,hy],t=.3,d=p=>lerp(p,V,t);
+  const A=[100,150],B=[210,150],C=[210,260],Dd=[100,260],A2=d(A),B2=d(B),C2=d(C);
+  const mx=(A[0]+B[0])/2,my=(A[1]+Dd[1])/2,Mt=[mx,150],Mb=[mx,260],Ml=[100,my],Mr=[210,my];
+  const Mt2=d(Mt),Mr2=d(Mr),top=lerp(Mt,Mt2,.5);
+  return [
+    K('Line and dot','Draw the sky line high up and put the magic dot on the right.','',[G([10,hy],[390,hy]),D(V,'VP')]),
+    K('The front square','Draw a square facing you: top, side, bottom, side.','standing-up and flat lines only',rectL(A,B,C,Dd)),
+    K('Lines to the dot','Put your ruler on the magic dot. Draw soft lines to three corners of the square.','start at the dot',[G(V,A),G(V,B),G(V,C)]),
+    K('Make it a box','Draw the back edges on the soft lines. Now it is a real box!','',[L(A2,B2),L(B2,C2),L(A,A2),L(B,B2),L(C,C2)]),
+    K('Find the middle','Measure the front: find the middle of the top line and the middle of the side. Draw the ribbon across the middle, both ways.','measure, do not guess',[M([100,140],[mx,140],'half'),M([mx,140],[210,140],'half'),L(Mt,Mb),L(Ml,Mr)]),
+    K('Ribbon and bow','The ribbon goes back to the dot on the top and on the side. Add a bow on top!','',[L(Mt,Mt2),L(Mr,Mr2),E([top[0]-11,top[1]-8],11,7),E([top[0]+11,top[1]-8],11,7)])
+  ]}
+function khouse(){const hy=80,V=[315,hy],t=.3,d=p=>lerp(p,V,t);
+  const A=[100,150],B=[220,150],C=[220,262],Dd=[100,262],mx=160,Pk=[mx,92];
+  const Pk2=d(Pk),B2=d(B),C2=d(C);const q=(B[0]-A[0])/4;
+  return [
+    K('Line and dot','Draw the sky line and put the magic dot on the right.','',[G([10,hy],[390,hy]),D(V,'VP')]),
+    K('The wall','Draw a square for the front wall of the house.','',rectL(A,B,C,Dd)),
+    K('The roof','Find the middle of the top line. Go up and put a dot for the roof top. Draw the roof to both corners.','measure the middle',[M([100,140],[mx,140],'half'),M([mx,140],[220,140],'half'),D(Pk,''),L(Pk,A),L(Pk,B)]),
+    K('Lines to the dot','Draw soft lines from the magic dot to the roof top and to the two corners on the right.','start at the dot',[G(V,Pk),G(V,B),G(V,C)]),
+    K('Make it deep','Draw the back of the roof and the side wall along the soft lines.','',[L(Pk,Pk2),L(Pk2,B2),L(B2,C2),L(B,B2),L(C,C2)]),
+    K('Door and window','The door is one quarter of the wall wide. Draw it in the second quarter, and a window in the fourth.','1 door = 1 quarter',[M([A[0]+q,272],[A[0]+2*q,272],'1/4'),L([A[0]+q,262],[A[0]+q,205]),L([A[0]+q,205],[A[0]+2*q,205]),L([A[0]+2*q,205],[A[0]+2*q,262]),...rectL([A[0]+3*q-6,180],[A[0]+4*q-10,180],[A[0]+4*q-10,212],[A[0]+3*q-6,212])])
+  ]}
+function kcastle(){const hy=70,V=[305,hy],t=.25,d=p=>lerp(p,V,t);
+  const A=[130,112],B=[230,112],C=[230,272],Dd=[130,272],A2=d(A),B2=d(B),C2=d(C),w=(B[0]-A[0])/5,h=18;
+  const mer=k=>{const x0=A[0]+k*w,x1=x0+w;return [L([x0,112],[x0,112-h]),L([x0,112-h],[x1,112-h]),L([x1,112-h],[x1,112])]};
+  return [
+    K('Line and dot','Draw the sky line high up and put the magic dot on the right.','',[G([10,hy],[390,hy]),D(V,'VP')]),
+    K('A tall tower','Draw a tall rectangle facing you. This is the front of the castle tower.','',rectL(A,B,C,Dd)),
+    K('Lines to the dot','Put your ruler on the magic dot. Draw soft lines to three corners of the tower.','start at the dot',[G(V,A),G(V,B),G(V,C)]),
+    K('Make it a box','Draw the back edges on the soft lines. Now the tower is a real box!','',[L(A2,B2),L(B2,C2),L(A,A2),L(B,B2),L(C,C2)]),
+    K('Castle teeth','Measure the top line and cut it into 5 equal parts. Draw a little block on parts 1, 3 and 5.','5 parts, 3 blocks',[...[0,1,2,3,4,5].map(k=>M([A[0]+k*w,104],[A[0]+k*w,120])),...mer(0),...mer(2),...mer(4)]),
+    K('Door and windows','Draw a door in the middle part at the bottom, and two thin windows.','',[L([A[0]+2*w,272],[A[0]+2*w,232]),L([A[0]+2*w,232],[A[0]+3*w,232]),L([A[0]+3*w,232],[A[0]+3*w,272]),...rectL([A[0]+w+4,150],[A[0]+w+12,150],[A[0]+w+12,178],[A[0]+w+4,178]),...rectL([A[0]+3*w+8,150],[A[0]+3*w+16,150],[A[0]+3*w+16,178],[A[0]+3*w+8,178])])
+  ]}
+function kblock(){const {hy,V1,V2,F0,F1,L0,L1,R0,R1,K:Kc}=box2geo();
+  return [
+    K('Line and two dots','Draw the sky line. Put a magic dot near each end.','two dots this time!',[G([10,hy],[390,hy]),D(V1,'VP1'),D(V2,'VP2')]),
+    K('The front corner','Draw one standing-up line under the sky line. This is the corner closest to you.','',[L(F0,F1)]),
+    K('Lines to both dots','From each dot, draw soft lines to the top and the bottom of the corner.','start at a dot',[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]),
+    K('The two sides','Draw a standing-up line on each side. Ink the edges between them.','',[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]),
+    K('Close the top','Draw two soft lines across from the dots. Where they cross is the back corner. Now it is a toy block!','',[G(V2,Kc),G(V1,Kc),L(L0,Kc),L(R0,Kc)])
+  ]}
+function kbus(){const hy=110,V1=[6,hy],V2=[394,hy],F0=[288,130],F1=[288,196];
+  const L0=atX(F0,V1,120),L1=atX(F1,V1,120),R0=atX(F0,V2,344),R1=atX(F1,V2,344),Kc=inter(L0,V2,R0,V1);
+  const wt=lerp(F0,F1,.16),wb=lerp(F0,F1,.5);
+  const wins=[[268,250],[236,220],[206,192],[178,166],[154,142]];
+  const wl=wins.flatMap(([a,b])=>{const p=atX(wt,V1,a),q=atX(wt,V1,b),p2=atX(wb,V1,a),q2=atX(wb,V1,b);return [Th(p,q),Th(p2,q2),Th(p,p2),Th(q,q2)]});
+  const wheel=x=>{const p=atX(F1,V1,x);return E([p[0],p[1]-2],7*(.6+.4*(x-120)/168),11*(.65+.35*(x-120)/168))};
+  return [
+    K('Line and two dots','Draw the sky line. Put a magic dot near each end.','',[G([4,hy],[396,hy]),D(V1,'VP1'),D(V2,'VP2')]),
+    K('The front corner','Draw one standing-up line on the right side. This is the corner of the bus.','',[L(F0,F1)]),
+    K('Lines to both dots','From each dot, draw soft lines to the top and the bottom of the corner.','start at a dot',[G(V1,F0),G(V1,F1),G(V2,F0),G(V2,F1)]),
+    K('Long side and front','Draw a line far to the left for the long side, and a short one on the right for the front. Ink the edges.','the long side goes to the left dot',[L(L0,L1),L(R0,R1),L(F0,L0),L(F1,L1),L(F0,R0),L(F1,R1)]),
+    K('The roof','Draw two soft lines from the dots across the top. Where they cross, the roof closes.','',[G(V2,Kc),G(V1,Kc),L(L0,Kc),L(R0,Kc)]),
+    K('Windows','Draw two soft lines from the left dot for the windows. Draw the windows between them, smaller far away.','',[G(V1,wt),G(V1,wb),...wl]),
+    K('Wheels','Draw round wheels at the bottom of the long side. Beep beep!','',[...[262,218,146].map(wheel)])
+  ]}
+const KL=[
+  {id:'kroad',unit:1,title:'Road to the dot',mins:3,nows:true,added:'2026-11-10',steps:kroad()},
+  {id:'kgift',unit:1,title:'Gift box',mins:5,nows:true,added:'2026-11-10',steps:kgift()},
+  {id:'khouse',unit:1,title:'Little house',mins:5,nows:true,added:'2026-11-10',steps:khouse()},
+  {id:'kcastle',unit:1,title:'Castle tower',mins:5,pro:true,nows:true,added:'2026-11-10',steps:kcastle()},
+  {id:'kblock',unit:2,title:'Toy block',mins:4,nows:true,added:'2026-11-10',steps:kblock()},
+  {id:'kbus',unit:2,title:'School bus',mins:6,pro:true,nows:true,added:'2026-11-10',steps:kbus()}
+];
+KL.forEach(l=>{KIDS[l.id]={title:l.title,steps:l.steps.map(s=>[s.title,s.text,s.tip])}});
+const KPUNITS=[{n:1,cls:'u1',title:'One magic dot',soon:[]},{n:2,cls:'u2',title:'Two magic dots',soon:['Toy train']}];
+const PATH=()=>isKid()?KL:LESSONS,PUNITS=()=>isKid()?KPUNITS:UNITS;
+
+orient(KL);autoGuides(KL);
 
 const KUNITS={1:['Level 1 · One magic dot','The magic dot','Roads, boxes and rooms with one dot.'],2:['Level 2 · Two magic dots','Blocks and houses','Two dots make blocks and houses.'],3:['Level 3 · The sky dot','Super tall','A dot in the sky for giant towers.']};
 const isKid=()=>S.mode==='kid';
@@ -1415,7 +1553,7 @@ let player=null;
 function hush(){try{if(player){player.pause();player=null}}catch(e){}}
 function play(key,force){
   if(!S.voice&&!force)return;hush();
-  try{player=new Audio('audio/'+key+'.mp3?v=9');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
+  try{player=new Audio('audio/'+key+'.mp3?v=10');const p=player.play();if(p&&p.catch)p.catch(()=>toast('Tap the speaker to hear the voice'))}catch(e){}
 }
 /* line types: every new line is named as vertical, horizontal (parallel to the horizon), going to a VP, or slanted */
 function lineKinds(l,i){
@@ -1423,9 +1561,10 @@ function lineKinds(l,i){
   const c={horizon:0,vert:0,hor:0,vp:{},slant:0,round:0};
   for(const sh of l.steps[i].shapes){
     if(sh.t==='e'){c.round++;continue}
-    if(sh.t!=='l'||sh.auto)continue;
+    if(sh.t!=='l'||sh.auto||sh.silent||sh.k==='erase')continue;
     const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
     if(Math.abs(dy)<.6&&sh.k==='guide'&&len>300){c.horizon++;continue}
+    if(Math.abs(dy)<.6){c.hor++;continue}
     const hit=vps.find(v=>Math.abs(dx*(v.p[1]-sh.a[1])-dy*(v.p[0]-sh.a[0]))/len<1.6);
     if(hit&&!(Math.abs(dy)<.6&&vps.length>1&&vps.every(v=>Math.abs(v.p[1]-vps[0].p[1])<1)&&Math.abs(sh.a[1]-hit.p[1])<1&&len>300)){c.vp[hit.n]=(c.vp[hit.n]||0)+1;continue}
     if(Math.abs(dx)<.6)c.vert++;else if(Math.abs(dy)<.6)c.hor++;else c.slant++;
@@ -1459,6 +1598,8 @@ const GOALS={
   rocket:['How to find the centre of the top in perspective and raise a pointed nose from it.','How to put a pointy nose on a rocket.'],
   treehouse:['How to put a one-point house with a gable roof on top of a tree.','How to draw a little house up in a tree.'],
   street:['How one vanishing point controls a whole street: road, buildings and windows.','How a whole street runs into one magic dot.'],
+  kroad:['','How far things get smaller, near the magic dot.'],kgift:['','How to turn a square into a box with a ribbon.'],khouse:['','How to draw a house with a pointy roof.'],kcastle:['','How to measure castle teeth so they are all the same.'],kblock:['','How two magic dots make a corner box.'],kbus:['','How to draw a long bus with two magic dots.'],
+  bedroom:['How to furnish a one-point room: measure every piece of furniture from the back wall and erase what it hides.','How to put a bed, a window, a door and a rug in a room.'],
   cafe:['How each wall uses its own vanishing point, and how an awning sticks out from a wall.','How to draw a café with a striped roof cover.']
 };
 function lineRule(l,kid){
@@ -1554,18 +1695,18 @@ function questFor(day){
   const fresh=openLib.filter(x=>!S.done[x.l.id]),pool=fresh.length?fresh:openLib;
   const d=S.days.length+1,dayOk=d<=30&&(d<=FREE_DAYS||isPro());
   const kinds=[];
-  if(ni>=0&&(!LESSONS[ni].pro||isPro()))kinds.push('lesson');
+  const P=PATH();if(ni>=0&&(!P[ni].pro||isPro()))kinds.push('lesson');
   if(pool.length)kinds.push('lib');
   if(dayOk)kinds.push('day');
   const k=kinds[seed%kinds.length]||'lib';
-  if(k==='lesson')return {date:day,kind:'lesson',id:LESSONS[ni].id,i:ni,done:false};
+  if(k==='lesson')return {date:day,kind:'lesson',id:P[ni].id,i:ni,done:false};
   if(k==='day')return {date:day,kind:'day',d,done:false};
   const pick=pool[seed%pool.length];return {date:day,kind:'lib',id:pick.l.id,i:pick.i,done:false};
 }
 function quest(){const t=today();if(!S.quest||S.quest.date!==t){S.quest=questFor(t);save()}return S.quest}
 function questText(q){
   if(q.kind==='day')return {t:isKid()?`Draw challenge day ${q.d}`:`Draw challenge day ${q.d}`,x:PROMPTS[q.d-1]};
-  const l=(q.kind==='lib'?LIB:LESSONS).find(z=>z.id===q.id);return {t:`Draw: ${l?LT(l):''}`,x:l?`${l.steps.length} steps · about ${l.mins} min`:''};
+  const l=(q.kind==='lib'?LIB:PATH()).find(z=>z.id===q.id);return {t:`Draw: ${l?LT(l):''}`,x:l?`${l.steps.length} steps · about ${l.mins} min`:''};
 }
 function questDone(kind,key){const q=S.quest;if(!q||q.date!==today()||q.done)return false;
   if((q.kind==='day'&&kind==='day'&&q.d===key)||(q.kind!=='day'&&kind===q.kind&&q.id===key)){q.done=true;S.gems+=QUEST_GEMS;S.questN=(S.questN||0)+1;save();track('quest/done');return true}return false}
@@ -1686,7 +1827,7 @@ function vMine(){
   if(mine.err)body=`<section class="panel"><p>${esc(mine.err)}</p><button class="btn ghost" data-act="mine">Try again</button></section>`;
   else if(mine.rows===null||mine.loading&&!mine.rows)body=`<p class="foot-note">Loading…</p>`;
   else if(!mine.rows.length)body=`<section class="panel"><h3>No drawings yet</h3><p class="fine2">Finish a lesson, add a photo of your paper and send it to Arda. He gives every drawing a score and a short note.</p><button class="btn primary" data-act="home">Go to lessons</button></section>`;
-  else body=`<div class="subs">${mine.rows.map(r=>{const l=LESSONS.find(x=>x.id===r.lesson_id);const [c,t]=st(r);const u=mine.urls[r.image_path];
+  else body=`<div class="subs">${mine.rows.map(r=>{const l=[...LESSONS,...KL,...LIB].find(x=>x.id===r.lesson_id);const [c,t]=st(r);const u=mine.urls[r.image_path];
     return `<article class="sub">${u?`<img src="${esc(u)}" alt="Your drawing" loading="lazy">`:'<span class="ph"></span>'}<div class="meta2"><span class="st ${c}">${t}</span><b>${esc(l?LT(l):r.lesson_id)}</b><small>${new Date(r.created_at).toLocaleDateString()}</small>${r.score?stars(r.score):''}${r.note?`<p class="rnote">${esc(r.note)}</p>`:''}</div></article>`}).join('')}</div>`;
   return `<div class="mhead"><button class="iconbtn" data-act="tab" data-tab="profile" aria-label="Back to profile">${I.back}</button><h1>My drawings</h1></div>${body}`;
 }
@@ -1694,27 +1835,37 @@ function vMine(){
 /* ---------- render helpers ---------- */
 const f=p=>p[0].toFixed(1)+' '+p[1].toFixed(1);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PEN='<g transform="rotate(-52) scale(1.35)"><path class="pn-b" d="M7 -3.6H32V3.6H7Z"/><path class="pn-e" d="M32 -3.6H37a1.6 1.6 0 0 1 1.6 1.6V2a1.6 1.6 0 0 1-1.6 1.6H32Z"/><path class="pn-w" d="M0 0L7 -3.6V3.6Z"/><path class="pn-t" d="M0 0L2.6 -1.35V1.35Z"/></g>';
 function art(lesson,upto,mode){
-  let polys='',lines='',top='';
+  let polys='',lines='',top='',under='',pens='';
   for(let i=0;i<=upto;i++){
     const isNew=mode==='step'&&i===upto;let j=0;
+    const nNew=isNew?lesson.steps[i].shapes.filter(z=>z.t==='l'&&!z.auto&&!z.silent&&z.k!=='erase').length:0;
     for(const s of lesson.steps[i].shapes){
-      const cls=isNew?' new':'',st=isNew?` style="--i:${j++}"`:'';
+      if(s.until!=null&&upto>=s.until)continue;
+      if(s.k==='erase'&&!isNew)continue;
+      const anim=isNew&&!s.silent;
+      const cls=anim?' new':'',st=anim?` style="--i:${j++}"`:'';
       if(s.t==='m'){if(mode!=='step'||upto-i>1)continue;const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],ln=Math.hypot(dx,dy)||1,nx=-dy/ln*5,ny=dx/ln*5;
         lines+=`<path d="M${f(s.a)}L${f(s.b)}M${(s.a[0]+nx).toFixed(1)} ${(s.a[1]+ny).toFixed(1)}L${(s.a[0]-nx).toFixed(1)} ${(s.a[1]-ny).toFixed(1)}M${(s.b[0]+nx).toFixed(1)} ${(s.b[1]+ny).toFixed(1)}L${(s.b[0]-nx).toFixed(1)} ${(s.b[1]-ny).toFixed(1)}" class="sh measure${cls}"${st}/>`;
         if(s.s&&mode==='step'){const mx=(s.a[0]+s.b[0])/2,my=(s.a[1]+s.b[1])/2,vert=Math.abs(dx)<Math.abs(dy);top+=`<text class="mlab${cls}" x="${(mx+(vert?(mx<200?-6:6):0)).toFixed(1)}" y="${(my+(vert?4:12)).toFixed(1)}" text-anchor="${vert?(mx<200?'end':'start'):'middle'}"${st}>${isKid()?s.s.replace('= width','= wide').replace('width','wide'):s.s}</text>`}continue}
       if(mode==='color'&&((s.t!=='l'&&s.t!=='e')||(s.k==='guide'&&!s.ce)))continue;
-      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;if(isNew)top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`}
+      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;
+        if(anim&&s.k!=='erase'){top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`;
+          if(!s.auto){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],len=Math.hypot(dx,dy);
+            if(nNew<=8&&len>=40){let tk='';for(let q=0;q<=len;q+=10)tk+=`M${q} 2v${q%50===0?5:3}`;
+              under+=`<g class="rul" style="--i:${j-1}" transform="translate(${f(s.a)}) rotate(${(Math.atan2(dy,dx)*180/Math.PI).toFixed(2)})"><rect x="-10" y="2" width="${(len+20).toFixed(1)}" height="12" rx="2"/><path class="rt" d="${tk}"/></g>`}
+            pens+=`<g class="pen" style="--i:${j-1};--ax:${s.a[0].toFixed(1)}px;--ay:${s.a[1].toFixed(1)}px;--bx:${s.b[0].toFixed(1)}px;--by:${s.b[1].toFixed(1)}px">${PEN}</g>`}}}
       else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
       else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
     }
   }
-  return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'}${mode==='color'?' colorart':''}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${lines}</g><g>${top}</g></svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="art ${mode==='step'?'':'final'} m-${mode}${mode==='color'?' colorart':''}" role="img" aria-label="${esc(lesson.title)} drawing"><g>${polys}</g><g>${under}</g><g class="lns">${lines}</g><g>${top}</g><g>${pens}</g></svg>`;
 }
-const curL=()=>(view.lib?LIB:LESSONS)[view.i];
-function nextIdx(){return LESSONS.findIndex(l=>!S.done[l.id])}
+const curL=()=>(view.lib?LIB:PATH())[view.i];
+function nextIdx(){return PATH().findIndex(l=>!S.done[l.id])}
 function header(){
   return `<header class="top"><div class="brand">${LOGO}<div>Perspective Sketch<small>by @perspective.sketch</small></div></div>
   <div class="stats"><span class="chip flame" title="Day streak">${I.flame}${S.streak}</span><span class="chip gemc" title="Gems">${I.gem}${S.gems}</span>${onTrial()?`<span class="chip pro" title="Pro trial days left">PRO ${daysLeft()}d</span>`:''}</div></header>`;
@@ -1726,33 +1877,33 @@ function setTabs(name){
 
 /* ---------- views ---------- */
 function vLearn(){
-  const ni=nextIdx(),q=quest();
+  const ni=nextIdx(),q=quest(),P=PATH();
   const warn=(onTrial()&&daysLeft()<=2)||trialOver()?trialBanner():'';
   let hero;
-  if(ni<0)hero=`<section class="hero-next"><div class="hn-art paper">${art(LESSONS[LESSONS.length-1],LESSONS[LESSONS.length-1].steps.length-1,'thumb')}</div><div class="hn-body"><h1>${isKid()?'You finished every lesson!':'Every lesson done'}</h1><button class="btn primary wide hn-cta" data-act="tab" data-tab="draw">${I.pencil}${isKid()?'Pick a new drawing':'Open the drawing studio'}</button></div></section>`;
-  else{const l=LESSONS[ni],locked=l.pro&&!isPro(),isQ=q.kind==='lesson'&&q.id===l.id&&!q.done;
+  if(ni<0)hero=`<section class="hero-next"><div class="hn-art paper">${art(P[P.length-1],P[P.length-1].steps.length-1,'thumb')}</div><div class="hn-body"><h1>${isKid()?'You finished every lesson!':'Every lesson done'}</h1><button class="btn primary wide hn-cta" data-act="tab" data-tab="draw">${I.pencil}${isKid()?'Pick a new drawing':'Open the drawing studio'}</button></div></section>`;
+  else{const l=P[ni],locked=l.pro&&!isPro(),isQ=q.kind==='lesson'&&q.id===l.id&&!q.done;
     hero=`<section class="hero-next"><button class="hn-art paper" data-act="open" data-i="${ni}" aria-label="Open ${esc(LT(l))}">${art(l,l.steps.length-1,'thumb')}<span class="hn-tag">${ni===0?(isKid()?'Start here':'Start here'):'Next'}</span>${isQ?`<span class="hn-q">${I.gem}+${QUEST_GEMS}</span>`:''}</button>
     <div class="hn-body"><h1>${esc(LT(l))}</h1><button class="btn primary wide hn-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
   let mission='';
-  if(!(q.kind==='lesson'&&q.id===(LESSONS[ni]||{}).id)){
-    const ml=q.kind==='day'?null:(q.kind==='lib'?LIB:LESSONS).find(z=>z.id===q.id);
+  if(!(q.kind==='lesson'&&q.id===(P[ni]||{}).id)){
+    const ml=q.kind==='day'?null:(q.kind==='lib'?LIB:P).find(z=>z.id===q.id);
     const hl=q.kind==='day'&&DAYHELP[q.d]?[...LESSONS,...LIB].find(z=>z.id===DAYHELP[q.d]):null;
     const thumb=ml||hl;const go=q.kind==='day'?`data-act="questday" data-d="${q.d}"`:`data-act="${q.kind==='lib'?'lib':'open'}" data-i="${q.i}"`;
     mission=`<button class="mtile${q.done?' mdone':''}" ${q.done?'disabled':go}><span class="mt-art paper">${thumb?art(thumb,thumb.steps.length-1,'thumb'):''}</span><span class="mt-txt"><small>${isKid()?"Today's mission":"Today's mission"}</small><b>${q.kind==='day'?`Challenge day ${q.d}`:esc(LT(ml))}</b></span><span class="mt-end">${q.done?I.check:`${I.gem}+${QUEST_GEMS}`}</span></button>`}
   else if(q.done)mission='';
-  const units=UNITS.map(u=>{
-    const list=LESSONS.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);const ud=list.filter(x=>S.done[x.l.id]).length;
+  const units=PUNITS().map(u=>{
+    const list=P.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);const ud=list.filter(x=>S.done[x.l.id]).length;
     const cards=list.map(({l,i})=>{const st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
       const badge=st==='done'?`<span class="lt-b ok">${I.check}</span>`:st==='current'?`<span class="lt-b cur">${i+1}</span>`:`<span class="lt-b lk">${pro?I.gem:I.lock}</span>`;
       return `<button class="ltile ${st}" data-act="node" data-i="${i}" aria-label="Lesson ${i+1}: ${esc(LT(l))} (${st})"><span class="lt-art paper">${art(l,l.steps.length-1,'thumb')}${badge}${isNew(l)?'<span class="lt-new">NEW</span>':''}</span><span class="lt-t">${esc(LT(l))}</span></button>`}).join('');
     const soon=u.soon.map(s=>`<button class="ltile soon" data-act="soon" aria-label="${esc(s)}: coming soon"><span class="lt-art lt-soon">Soon</span><span class="lt-t">${esc(s)}</span></button>`).join('');
-    const ut=isKid()?KUNITS[u.n][1]:u.title;
+    const ut=u.title;
     return `<section class="lunit ${u.cls}"><div class="lu-head"><h2>${ut}</h2><span class="lu-c">${ud}/${list.length}</span></div><div class="lgrid">${cards}${soon}</div></section>`}).join('');
   const code=!S.pro&&!S.trialCode?`<button class="codelink" data-act="paywall" data-focus="code">${I.gem}${isKid()?'Have a code? Ask a grown-up':'Have a code from Instagram?'}</button>`:'';
   return header()+warn+hero+mission+units+code;
 }
 function vpCount(l){const s=new Set();l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))s.add(sh.label)}));return s.size}
-function levelOf(l){const n=vpCount(l);return n>=3?{k:3,t:'Advanced',kt:'Hard',p:'3-point'}:n===2?{k:2,t:'Intermediate',kt:'Medium',p:'2-point'}:{k:1,t:'Beginner',kt:'Easy',p:'1-point'}}
+function levelOf(l){const n=vpCount(l);if(l.lv===2&&n<2)return {k:2,t:'Intermediate',kt:'Medium',p:n+'-point'};return n>=3?{k:3,t:'Advanced',kt:'Hard',p:'3-point'}:n===2?{k:2,t:'Intermediate',kt:'Medium',p:'2-point'}:{k:1,t:'Beginner',kt:'Easy',p:'1-point'}}
 function vDraw(){
   const doneN=LIB.filter(l=>S.done[l.id]).length,freeN=LIB.filter(l=>!l.pro).length;
   const card=(l,i)=>{const locked=l.pro&&!isPro(),done=S.done[l.id],lv=levelOf(l);
@@ -1792,7 +1943,7 @@ function vLesson(){
   <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
   <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
-  ${l.lib?'':`<div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`}`;
+  ${(l.lib||l.nows)?'':`<div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`}`;
 }
 function vComplete(){
   const l=curL();const gained=view.gained;
@@ -1805,13 +1956,13 @@ function vComplete(){
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
   ${sendPanel(l)}
   <section class="panel"><h3>${isKid()?'Color it your way':'Color it (optional)'}</h3><p class="fine2">${isKid()?'Pick your own colors for every part. Tap to fill!':'Try colors on the finished drawing, then save the picture.'}</p><button class="btn ghost" data-act="color">${I.pencil}${isKid()?'Start coloring':'Open coloring'}</button></section>
-  ${l.lib?'':`<section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>`}
+  ${(l.lib||l.nows)?'':`<section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>`}
   <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
   ${l.lib?`<button class="btn primary wide" data-act="tab" data-tab="draw">${I.pencil}Pick another drawing</button>`:`<button class="btn primary wide" data-act="home">${ni<0?'Back to lessons':'Continue to the next lesson'}</button>`}`;
 }
 /* day -> the lesson that teaches it (only where one really exists) */
-const DAYHELP={1:'box1',2:'road',3:'stairs',4:'room',5:'room',6:'box1',7:'box1',8:'box2',9:'box2',10:'house',11:'cafe',12:'house',13:'stairs',17:'robot',18:'room',19:'room',20:'tower',21:'birdseye',22:'birdseye',26:'street',27:'cafe',28:'room',29:'tower',30:'street'};
+const DAYHELP={1:'box1',2:'road',3:'stairs',4:'room',5:'room',6:'box1',7:'box1',8:'box2',9:'box2',10:'house',11:'cafe',12:'house',13:'stairs',17:'robot',18:'room',19:'room',20:'tower',21:'birdseye',22:'birdseye',26:'street',27:'cafe',28:'bedroom',29:'tower',30:'street'};
 const dayLevel=d=>d<=7?{k:1,t:'Beginner',kt:'Easy'}:d<=19?{k:2,t:'Intermediate',kt:'Medium'}:{k:3,t:'Advanced',kt:'Hard'};
 const MILES=[7,14,21,30];
 function weekDots(){const t=today(),mon=weekKey(t),log=new Set(S.log||[]);const names=['M','T','W','T','F','S','S'];
@@ -1827,7 +1978,7 @@ function vChallenge(){
   else if(proL)action=`<button class="btn primary wide" data-act="paywall">${I.gem}Unlock days 8–30 with Pro</button>`;
   else if(isNext)action=`<button class="btn ok wide" data-act="daydone">${I.check}I drew it · +1 gem</button>`;
   else action=`<button class="btn ghost wide" disabled>${I.lock}Finish day ${next} first</button>`;
-  let helpBtn='';if(help){const inLib=LIB.findIndex(l=>l.id===help),inL=LESSONS.findIndex(l=>l.id===help),l=inLib>=0?LIB[inLib]:LESSONS[inL];
+  let helpBtn='';if(help&&!(isKid()&&LIB.findIndex(l=>l.id===help)<0)){const inLib=LIB.findIndex(l=>l.id===help),inL=PATH().findIndex(l=>l.id===help),l=inLib>=0?LIB[inLib]:PATH()[inL];
     if(l)helpBtn=`<button class="btn ghost wide" data-act="${inLib>=0?'lib':'open'}" data-i="${inLib>=0?inLib:inL}">${I.pencil}${isKid()?'Show me how':'Learn how first'}: ${esc(LT(l))}</button>`}
   const mileHtml=MILES.map(m=>`<span class="mi${doneN>=m?' on':''}" style="left:${m/30*100}%"><b>${m}</b></span>`).join('');
   const nextMile=MILES.find(m=>m>doneN);
@@ -1844,18 +1995,18 @@ function vChallenge(){
   <p class="daylegend"><span><i class="lg done"></i>Done</span><span><i class="lg next"></i>Today</span><span><i class="lg pro"></i>Pro</span><span><i class="lg mile"></i>Milestone</span></p></section>`;
 }
 function vProfile(){
-  const lessons=LESSONS.filter(l=>S.done[l.id]).length,libs=LIB.filter(l=>S.done[l.id]).length;
+  const P=PATH(),lessons=P.filter(l=>S.done[l.id]).length,libs=LIB.filter(l=>S.done[l.id]).length;
   const nm=(S.subName||'').trim(),ini=nm?nm[0].toUpperCase():'';
   const earnedB=BADGES.filter(b=>b.test()).length;
   if(sbGet()&&mine.rows===null&&!mine.loading&&!mine.err){mine.loading=true;setTimeout(()=>loadMine(false),0)}
-  const unitBars=UNITS.map(u=>{const ls=LESSONS.filter(l=>l.unit===u.n),d=ls.filter(l=>S.done[l.id]).length;const nmU=isKid()?KUNITS[u.n][1]:u.title;
+  const unitBars=PUNITS().map(u=>{const ls=P.filter(l=>l.unit===u.n),d=ls.filter(l=>S.done[l.id]).length;const nmU=u.title;
     return `<div class="pbar"><div class="pb-top"><span>${esc(nmU)}</span><b>${d}/${ls.length}</b></div><div class="ubar"><span style="width:${d/ls.length*100}%"></span></div></div>`}).join('')
     +`<div class="pbar"><div class="pb-top"><span>${isKid()?'Draw anything':'Draw studio'}</span><b>${libs}/${LIB.length}</b></div><div class="ubar"><span style="width:${libs/LIB.length*100}%"></span></div></div>`
     +`<div class="pbar"><div class="pb-top"><span>30-day challenge</span><b>${S.days.length}/30</b></div><div class="ubar"><span style="width:${S.days.length/30*100}%"></span></div></div>`;
-  const doneList=[...LESSONS.map(l=>({l,lib:false})),...LIB.map(l=>({l,lib:true}))].filter(x=>S.done[x.l.id])
+  const doneList=[...P.map(l=>({l,lib:false})),...LIB.map(l=>({l,lib:true}))].filter(x=>S.done[x.l.id])
     .map(x=>({...x,at:(S.doneAt||{})[x.l.id]||''})).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
   const fmt=d=>{if(!d)return 'Earlier';const t=today();if(d===t)return 'Today';if(d===dayShift(t,-1))return 'Yesterday';const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString(undefined,{day:'numeric',month:'short'})};
-  const journey=doneList.length?`<div class="jgrid">${doneList.slice(0,8).map(x=>`<button class="jcard" data-act="${x.lib?'lib':'open'}" data-i="${(x.lib?LIB:LESSONS).indexOf(x.l)}" aria-label="${esc(LT(x.l))}, draw again"><div class="paper">${art(x.l,x.l.steps.length-1,'thumb')}</div><b>${esc(LT(x.l))}</b><small>${fmt(x.at)}</small></button>`).join('')}</div>${doneList.length>8?`<p class="fine2">+${doneList.length-8} more</p>`:''}`
+  const journey=doneList.length?`<div class="jgrid">${doneList.slice(0,8).map(x=>`<button class="jcard" data-act="${x.lib?'lib':'open'}" data-i="${(x.lib?LIB:P).indexOf(x.l)}" aria-label="${esc(LT(x.l))}, draw again"><div class="paper">${art(x.l,x.l.steps.length-1,'thumb')}</div><b>${esc(LT(x.l))}</b><small>${fmt(x.at)}</small></button>`).join('')}</div>${doneList.length>8?`<p class="fine2">+${doneList.length-8} more</p>`:''}`
     :`<div class="empty"><p>${isKid()?'Your finished drawings will show up here.':'Every lesson and drawing you finish will appear here, so you can see how far you have come.'}</p><button class="btn primary small" data-act="tab" data-tab="learn">${I.pencil}Start your first lesson</button></div>`;
   let gallery;
   if(!sbGet())gallery=`<div class="empty"><p>${isKid()?'Finish a drawing, take a photo and send it to Arda for stars.':'Finish a lesson, add a photo of your paper and send it to Arda. His score and note appear here.'}</p></div>`;
@@ -1865,7 +2016,7 @@ function vProfile(){
   else gallery=`<div class="ggrid">${mine.rows.slice(0,6).map(r=>{const u=mine.urls[r.image_path];return `<button class="gitem" data-act="mine" aria-label="Open my drawings">${u?`<img src="${esc(u)}" alt="Your drawing" loading="lazy">`:'<span class="ph"></span>'}${r.score?`<span class="gscore">${I.star}${r.score}</span>`:r.status==='pending'?'<span class="gscore wait">…</span>':''}</button>`}).join('')}</div>`;
   return header()+`<section class="studio-me"><div class="me-av" aria-hidden="true">${ini||I.pencil}</div><div class="me-txt"><p class="eyebrow">${isKid()?'Kids studio':'My studio'}</p><h1>${nm?esc(nm)+"'s studio":(isKid()?'My drawing studio':'My studio')}</h1>
   <p class="fine2">${isPro()?(onTrial()?`Pro trial · ${daysLeft()} days left`:'Perspective Pro'):'Free plan'} · ${S.streak} day streak</p></div></section>
-  <div class="grid4"><div class="stat"><b>${lessons}/${LESSONS.length}</b><span>Lessons</span></div><div class="stat"><b>${libs}/${LIB.length}</b><span>Drawings</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div><div class="stat"><b>${S.gems}</b><span>Gems</span></div></div>
+  <div class="grid4"><div class="stat"><b>${lessons}/${P.length}</b><span>Lessons</span></div><div class="stat"><b>${libs}/${LIB.length}</b><span>Drawings</span></div><div class="stat"><b>${S.days.length}/30</b><span>Challenge days</span></div><div class="stat"><b>${S.gems}</b><span>Gems</span></div></div>
   <section class="panel"><div class="wk-top"><h3>This week</h3><span class="fine2">${(S.log||[]).filter(d=>d>=weekKey(today())).length} drawing day${(S.log||[]).filter(d=>d>=weekKey(today())).length===1?'':'s'}</span></div><div class="wdots">${weekDots()}</div></section>
   <section class="panel"><h3>Progress</h3><div class="pbars">${unitBars}</div></section>
   <section class="panel"><div class="wk-top"><h3>${isKid()?'My drawings so far':'My drawing journey'}</h3><span class="fine2">${doneList.length} finished</span></div>${journey}</section>
@@ -1888,8 +2039,8 @@ function vProfile(){
 function paywall(){
   return `<div class="scrim" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pw-title" data-stop="1">
   <div class="sheet-top"><div><p class="eyebrow">Perspective Pro</p><h2 id="pw-title">Draw anything in perspective</h2></div><button class="iconbtn" data-act="closesheet" aria-label="Close">${I.x}</button></div>
-  <div class="cmp"><div class="cmp-col"><p class="eyebrow">Free</p><ul><li>${LESSONS.filter(l=>!l.pro).length} lessons (Unit 1 + the two-point box)</li><li>${LIB.filter(l=>!l.pro).length} studio drawings</li><li>Challenge days 1–7</li><li>Daily mission and badges</li><li>Send drawings to Arda</li></ul></div>
-  <div class="cmp-col pro"><p class="eyebrow">Pro adds</p><ul><li>All ${LESSONS.length} lessons, up to three-point</li><li>All ${LIB.length} studio drawings</li><li>All 30 challenge days</li><li>New lessons every week</li><li>Printable practice sheets (PDF)</li></ul></div></div>
+  <div class="cmp"><div class="cmp-col"><p class="eyebrow">Free</p><ul><li>${PATH().filter(l=>!l.pro).length} lessons${isKid()?'':' (Unit 1 + the two-point box)'}</li><li>${LIB.filter(l=>!l.pro).length} studio drawings</li><li>Challenge days 1–7</li><li>Daily mission and badges</li><li>Send drawings to Arda</li></ul></div>
+  <div class="cmp-col pro"><p class="eyebrow">Pro adds</p><ul><li>All ${PATH().length} lessons${isKid()?'':', up to three-point'}</li><li>All ${LIB.length} studio drawings</li><li>All 30 challenge days</li><li>New lessons every week</li><li>Printable practice sheets (PDF)</li></ul></div></div>
   <div class="plans"><button class="planopt" aria-pressed="true" data-act="plan"><span class="save">Save 50%</span><small>Yearly</small><b>$29.99</b><small>$2.50 / month</small></button><button class="planopt" aria-pressed="false" data-act="plan"><small>Monthly</small><b>$4.99</b><small>billed monthly</small></button></div>
   <button class="btn primary wide" data-act="gopro">Continue with Pro</button>
   ${!S.trialCode&&!S.pro?`<div style="display:flex;flex-direction:column;gap:8px"><p style="font-size:14px;font-weight:600">Have a code? Get 15 days free</p>${codeBox()}</div>`:''}
@@ -1917,7 +2068,7 @@ function doApply(){const inp=document.getElementById('codein');if(!inp)return;co
 function closePaywall(){sheet.hidden=true;sheet.innerHTML=''}
 
 function openLesson(i,lib){
-  const l=(lib?LIB:LESSONS)[i];
+  const l=(lib?LIB:PATH())[i];
   if(l.pro&&!isPro()){openPaywall();return}
   photoURL=null;track('open/'+l.id);view={name:'lesson',i,s:0,lib:!!lib};render(true);
 }
@@ -1927,9 +2078,9 @@ document.addEventListener('click',e=>{
   if(a==='closesheet'){if(el.classList.contains('scrim')&&e.target!==el)return;closePaywall();return}
   if(a==='tab'){view={name:el.dataset.tab};resetArm=false;render(true);return}
   if(a==='open'){openLesson(+el.dataset.i);return}
-  if(a==='node'){const i=+el.dataset.i,l=LESSONS[i];
+  if(a==='node'){const i=+el.dataset.i,l=PATH()[i];
     if(S.done[l.id]||i===nextIdx())openLesson(i);
-    else toast(`Finish “${LESSONS[nextIdx()].title}” first`);return}
+    else toast(`Finish “${LT(PATH()[nextIdx()])}” first`);return}
   if(a==='soon'){toast('Coming soon');return}
   if(a==='lib'){openLesson(+el.dataset.i,true);return}
   if(a==='close'||a==='home'){hush();view={name:'learn'};render(true);return}
