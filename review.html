@@ -52,7 +52,7 @@ textarea{min-height:80px;resize:vertical}
 <div id="zoom" hidden><img alt=""></div>
 <script>
 const SB_URL='https://qrbojitoclgqulokyobf.supabase.co',SB_KEY='sb_publishable_pjbLqnnn_GpmSglIsFrmZw_jeHyRi6B',K='ps-review-session';
-const LESSON={road:'Road to the horizon',box1:'Box in one-point',room:'Your first room',stairs:'Stairs in one-point',box2:'Box in two-point',house:'A simple house',glass:'Glass tower',tower:'Tower looking up',birdseye:'Building from above',robot:'Box robot',train:'Train on the tracks',rocket:'Rocket',treehouse:'Treehouse',street:'City street',cafe:'Corner café'};
+const LESSON={road:'Road to the horizon',box1:'Box in one-point',room:'Your first room',stairs:'Stairs in one-point',box2:'Box in two-point',house:'A simple house',glass:'Glass tower',tower:'Tower looking up',birdseye:'Building from above',robot:'Box robot',train:'Train on the tracks',rocket:'Rocket',treehouse:'Treehouse',street:'City street',cafe:'Corner café',bedroom:'Cozy bedroom',kroad:'Kids: Road to the dot',kgift:'Kids: Gift box',khouse:'Kids: Little house',kcastle:'Kids: Castle tower',kblock:'Kids: Toy block',kbus:'Kids: School bus'};
 const root=document.getElementById('root');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let sess=null,tab='pending',rows=[],urls={},draft={},busy={},err='',loading=false;
