@@ -16,7 +16,7 @@
   --bg:#E8ECF1; --surface:#FFFFFF; --paper:#FBFCFE; --grid:#E2E9F2;
   --ink:#1E2228; --muted:#5B6573; --line:#D3DAE3;
   --guide:#7DAEE0; --accent:#2D5BFF; --accent-deep:#1B3DC2; --accent-ink:#FFFFFF; --accent-soft:#DDE5FF;
-  --new:#F0661E; --marker:#FFC53D; --ok:#17996A; --ok-deep:#0F7550; --vp:#E0352B; --lock:#C3CBD6; --lock-deep:#A5AFBC;
+  --new:#F0661E;--new-ink:#B23F00; --marker:#FFC53D; --ok:#17996A; --ok-deep:#0F7550; --vp:#E0352B; --lock:#C3CBD6; --lock-deep:#A5AFBC;
   --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
   --body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -26,13 +26,13 @@
   --bg:#101318; --surface:#191D24; --paper:#1F242C; --grid:#283039;
   --ink:#E8ECF1; --muted:#9CA6B3; --line:#2C343F;
   --guide:#4E7FB5; --accent:#6F8CFF; --accent-deep:#4560D6; --accent-ink:#0C1020; --accent-soft:#232C4A;
-  --new:#FF8A4A; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
+  --new:#FF8A4A;--new-ink:#FFA170; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#101318; --surface:#191D24; --paper:#1F242C; --grid:#283039;
   --ink:#E8ECF1; --muted:#9CA6B3; --line:#2C343F;
   --guide:#4E7FB5; --accent:#6F8CFF; --accent-deep:#4560D6; --accent-ink:#0C1020; --accent-soft:#232C4A;
-  --new:#FF8A4A; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
+  --new:#FF8A4A;--new-ink:#FFA170; --marker:#FFC53D; --ok:#36C48A; --ok-deep:#21915F; --vp:#FF5F55; --lock:#38414D; --lock-deep:#272E37;
   color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -148,9 +148,13 @@ p{margin:0}
 .segs i.cur{background:var(--new)}
 .lnum{font-family:var(--mono);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .lbody{display:flex;flex-direction:column;gap:8px}
+@media (max-width:899px){#canvas svg{display:block;max-height:min(44vh,440px);margin-inline:auto}.lbody h2{margin:0}}
+@media (max-width:899px) and (max-height:760px){#canvas svg{max-height:36vh}}
+@media (max-width:899px) and (max-height:700px){#canvas svg{max-height:29vh}}
+@media (max-width:899px) and (max-height:760px){.lbody{gap:4px}.lbody .txt{font-size:16px;line-height:1.45}.lbody .tip{font-size:19px}}
 .lbody h2{font-size:26px}
 .lbody p.txt{font-size:16.5px;max-width:60ch}
-.tip{font-family:var(--hand);font-size:22px;color:var(--new);line-height:1.15}
+.tip{font-family:var(--hand);font-size:22px;color:var(--new-ink);line-height:1.15}
 .rule{font-size:13.5px;background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:10px 12px}
 .kinds{display:flex;flex-wrap:wrap;gap:6px}
 .kchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-weight:600}
@@ -311,6 +315,10 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
 .field{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:600}
 .field input{font:inherit;font-weight:500;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
 .field input:focus{outline:3px solid var(--accent);outline-offset:1px}
+.field textarea{font:inherit;font-weight:500;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);width:100%;min-height:96px;resize:vertical}
+.field textarea:focus{outline:3px solid var(--accent);outline-offset:1px}
+.asklist{display:grid;gap:10px;margin-top:12px}.askitem{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font-size:14px}.askitem .q{color:var(--ink-2)}.askitem .r{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}.askitem .st{font-size:12px;color:var(--muted)}
+.consent{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--muted);margin:8px 0}.consent input{margin-top:1px;width:20px;height:20px;flex:none}
 .fine2{font-size:13px;color:var(--muted)}
 .sentok h3{display:flex;align-items:center;gap:8px;color:var(--ok)}
 .mhead{display:flex;align-items:center;gap:12px}
@@ -330,7 +338,7 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
   --bg:#F6F3EE; --surface:#FFFFFF; --surface-2:#FBF9F5; --paper:#FFFEFB; --grid:#ECE7DE;
   --ink:#171A21; --ink-2:#2B303A; --muted:#5E6573; --line:#E5DFD5; --line-2:#D8D1C5;
   --guide:#7FA8DA; --accent:#1F3FB8; --accent-deep:#152C86; --accent-ink:#FFFFFF; --accent-soft:#EAEEFB;
-  --new:#E8621B; --pink:#D9467E; --marker:#F0A92E; --ok:#14865A; --ok-deep:#0D6643; --ok-soft:#E3F3EA;
+  --new:#E8621B;--new-ink:#B23F00; --pink:#D9467E; --marker:#F0A92E; --ok:#14865A; --ok-deep:#0D6643; --ok-soft:#E3F3EA;
   --vp:#D93A2F; --lock:#ECE8E1; --lock-deep:#DAD3C8;
   --r-sm:10px; --r-md:14px; --r-lg:20px; --r-xl:26px;
   --sh-1:0 1px 2px rgba(23,26,33,.05),0 1px 1px rgba(23,26,33,.03);
@@ -342,7 +350,7 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
   --bg:#111318; --surface:#1A1D24; --surface-2:#1E222A; --paper:#1F232B; --grid:#2A3039;
   --ink:#EDEFF3; --ink-2:#D5D9E0; --muted:#9AA3B1; --line:#2C323C; --line-2:#3A414D;
   --guide:#5B8BC6; --accent:#7D95FF; --accent-deep:#4D63D6; --accent-ink:#0B1020; --accent-soft:#222A47;
-  --new:#FF8A4A; --pink:#F06EA0; --marker:#F5BD4F; --ok:#38C489; --ok-deep:#21915F; --ok-soft:#183427;
+  --new:#FF8A4A;--new-ink:#FFA170; --pink:#F06EA0; --marker:#F5BD4F; --ok:#38C489; --ok-deep:#21915F; --ok-soft:#183427;
   --vp:#FF6A5F; --lock:#262B34; --lock-deep:#1D2129;
   --sh-1:none; --sh-2:0 8px 24px -12px rgba(0,0,0,.6); --sh-3:0 18px 40px -16px rgba(0,0,0,.7);
   color-scheme:dark}}
@@ -350,7 +358,7 @@ body[data-paper="blueprint"]{--art-ink:#F2F6FF;--art-guide:#8EC2FF}
   --bg:#111318; --surface:#1A1D24; --surface-2:#1E222A; --paper:#1F232B; --grid:#2A3039;
   --ink:#EDEFF3; --ink-2:#D5D9E0; --muted:#9AA3B1; --line:#2C323C; --line-2:#3A414D;
   --guide:#5B8BC6; --accent:#7D95FF; --accent-deep:#4D63D6; --accent-ink:#0B1020; --accent-soft:#222A47;
-  --new:#FF8A4A; --pink:#F06EA0; --marker:#F5BD4F; --ok:#38C489; --ok-deep:#21915F; --ok-soft:#183427;
+  --new:#FF8A4A;--new-ink:#FFA170; --pink:#F06EA0; --marker:#F5BD4F; --ok:#38C489; --ok-deep:#21915F; --ok-soft:#183427;
   --vp:#FF6A5F; --lock:#262B34; --lock-deep:#1D2129;
   --sh-1:none; --sh-2:0 8px 24px -12px rgba(0,0,0,.6); --sh-3:0 18px 40px -16px rgba(0,0,0,.7);
   color-scheme:dark}
@@ -428,7 +436,7 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .node .lbl{font-size:13px;font-weight:650;color:var(--ink-2)}
 .node .meta{font-size:11.5px}
 .start{top:-28px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 10px;font-size:10px;letter-spacing:.12em;box-shadow:var(--sh-1)}
-.newpill{background:color-mix(in srgb,var(--new) 14%,var(--surface));color:color-mix(in srgb,var(--new) 80%,var(--ink));border:1px solid color-mix(in srgb,var(--new) 35%,transparent);padding:1px 6px;border-radius:999px;font-size:9.5px}
+.newpill{background:color-mix(in srgb,var(--new) 14%,var(--surface));color:var(--new-ink);border:1px solid color-mix(in srgb,var(--new) 35%,transparent);padding:1px 6px;border-radius:999px;font-size:9.5px}
 
 /* hero (Draw + 30 days) */
 .hero-c{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh-2);border-radius:var(--r-xl);padding:22px;gap:10px;position:relative;overflow:hidden}
@@ -824,7 +832,7 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .mtile.mdone{border-left-color:var(--ok);opacity:.8}
 .mt-art{display:block;border-radius:10px;overflow:hidden;min-height:48px;background:var(--surface-2)}
 .mt-txt{display:flex;flex-direction:column;min-width:0}
-.mt-txt small{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--new) 85%,var(--ink))}
+.mt-txt small{font:700 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--new-ink)}
 .mt-txt b{font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mt-end{display:inline-flex;align-items:center;gap:3px;font:700 13px var(--body);color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:5px 10px}
 .mt-end .ico{width:14px;height:14px}
@@ -845,7 +853,7 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 .lt-b.ok{background:var(--ok);color:#fff}
 .lt-b.cur{background:var(--accent);color:var(--accent-ink)}
 .lt-b.lk{background:var(--surface);color:var(--muted);border:1px solid var(--line-2)}
-.lt-new{position:absolute;left:7px;top:7px;background:var(--surface);color:color-mix(in srgb,var(--new) 85%,var(--ink));font:700 9.5px var(--mono);letter-spacing:.06em;padding:2px 6px;border-radius:999px;box-shadow:var(--sh-1)}
+.lt-new{position:absolute;left:7px;top:7px;background:var(--surface);color:var(--new-ink);font:700 9.5px var(--mono);letter-spacing:.06em;padding:2px 6px;border-radius:999px;box-shadow:var(--sh-1)}
 .ltile.current .lt-art{box-shadow:0 0 0 3px var(--accent),var(--sh-2)}
 .ltile.locked .lt-art .art{opacity:.45;filter:grayscale(1)}
 .ltile.locked .lt-t{color:var(--muted)}
@@ -1338,7 +1346,41 @@ function bedroom(){const hy=130,V=[240,hy],ER=8;
     {title:'The rug',text:'The rug is as wide as the window. From the VP, draw two light lines through the same two marks on the floor line. Draw two horizontal lines between them for the far and the near end, then ink the two sides.',tip:'same marks, same width',shapes:[tx(wl),tx(wr),G(V,lerp(V,r1,2.3)),G(V,lerp(V,r2,2.3)),L(a1,a2),L(b1,b2),L(a1,b1),L(a2,b2)]},
     {title:'Headboard, blanket and shade',text:'On the wall, draw the headboard: half a part high and as wide as the bed, one vertical and one horizontal line. Draw a horizontal line across the bed for the folded blanket. Then shade the side of the bed and give the rug a light tone.',tip:'light comes from the window',shapes:[M([218,145],[218,160],'half'),L([210,160],[210,145]),L([210,145],[120,145]),Th(fl,fr),P([bw1,ftr,fbr,bw2]),P([a1,a2,b2,b1],'shadeLight')]}
   ]}
+function bookshelf(){const hy=60,V=[320,hy],K=11/13,ER=11;
+  const bk=p=>lerp(V,p,K),U=(s,n=ER)=>Object.assign(s,{until:n}),Sx=s=>Object.assign(s,{silent:true}),X=(a,b)=>({t:'l',a,b,k:'erase'});
+  const x0=110,x1=190,y0=100,y1=260,s1=y0+(y1-y0)/3,s2=y0+2*(y1-y0)/3;
+  const TL=[x0,y0],TR=[x1,y0],BR=[x1,y1],BL=[x0,y1],bTR=bk(TR),bBR=bk(BR),bTL=bk(TL),bx=bTL[0];
+  const f1=bk([x0,s1]),f2=bk([x0,s2]),f3=bk(BL);
+  const tk=(x,y)=>M([x,y-6],[x,y+6]);
+  const b7=y0+(s1-y0)/8,b34=s1+(s2-s1)/4;
+  const toV=(p,lim)=>{const q=atX(p,V,x1);return q[1]<lim?atY(p,V,lim):q};
+  // leaning book
+  const lb0=[180,y1],ang=Math.asin(10/((s2-b34))),bl=s2-b34;
+  const lb1=[190,y1-Math.sqrt(bl*bl-100)],u=[(lb1[0]-lb0[0])/bl,(lb1[1]-lb0[1])/bl],nrm=[u[1]*10,-u[0]*10];
+  const lb3=[lb0[0]+nrm[0],lb0[1]+nrm[1]],lb2=[lb1[0]+nrm[0],lb1[1]+nrm[1]];
+  const xl=lb3[0]+(lb2[0]-lb3[0])*(lb3[1]-f3[1])/(lb3[1]-lb2[1]);
+  // pot
+  const cX=inter(TL,bTR,TR,bTL),pl=atY(V,[140,y0],cX[1])[0],pr=atY(V,[160,y0],cX[1])[0],pw=pr-pl,cx=cX[0];
+  const rimY=cX[1]-pw,bRx=pw*3/8,bRy=3.1,bC=[cx,y0-bRy];
+  const sideL=[[cx-pw/2,rimY],[cx-bRx,bC[1]]],sideR=[[cx+pw/2,rimY],[cx+bRx,bC[1]]];
+  const hitX=(s,y)=>s[0][0]+(s[1][0]-s[0][0])*(y-s[0][1])/(s[1][1]-s[0][1]);
+  const ex0=hitX(sideL,bTL[1]),ex1=hitX(sideR,bTL[1]);
+  return [
+    {title:'Eye level and VP',text:'Draw the horizon near the top and put the VP on the right. Verticals stay vertical, horizontals stay parallel to the horizon, and everything going back meets at the VP.',tip:'Your eyes are just above the bookshelf, so you will see a thin slice of its top.',shapes:[Object.assign(G([0,hy],[400,hy]),{ce:true}),T([12,hy-8],'horizon','hor'),D(V,'VP')]},
+    {title:'The front face',text:'Draw a tall rectangle left of the VP, facing you. Its width is the unit for the whole scene; copy it twice up the left edge for the height.',tip:'This face looks straight at you, so you may copy lengths directly with the ruler.',shapes:[M([x0,272],[x1,272],'1 unit'),M([96,y1],[96,180],'1 unit'),M([96,180],[96,y0],'1 unit'),L(BL,BR),L(BL,TL),L(TL,TR),L(TR,BR)]},
+    {title:'Side panel and top',text:'From the VP, draw light lines to both right corners and the top-left corner. One quarter unit to the right, draw the back edge vertical, then close the top horizontally.',tip:'Halve the bottom edge twice to get a quarter unit. Ink only from each corner back to the new edge.',shapes:[tk(130,y1),tk(150,y1),tk(170,y1),M([x0,284],[130,284],'1/4'),M([x1,284],[bTR[0],284],'1/4'),G(V,TR),G(V,BR),G(V,TL),L(bTR,TR),L(bBR,BR),L(bTR,bBR),U(L(bTR,bTL)),L(bTL,TL)]},
+    {title:'Three equal shelves',text:'Draw an X on the front, plus lines from the right edge\'s middle to both left corners. The crossings mark thirds: draw two horizontal boards through them.',tip:'These slanted lines only measure, so slanted is allowed. Halving gives 2 or 4 parts, never 3; the diagonals give exact thirds.',shapes:[U(G([x0,180],[x1,180]),5),U(D([x1,180],''),5),U(G(TL,BR),5),U(G(TR,BL),5),U(G([x1,180],TL),5),U(G([x1,180],BL),5),M([226,y0],[226,s1],'1/3'),M([226,s1],[226,s2],'1/3'),M([226,s2],[226,y1],'1/3'),L([x0,s1],[x1,s1]),L([x0,s2],[x1,s2])]},
+    {title:'Inside the shelves',text:'Drop a light vertical from the top\'s back-left corner. From the VP, draw light lines to the three lower left corners; ink each from the corner back to the vertical.',tip:'These are the shelf floors, seen from above. The left inside wall shows because the VP is on the right.',shapes:[U(G([bx,y0],f3),6),G(V,[x0,s1]),G(V,[x0,s2]),G(V,BL),L(f1,[x0,s1]),L(f2,[x0,s2]),L(f3,BL)]},
+    {title:'The back panel',text:'Where each floor line meets the vertical, draw a horizontal to the right edge. Ink the vertical only from each board down to its floor line.',tip:'Stop where the shelf floor covers the line: what is behind does not show.',shapes:[U(L(f1,[x1,f1[1]])),U(L(f2,[x1,f2[1]])),U(L(f3,[x1,f3[1]])),L([bx,y0],f1),L([bx,s1],f2),L([bx,s2],f3)]},
+    {title:'Books on the top shelf',text:'One eighth of the width is a spine. Draw three spines on the top shelf, right side, 7/8 tall; draw lines from the VP to their top-left corners.',tip:'Halve the width three times for 1/8, and the shelf height three times for 7/8. Ink the top lines only up to the board or the side edge.',shapes:[tk(160,y0),tk(170,y0),tk(180,y0),M([x1,288],[180,288],'1/8'),M([226,b7],[226,s1],'7/8'),L([160,s1],[160,b7]),L([170,s1],[170,b7]),L([180,s1],[180,b7]),L([160,b7],[x1,b7]),L(toV([160,b7],y0),[160,b7]),L(toV([170,b7],y0),[170,b7]),L(toV([180,b7],y0),[180,b7])]},
+    {title:'Books on the middle shelf',text:'Draw two spines on the middle shelf, right side, 3/4 of the shelf tall. Draw lines from the VP to their top-left corners; ink only up to the board.',tip:'Halve the middle shelf\'s height twice to find 3/4.',shapes:[M([238,b34],[238,s2],'3/4'),L([170,s2],[170,b34]),L([180,s2],[180,b34]),L([170,b34],[x1,b34]),L(toV([170,b34],s1),[170,b34]),L(toV([180,b34],s1),[180,b34])]},
+    {title:'The leaning book',text:'Bottom shelf: a book as big as the middle ones leans on the side, foot on the 1/8 mark of the front edge. It is tipped: slanted is allowed.',tip:'It tips only inside the front plane, so it keeps its true shape. Its depth edges still run to the VP: two short lines that vanish behind the side.',shapes:[tk(180,y1),M([272,b34],[272,s2],'1 book'),M([lb0[0]-nrm[0]*1.2,lb0[1]-nrm[1]*1.2],[lb1[0]-nrm[0]*1.2,lb1[1]-nrm[1]*1.2],''),L(lb0,lb1),L(lb3,lb2),L(lb2,lb1),L(lb3,lb0),L(atX(lb2,V,x1),lb2),L(atX(lb0,V,x1),lb0)]},
+    {title:'A spot for the pot',text:'Draw an X on the thin top to find its middle. From the VP, draw light lines to the eighth marks either side of the front edge\'s middle.',tip:'The pot is a quarter unit wide. The two lines carry that width back to the middle of the top.',shapes:[U(G(TL,bTR)),U(G(TR,bTL)),tk(140,y0),tk(150,y0),tk(160,y0),M([140,112],[160,112],'1/4'),U(G(V,[140,y0])),U(G(V,[160,y0]))]},
+    {title:'The plant pot',text:'Rim: an ellipse as wide as the two lines, one pot-width above the X. Bottom: a smaller, rounder ellipse on the X, joined by two slanted sides.',tip:'Add a few free leaves. The pot faces you, so its height equals its width. The further below the horizon, the rounder the ellipse. Round sides and leaves are not box edges, so slanted and curved lines are allowed.',shapes:[M([cx+pw/2+8,rimY],[cx+pw/2+8,cX[1]],'= width'),E([cx,rimY],pw/2,2),U(E(bC,bRx,bRy)),L(...sideL),L(...sideR),E([cx-6.7,rimY-8.4],2.4,6.5),E([cx,rimY-11.4],2.8,9),E([cx+6.7,rimY-8.4],2.4,6.5)]},
+    {title:'Erase what the books and the plant hide',text:'Erase what the books and the plant hide: the back-panel lines behind the books, the top\'s back edge behind the pot, and the back half of the pot\'s bottom ellipse.',tip:'What is behind disappears. If you like, shade the side panel and the inside walls a little darker.',shapes:[X([160,f1[1]],[x1,f1[1]]),X([170,f2[1]],[x1,f2[1]]),X([xl,f3[1]],[x1,f3[1]]),X([ex0,bTL[1]],[ex1,bTL[1]]),Object.assign(E(bC,bRx,bRy,'erase'),{half:'top'}),Sx(L(f1,[160,f1[1]])),Sx(L(f2,[170,f2[1]])),Sx(L(f3,[xl,f3[1]])),Sx(L(bTL,[ex0,bTL[1]])),Sx(L([ex1,bTL[1]],bTR)),Sx(Object.assign(E(bC,bRx,bRy),{half:'bottom'})),P([TR,bTR,bBR,BR])]}
+  ]}
 const LIB=[
+  {id:'bookshelf',lib:'place',unit:2,lv:2,title:'Bookshelf with books',mins:8,added:'2026-11-12',steps:bookshelf()},
   {id:'bedroom',lib:'place',unit:3,lv:2,title:'Cozy bedroom',mins:12,added:'2026-11-10',steps:bedroom()},
   {id:'robot',lib:'fun',unit:1,title:'Box robot',mins:6,added:'2026-11-09',steps:robot()},
   {id:'train',lib:'fun',unit:2,title:'Train on the tracks',mins:7,pro:true,added:'2026-11-09',steps:train()},
@@ -1349,6 +1391,19 @@ const LIB=[
 ];
 const LIBCATS=[['fun','Fun things','Robots, trains, rockets and more.'],['place','Places','Streets, cafés and buildings.']];
 Object.assign(KIDS,{
+  bookshelf:{title:'My Bookshelf',steps:[
+    ['Line and dot','Draw the sky line near the top and a magic dot on the right. Standing-up lines stay standing!','you are a bit taller than the shelf'],
+    ['The front','Draw the front of the shelf. It is two widths tall: measure the bottom, go up twice.','measure, do not guess'],
+    ['The side','Soft lines from the magic dot to three corners. Draw the side, a quarter of the front wide.','start at the dot'],
+    ['Three shelves','Draw a big X. Soft lines: right edge\'s middle dot to both left corners. Shelves go through the new dots.','the X helps you measure'],
+    ['Inside','Draw a soft standing-up line inside. Draw soft lines from the magic dot to the left shelf corners.',''],
+    ['The back','Draw flat lines for the back of each shelf. Stop the standing-up line where a shelf covers it.','stop where it hides'],
+    ['Tall books','Draw three thin, tall books on the top shelf, right side. Their tops go to the magic dot.',''],
+    ['More books','Two more books on the middle shelf, a bit shorter. Their tops go to the magic dot too.',''],
+    ['A tired book','This book got tired and leans on the side! Its lines are slanted, because it is tipped over.',''],
+    ['Pot spot','Tiny X on top. Two soft lines from the magic dot show how wide the pot is.',''],
+    ['The plant','Draw a flat oval for the top of the pot and a smaller one below. Add leaves!',''],
+    ['Rub out','Rub out the lines behind the books and the pot. Then color it! There is no wrong color.','what is behind disappears']]},
   bedroom:{title:'My Cozy Bedroom',steps:[
     ['Line and dot','Draw the sky line across the middle. Put the magic dot a little to the right.','you are looking into the room'],
     ['The back wall','Draw a big box around the dot: top, side, bottom, side. That is the far wall.',''],
@@ -1541,6 +1596,7 @@ const KPUNITS=[{n:1,cls:'u1',title:'One magic dot',soon:[]},{n:2,cls:'u2',title:
 const PATH=()=>isKid()?KL:LESSONS,PUNITS=()=>isKid()?KPUNITS:UNITS;
 
 orient(KL);autoGuides(KL);
+{const r=KL.find(l=>l.id==='kroad');if(r)r.steps[0].shapes[0].ce=true}
 
 const KUNITS={1:['Level 1 · One magic dot','The magic dot','Roads, boxes and rooms with one dot.'],2:['Level 2 · Two magic dots','Blocks and houses','Two dots make blocks and houses.'],3:['Level 3 · The sky dot','Super tall','A dot in the sky for giant towers.']};
 const isKid=()=>S.mode==='kid';
@@ -1560,7 +1616,7 @@ function lineKinds(l,i){
   const vps=[];l.steps.forEach(st=>st.shapes.forEach(sh=>{if(sh.t==='d'&&/^VP/.test(sh.label||''))vps.push({p:sh.p,n:sh.label})}));
   const c={horizon:0,vert:0,hor:0,vp:{},slant:0,round:0};
   for(const sh of l.steps[i].shapes){
-    if(sh.t==='e'){c.round++;continue}
+    if(sh.t==='e'){if(!sh.silent&&sh.k!=='erase')c.round++;continue}
     if(sh.t!=='l'||sh.auto||sh.silent||sh.k==='erase')continue;
     const dx=sh.b[0]-sh.a[0],dy=sh.b[1]-sh.a[1],len=Math.hypot(dx,dy);if(len<3)continue;
     if(Math.abs(dy)<.6&&sh.k==='guide'&&len>300){c.horizon++;continue}
@@ -1599,6 +1655,7 @@ const GOALS={
   treehouse:['How to put a one-point house with a gable roof on top of a tree.','How to draw a little house up in a tree.'],
   street:['How one vanishing point controls a whole street: road, buildings and windows.','How a whole street runs into one magic dot.'],
   kroad:['','How far things get smaller, near the magic dot.'],kgift:['','How to turn a square into a box with a ribbon.'],khouse:['','How to draw a house with a pointy roof.'],kcastle:['','How to measure castle teeth so they are all the same.'],kblock:['','How two magic dots make a corner box.'],kbus:['','How to draw a long bus with two magic dots.'],
+  bookshelf:['Divide a front face into equal thirds with diagonals and fill a one-point bookshelf with upright and leaning books.','Draw a tall bookshelf with a magic dot, books, a tired leaning book and a little plant.'],
   bedroom:['How to furnish a one-point room: measure every piece of furniture from the back wall and erase what it hides.','How to put a bed, a window, a door and a rug in a room.'],
   cafe:['How each wall uses its own vanishing point, and how an awning sticks out from a wall.','How to draw a café with a striped roof cover.']
 };
@@ -1764,6 +1821,59 @@ async function loadMine(quiet){
     if(view.name==='mine'||view.name==='profile'||((fresh||add)&&view.name==='learn'))render();
   }catch(e){mine.loading=false;mine.err='Could not load your drawings. Check your connection.';if(!quiet&&view.name==='mine')render()}
 }
+/* ---------- analytics (GoatCounter, set the code to turn on) ---------- */
+const GC_CODE='';
+if(GC_CODE){try{const g=document.createElement('script');g.async=true;g.src='https://gc.zgo.at/count.js';g.dataset.goatcounter='https://'+GC_CODE+'.goatcounter.com/count';document.head.appendChild(g)}catch(e){}}
+/* ---------- Ask Arda (adults) and e-mail list ---------- */
+let asks={rows:null,loading:false,err:'',sending:false};
+async function loadAsks(){
+  try{const s=await sbSession(false);
+    if(!s){asks={rows:[],loading:false,err:'',sending:false};if(view.name==='profile')render();return}
+    const rows=await sbReq('/rest/v1/messages?select=id,created_at,body,status,reply,replied_at&user_id=eq.'+s.uid+'&order=created_at.desc&limit=20',{},s.at)||[];
+    S.seenReply=S.seenReply||{};let fresh=0;
+    for(const r of rows)if(r.reply&&!S.seenReply[r.id]){S.seenReply[r.id]=1;fresh++}
+    if(fresh){save();toast('You have a new answer in Profile · Ask Arda')}
+    asks={rows,loading:false,err:'',sending:false};if(view.name==='profile')render();
+  }catch(e){asks.loading=false;asks.err='Could not load your questions. Check your connection.';if(view.name==='profile')render()}
+}
+async function doAsk(){
+  const nmEl=document.getElementById('askname'),bEl=document.getElementById('askbody');
+  const name=(nmEl&&nmEl.value||'').trim().slice(0,40),body=(bEl&&bEl.value||'').trim();
+  if(!name){toast('Please write your name');nmEl&&nmEl.focus();return}
+  if(body.length<2){toast('Please write your question');bEl&&bEl.focus();return}
+  S.subName=name;save();asks.sending=true;render();
+  try{const s=await sbSession(true);
+    await sbReq('/rest/v1/messages',{method:'POST',headers:Object.assign({Prefer:'return=minimal'},JSONH),body:JSON.stringify({name,body:body.slice(0,1500)})},s.at);
+    track('ask');asks.sending=false;toast('Sent. You will get an answer here, usually within a few hours.');asks.rows=null;loadAsks();
+  }catch(e){asks.sending=false;const m=String(e&&e.message||e);toast(/daily_limit/.test(m)?'You can send 10 questions a day. Try again tomorrow.':/fetch|network|load failed/i.test(m)?'No connection. Check your internet and try again.':'Could not send right now. Please try again.');render()}
+}
+async function doLead(){
+  const el=document.getElementById('leademail'),ck=document.getElementById('leadok');const email=(el&&el.value||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Please check your e-mail address');el&&el.focus();return}
+  if(!ck||!ck.checked){toast('Please tick the box to agree');return}
+  try{await sbReq('/rest/v1/leads',{method:'POST',headers:Object.assign({Prefer:'return=minimal'},JSONH),body:JSON.stringify({email,source:'app-profile',consent:true})});
+    S.leadDone=1;save();track('lead');toast('Thank you! You are on the list.');render()
+  }catch(e){const m=String(e&&e.message||e);if(/duplicate|unique/i.test(m)){S.leadDone=1;save();toast('You are already on the list.');render()}else toast('Could not save right now. Please try again.')}
+}
+function askPanel(){
+  if(isKid())return '';
+  if(asks.rows===null&&!asks.loading&&sbGet()){asks.loading=true;setTimeout(loadAsks,0)}
+  const st=r=>r.status==='answered'?'Answered':r.status==='escalated'?'Arda will answer you himself':r.status==='closed'?'Closed':'Waiting for an answer';
+  const list=(asks.rows||[]).map(r=>`<div class="askitem"><div class="st">${st(r)}</div><div class="q">${esc(r.body)}</div>${r.reply?`<div class="r">${esc(r.reply)}</div>`:''}</div>`).join('');
+  return `<section class="panel"><h3>Ask Arda</h3><p class="fine2">Stuck on a lesson or a perspective question? Write it here. You get an answer in the app, usually within a few hours.</p>
+  <label class="field">Your name<input id="askname" maxlength="40" autocomplete="given-name" value="${esc(S.subName||'')}"></label>
+  <label class="field">Your question<textarea id="askbody" maxlength="1500" placeholder="e.g. Where do I put the second vanishing point?"></textarea></label>
+  <button class="btn primary wide" data-act="ask"${asks.sending?' disabled':''}>${asks.sending?'Sending…':'Send question'}</button>
+  ${asks.err?`<p class="fine2">${esc(asks.err)}</p>`:''}${list?`<div class="asklist">${list}</div>`:''}</section>`;
+}
+function leadPanel(){
+  if(isKid())return '';
+  if(S.leadDone)return `<section class="panel"><h3>${I.check}You are on the list</h3><p class="fine2">New lessons, free practice sheets and Pro news will come to your e-mail.</p></section>`;
+  return `<section class="panel"><h3>Free practice sheets by e-mail</h3><p class="fine2">Get new lessons and free printable perspective sheets. No spam, unsubscribe any time.</p>
+  <label class="field">E-mail<input id="leademail" type="email" maxlength="120" autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
+  <label class="consent"><input type="checkbox" id="leadok"><span>I agree to get e-mails from Perspective Sketch (@perspective.sketch).</span></label>
+  <button class="btn ghost wide" data-act="lead">Send me the sheets</button></section>`;
+}
 const stars=n=>`<span class="stars" role="img" aria-label="${n} out of 5">${[1,2,3,4,5].map(i=>`<span class="${i<=n?'on':''}">${I.star}</span>`).join('')}</span>`;
 function sendPanel(l){
   if(view.sent)return `<section class="panel sentok"><h3>${I.check}Sent to Arda</h3><p style="font-size:14px">${isKid()?'Arda will look at your drawing and give it stars. Check back soon!':'Arda reviews every drawing himself. His score and note will show up in Profile, under My drawings.'}</p><button class="btn ghost" data-act="mine">See my drawings</button></section>`;
@@ -1789,15 +1899,26 @@ function colorLinesSVG(stroke,w){const sv=document.querySelector('#cw svg');if(!
   c.querySelectorAll('path').forEach(p=>{p.setAttribute('fill','none');p.setAttribute('stroke',stroke);p.setAttribute('stroke-width',p.classList.contains('thin')?w*.7:w);p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');p.removeAttribute('class');p.removeAttribute('pathLength')});
   return new XMLSerializer().serializeToString(c)}
 function svgImg(str){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(str)})}
+/* saved coloring per drawing (this device only) */
+const CKEY='ps-colors-v1';
+function colorsGet(){try{return JSON.parse(localStorage.getItem(CKEY)||'{}')||{}}catch(e){return {}}}
+function colorsPut(id,url){const m=colorsGet();if(url)m[id]={u:url,at:Date.now()};else delete m[id];
+  const keys=Object.keys(m).sort((a,b)=>m[b].at-m[a].at);for(const k of keys.slice(12))delete m[k];
+  for(let i=0;i<4;i++){try{localStorage.setItem(CKEY,JSON.stringify(m));return true}catch(e){const ks=Object.keys(m).sort((a,b)=>m[a].at-m[b].at);if(ks.length<=1)break;delete m[ks[0]]}}return false}
+let colorTimer=null;
+function colorAutosave(){clearTimeout(colorTimer);colorTimer=setTimeout(()=>{const cv=document.getElementById('cc');if(!cv||view.name!=='color')return;
+  const x=cv.getContext('2d').getImageData(0,0,800,600).data;let any=false;for(let i=3;i<x.length;i+=4*97){if(x[i]>0){any=true;break}}
+  colorsPut(curL().id,any?cv.toDataURL('image/png'):null)},500)}
 async function colorInit(){const cv=document.getElementById('cc');if(!cv)return;col.undo=[];
   try{const im=await svgImg(colorLinesSVG('#000',2.2));const w=document.createElement('canvas');w.width=800;w.height=600;const x=w.getContext('2d');x.drawImage(im,0,0,800,600);col.wall=x.getImageData(0,0,800,600).data}catch(e){col.wall=null}
   let drawing=false,last=null;const ctx=cv.getContext('2d');
+  const sv=colorsGet()[curL().id];if(sv&&sv.u){try{const im=new Image();im.onload=()=>{ctx.drawImage(im,0,0,800,600)};im.src=sv.u}catch(e){}}
   const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)*800/r.width,(e.clientY-r.top)*600/r.height]};
   cv.onpointerdown=e=>{e.preventDefault();pushUndo();const p=pos(e);
-    if(col.tool==='fill'){flood(ctx,Math.floor(p[0]),Math.floor(p[1]),col.color);return}
-    drawing=true;last=p;cv.setPointerCapture(e.pointerId);stroke(ctx,p,p)};
+    if(col.tool==='fill'){flood(ctx,Math.floor(p[0]),Math.floor(p[1]),col.color);colorAutosave();return}
+    drawing=true;last=p;try{cv.setPointerCapture(e.pointerId)}catch(_){}stroke(ctx,p,p)};
   cv.onpointermove=e=>{if(!drawing)return;const p=pos(e);stroke(ctx,last,p);last=p};
-  cv.onpointerup=cv.onpointercancel=()=>{drawing=false}}
+  cv.onpointerup=cv.onpointercancel=()=>{if(drawing)colorAutosave();drawing=false}}
 function stroke(ctx,a,b){ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=col.tool==='erase'?34:18;
   if(col.tool==='erase')ctx.globalCompositeOperation='destination-out';else{ctx.strokeStyle=col.color;ctx.globalAlpha=.85}
   ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0]+.01,b[1]);ctx.stroke();ctx.restore()}
@@ -1850,13 +1971,13 @@ function art(lesson,upto,mode){
         lines+=`<path d="M${f(s.a)}L${f(s.b)}M${(s.a[0]+nx).toFixed(1)} ${(s.a[1]+ny).toFixed(1)}L${(s.a[0]-nx).toFixed(1)} ${(s.a[1]-ny).toFixed(1)}M${(s.b[0]+nx).toFixed(1)} ${(s.b[1]+ny).toFixed(1)}L${(s.b[0]-nx).toFixed(1)} ${(s.b[1]-ny).toFixed(1)}" class="sh measure${cls}"${st}/>`;
         if(s.s&&mode==='step'){const mx=(s.a[0]+s.b[0])/2,my=(s.a[1]+s.b[1])/2,vert=Math.abs(dx)<Math.abs(dy);top+=`<text class="mlab${cls}" x="${(mx+(vert?(mx<200?-6:6):0)).toFixed(1)}" y="${(my+(vert?4:12)).toFixed(1)}" text-anchor="${vert?(mx<200?'end':'start'):'middle'}"${st}>${isKid()?s.s.replace('= width','= wide').replace('width','wide'):s.s}</text>`}continue}
       if(mode==='color'&&((s.t!=='l'&&s.t!=='e')||(s.k==='guide'&&!s.ce)))continue;
-      if(s.t==='l'){lines+=`<path d="M${f(s.a)}L${f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;
+      if(s.t==='l'){const hz=mode==='color'&&s.ce&&Math.abs(s.a[1]-s.b[1])<.6&&Math.abs(s.a[0]-s.b[0])>300;lines+=`<path d="M${hz?'0 '+s.a[1].toFixed(1):f(s.a)}L${hz?'400 '+s.b[1].toFixed(1):f(s.b)}" pathLength="1" class="sh ${s.k}${s.auto?' dash':''}${cls}"${st}/>`;
         if(anim&&s.k!=='erase'){top+=`<circle class="start" cx="${s.a[0].toFixed(1)}" cy="${s.a[1].toFixed(1)}" r="7" style="--i:${j-1}"/>`;
           if(!s.auto){const dx=s.b[0]-s.a[0],dy=s.b[1]-s.a[1],len=Math.hypot(dx,dy);
             if(nNew<=8&&len>=40){let tk='';for(let q=0;q<=len;q+=10)tk+=`M${q} 2v${q%50===0?5:3}`;
               under+=`<g class="rul" style="--i:${j-1}" transform="translate(${f(s.a)}) rotate(${(Math.atan2(dy,dx)*180/Math.PI).toFixed(2)})"><rect x="-10" y="2" width="${(len+20).toFixed(1)}" height="12" rx="2"/><path class="rt" d="${tk}"/></g>`}
             pens+=`<g class="pen" style="--i:${j-1};--ax:${s.a[0].toFixed(1)}px;--ay:${s.a[1].toFixed(1)}px;--bx:${s.b[0].toFixed(1)}px;--by:${s.b[1].toFixed(1)}px">${PEN}</g>`}}}
-      else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
+      else if(s.t==='e'){const [cx,cy]=s.c;lines+=`<path d="M${(cx-s.rx).toFixed(1)} ${cy.toFixed(1)}${s.half?`a${s.rx} ${s.ry} 0 0 ${s.half==='top'?1:0} ${2*s.rx} 0`:`a${s.rx} ${s.ry} 0 1 0 ${2*s.rx} 0a${s.rx} ${s.ry} 0 1 0 ${-2*s.rx} 0`}" pathLength="1" class="sh ${s.k}${cls}"${st}/>`}
       else if(s.t==='p')polys+=`<path d="M${s.pts.map(f).join('L')}Z" class="sh ${s.k}${cls}"${st}/>`;
       else if(s.t==='d'){const lt=isKid()?s.label.replace('VP','dot ').trim():s.label;const lab=s.label&&mode!=='thumb'?`<text class="lab" x="${(s.p[0]+(s.p[0]>330?-40:8)).toFixed(1)}" y="${(s.p[1]-(s.p[1]<40?-24:9)).toFixed(1)}">${lt}</text>`:'';top+=`<g class="dot${cls}"${st}><circle cx="${s.p[0].toFixed(1)}" cy="${s.p[1].toFixed(1)}" r="${mode==='thumb'?6:4.5}"/>${lab}</g>`}
       else if(s.t==='t'&&mode==='step')top+=`<text class="lab ${s.c}${cls}" x="${s.p[0]}" y="${s.p[1]}"${st}>${isKid()&&s.s==='horizon'?'sky line':s.s}</text>`;
@@ -1939,9 +2060,9 @@ function vLesson(){
   const segs=l.steps.map((_,i)=>`<i class="${i<s?'on':i===s?'cur':''}"></i>`).join('');
   return `<div class="lbar"><button class="iconbtn" data-act="close" aria-label="Close lesson">${I.x}</button><div class="segs" aria-hidden="true">${segs}</div><span class="lnum">${s+1}/${n}</span><button class="iconbtn" data-act="voice" aria-pressed="${S.voice}" aria-label="Voice ${S.voice?'on':'off'}">${S.voice?I.sound:I.mute}</button></div>
   <div class="paper" id="canvas">${art(l,s,'step')}</div>
+  <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   ${kindChips(l,s)}${s===0?`${GOALS[l.id]?`<div class="goal"><p class="eyebrow">${isKid()?'Today you learn':'You will learn'}</p><p>${esc(GOALS[l.id][isKid()?1:0])}</p></div>`:''}<p class="rule">${esc(lineRule(l,isKid()))}</p>`:''}
   <div class="legend"><span><b style="background:var(--new)"></b>${isKid()?'draw this now':'this step'}</span><span><b style="background:var(--ink)"></b>${isKid()?'done lines':'ink'}</span><span><b style="background:var(--guide)"></b>${isKid()?'soft helper line':'light guide'}</span></div>
-  <div class="lbody"><p class="eyebrow">${esc(LT(l))} · Step ${s+1} of ${n}</p><h2>${esc(st.title)}</h2><p class="txt">${esc(st.text)}</p>${st.tip?`<p class="tip">${esc(st.tip)}</p>`:''}</div>
   <div class="lactions"><button class="btn ghost" data-act="prev" aria-label="Previous step" ${s===0?'disabled':''}>${I.back}</button><button class="btn ghost" data-act="replay" aria-label="Replay this step">${I.replay}</button><button class="btn ${s===n-1?'ok':'primary'}" data-act="next">${s===n-1?I.check+'I drew it':'Next step'+I.next}</button></div>
   ${(l.lib||l.nows)?'':`<div class="extras"><a class="btn ghost small" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Practice sheet (PDF)</a></div>`}`;
 }
@@ -1955,7 +2076,7 @@ function vComplete(){
     ${photoURL?`<div class="compare"><figure><div class="paper">${art(l,l.steps.length-1,'final')}</div><figcaption>Lesson</figcaption></figure><figure><img src="${photoURL}" alt="Your drawing"><figcaption>Yours</figcaption></figure></div>`:''}
     <label class="upload" for="photo">${I.cam}<span>${photoURL?'Choose another photo':'Add a photo of your drawing'}</span><input id="photo" type="file" accept="image/*"></label></section>
   ${sendPanel(l)}
-  <section class="panel"><h3>${isKid()?'Color it your way':'Color it (optional)'}</h3><p class="fine2">${isKid()?'Pick your own colors for every part. Tap to fill!':'Try colors on the finished drawing, then save the picture.'}</p><button class="btn ghost" data-act="color">${I.pencil}${isKid()?'Start coloring':'Open coloring'}</button></section>
+  <section class="panel"><h3>${isKid()?'Color it your way':'Color it (optional)'}</h3><p class="fine2">${isKid()?'Pick your own colors for every part. Tap to fill!':'Try colors on the finished drawing, then save the picture.'}</p><button class="btn ghost" data-act="color">${I.pencil}${colorsGet()[l.id]?(isKid()?'Keep coloring':'Continue coloring'):(isKid()?'Start coloring':'Open coloring')}</button></section>
   ${(l.lib||l.nows)?'':`<section class="panel"><h3>Practice more</h3><p style="font-size:14px;color:var(--muted)">Print the sheet: trace the lines first, then draw it on your own.</p><a class="btn ghost" href="${wsURL(l)}" target="_blank" rel="noopener">${I.dl}Download practice sheet (PDF)</a></section>`}
   <section class="panel"><h3>Share it</h3><p style="font-size:14px">${isKid()?'Ask a grown-up to post your drawing and tag us. We feature the best ones!':'Post your drawing and tag the page. The best ones get featured.'}</p>
     <div class="copyrow"><code id="tagtext">#perspectivesketch @perspective.sketch</code><button class="iconbtn" data-act="copy" aria-label="Copy tags">${I.copy}</button></div></section>
@@ -2003,10 +2124,11 @@ function vProfile(){
     return `<div class="pbar"><div class="pb-top"><span>${esc(nmU)}</span><b>${d}/${ls.length}</b></div><div class="ubar"><span style="width:${d/ls.length*100}%"></span></div></div>`}).join('')
     +`<div class="pbar"><div class="pb-top"><span>${isKid()?'Draw anything':'Draw studio'}</span><b>${libs}/${LIB.length}</b></div><div class="ubar"><span style="width:${libs/LIB.length*100}%"></span></div></div>`
     +`<div class="pbar"><div class="pb-top"><span>30-day challenge</span><b>${S.days.length}/30</b></div><div class="ubar"><span style="width:${S.days.length/30*100}%"></span></div></div>`;
+  const cmap=colorsGet();
   const doneList=[...P.map(l=>({l,lib:false})),...LIB.map(l=>({l,lib:true}))].filter(x=>S.done[x.l.id])
     .map(x=>({...x,at:(S.doneAt||{})[x.l.id]||''})).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
   const fmt=d=>{if(!d)return 'Earlier';const t=today();if(d===t)return 'Today';if(d===dayShift(t,-1))return 'Yesterday';const [y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString(undefined,{day:'numeric',month:'short'})};
-  const journey=doneList.length?`<div class="jgrid">${doneList.slice(0,8).map(x=>`<button class="jcard" data-act="${x.lib?'lib':'open'}" data-i="${(x.lib?LIB:P).indexOf(x.l)}" aria-label="${esc(LT(x.l))}, draw again"><div class="paper">${art(x.l,x.l.steps.length-1,'thumb')}</div><b>${esc(LT(x.l))}</b><small>${fmt(x.at)}</small></button>`).join('')}</div>${doneList.length>8?`<p class="fine2">+${doneList.length-8} more</p>`:''}`
+  const journey=doneList.length?`<div class="jgrid">${doneList.slice(0,8).map(x=>`<button class="jcard" data-act="${x.lib?'lib':'open'}" data-i="${(x.lib?LIB:P).indexOf(x.l)}" aria-label="${esc(LT(x.l))}, draw again"><div class="paper" style="position:relative">${cmap[x.l.id]?`<img src="${cmap[x.l.id].u}" alt="" style="position:absolute;inset:0;width:100%;height:100%;opacity:.9">`:''}${art(x.l,x.l.steps.length-1,'thumb')}</div><b>${esc(LT(x.l))}</b>${cmap[x.l.id]?'<small>Colored</small>':''}<small>${fmt(x.at)}</small></button>`).join('')}</div>${doneList.length>8?`<p class="fine2">+${doneList.length-8} more</p>`:''}`
     :`<div class="empty"><p>${isKid()?'Your finished drawings will show up here.':'Every lesson and drawing you finish will appear here, so you can see how far you have come.'}</p><button class="btn primary small" data-act="tab" data-tab="learn">${I.pencil}Start your first lesson</button></div>`;
   let gallery;
   if(!sbGet())gallery=`<div class="empty"><p>${isKid()?'Finish a drawing, take a photo and send it to Arda for stars.':'Finish a lesson, add a photo of your paper and send it to Arda. His score and note appear here.'}</p></div>`;
@@ -2021,6 +2143,7 @@ function vProfile(){
   <section class="panel"><h3>Progress</h3><div class="pbars">${unitBars}</div></section>
   <section class="panel"><div class="wk-top"><h3>${isKid()?'My drawings so far':'My drawing journey'}</h3><span class="fine2">${doneList.length} finished</span></div>${journey}</section>
   <section class="panel"><div class="wk-top"><h3>${isKid()?'Sent to Arda':'Reviewed by Arda'}</h3>${sbGet()?`<button class="linkbtn" data-act="mine">See all</button>`:''}</div>${gallery}</section>
+  ${askPanel()}${leadPanel()}
   <section class="panel"><div class="wk-top"><h3>Badges</h3><span class="fine2">${earnedB} of ${BADGES.length}</span></div><div class="badges">${BADGES.map(b=>{const on=b.test();return `<div class="badge${on?' on':''}" title="${esc(b.desc)}"><i>${on?I.medal:I.lock}</i><span>${esc(b.name)}</span></div>`}).join('')}</div></section>
   <section class="panel"><div class="plan"><div><p class="eyebrow">Your plan</p><h3>${isPro()?'Perspective Pro':'Free'}</h3></div>${isPro()?`<span class="chip pro">${I.gem}Pro</span>`:`<button class="btn primary small" data-act="paywall">${I.gem}Go Pro</button>`}</div>
   <p class="fine2">${onTrial()?`Free trial with code ${esc(S.trialCode)}: ${daysLeft()} days left.`:isPro()?'All lessons and all 30 challenge days are open.':trialOver()?'Your free trial has ended. Your progress is saved.':'Free: Unit 1, the two-point box, 2 studio drawings and challenge days 1–7.'}</p>
@@ -2106,13 +2229,16 @@ document.addEventListener('click',e=>{
   if(a==='mine'){hush();view={name:'mine'};mine.loading=true;mine.err='';render(true);loadMine(false);return}
   if(a==='questday'){selDay=+el.dataset.d;view={name:'challenge'};render(true);return}
   if(a==='send'){doSend();return}
+  if(a==='ask'){doAsk();return}
+  if(a==='lead'){doLead();return}
   if(a==='color'){hush();view=Object.assign({},view,{name:'color'});render(true);track('color/'+curL().id);return}
   if(a==='colorback'){view=Object.assign({},view,{name:'complete'});render(true);return}
   if(a==='pick'){col.color=el.dataset.c;if(col.tool==='erase')col.tool='fill';document.querySelectorAll('.sw2').forEach(b=>{const on=b===el;b.classList.toggle('on',on);b.setAttribute('aria-checked',on)});document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===col.tool));return}
   if(a==='ctool'){col.tool=el.dataset.t;document.querySelectorAll('[data-act="ctool"]').forEach(b=>b.setAttribute('aria-pressed',b===el));return}
-  if(a==='cundo'){const cv=document.getElementById('cc');const u=col.undo.pop();if(u&&cv){const x=cv.getContext('2d');(col.redo=col.redo||[]).push(x.getImageData(0,0,800,600));x.putImageData(u,0,0)}return}
-  if(a==='credo'){const cv=document.getElementById('cc');const r=(col.redo||[]).pop();if(r&&cv){const x=cv.getContext('2d');col.undo.push(x.getImageData(0,0,800,600));x.putImageData(r,0,0)}return}
-  if(a==='cclear'){const cv=document.getElementById('cc');if(cv){pushUndo();cv.getContext('2d').clearRect(0,0,800,600)}return}
+  if(a==='cundo'){const cv=document.getElementById('cc');const u=col.undo.pop();if(u&&cv){const x=cv.getContext('2d');(col.redo=col.redo||[]).push(x.getImageData(0,0,800,600));x.putImageData(u,0,0);colorAutosave()}return}
+  if(a==='credo'){const cv=document.getElementById('cc');const r=(col.redo||[]).pop();if(r&&cv){const x=cv.getContext('2d');col.undo.push(x.getImageData(0,0,800,600));x.putImageData(r,0,0);colorAutosave()}return}
+  if(a==='cclear'){const cv=document.getElementById('cc');if(!cv)return;if(el.dataset.arm!=='1'){el.dataset.arm='1';el.textContent=isKid()?'Tap again to clear':'Tap again to clear all';clearTimeout(el._tm);el._tm=setTimeout(()=>{el.dataset.arm='';el.textContent='Clear'},3000);return}
+    el.dataset.arm='';el.textContent='Clear';pushUndo();cv.getContext('2d').clearRect(0,0,800,600);colorAutosave();toast('Cleared · Undo brings it back');return}
   if(a==='csave'){colorSave();return}
   if(a==='paywall'){openPaywall(el.dataset.focus==='code');return}
   if(a==='applycode'){doApply();return}
