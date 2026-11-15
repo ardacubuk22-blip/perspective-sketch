@@ -1822,7 +1822,7 @@ async function loadMine(quiet){
   }catch(e){mine.loading=false;mine.err='Could not load your drawings. Check your connection.';if(!quiet&&view.name==='mine')render()}
 }
 /* ---------- analytics (GoatCounter, set the code to turn on) ---------- */
-const GC_CODE='';
+const GC_CODE='perspective-sketch';
 if(GC_CODE){try{const g=document.createElement('script');g.async=true;g.src='https://gc.zgo.at/count.js';g.dataset.goatcounter='https://'+GC_CODE+'.goatcounter.com/count';document.head.appendChild(g)}catch(e){}}
 /* ---------- Ask Arda (adults) and e-mail list ---------- */
 let asks={rows:null,loading:false,err:'',sending:false};
