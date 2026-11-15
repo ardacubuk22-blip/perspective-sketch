@@ -9,7 +9,7 @@
 <title>Perspective Sketch App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600&family=Baloo+2:wght@600;700;800&family=Kalam:wght@400;700&display=swap">
 <style>
 /* Layout: one phone-width column; a drafting-paper canvas is the hero of every screen; lesson path like a game map; bottom tab bar */
 :root{
@@ -884,6 +884,89 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
 @keyframes eraseout{0%{opacity:.95}60%{opacity:.95}100%{opacity:.12}}
 .art.m-final .lns{filter:url(#rough)}
 .app.lessonv #canvas{box-shadow:var(--sh-2),inset 0 0 44px rgba(120,96,52,.07)}
+
+/* ---------- kids skin (v26): game-map home (option B) + sketchbook lessons (option A) ---------- */
+body.kid{color-scheme:light;
+  --bg:#EAF7FF;--surface:#FFFFFF;--surface-2:#F4FBFF;--paper:#FFFEFB;--grid:#E6EEF6;
+  --ink:#1D2B4F;--ink-2:#2B385C;--muted:#4A5675;--line:#D3E6F4;--line-2:#B9D4E8;
+  --guide:#4C7CC0;--accent:#1F6FB8;--accent-deep:#1D2B4F;--accent-ink:#FFFFFF;--accent-soft:#E1F4FF;
+  --new:#E2513D;--new-ink:#B8402E;--marker:#FFC93C;--ok:#3FAE2A;--ok-deep:#1D2B4F;--ok-soft:#E2F6DA;--vp:#E0352B;--lock:#E3EAF1;--lock-deep:#C7D3DF;
+  --sh-1:none;--sh-2:none;--sh-3:none;
+  --display:"Baloo 2","Avenir Next",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink)}
+body.kid h1,body.kid h2,body.kid h3{letter-spacing:0;font-weight:800}
+body.kid .top .chip{border:2.5px solid #1D2B4F;border-radius:12px;font-family:"Baloo 2",var(--body);font-weight:800;font-size:15px;background:#fff}
+body.kid .btn{font-family:"Baloo 2",var(--body);font-weight:800;font-size:16.5px;border-radius:16px;letter-spacing:0}
+body.kid .btn.primary{background:#FF6F59;color:#1D2B4F;border:3px solid #1D2B4F;box-shadow:0 5px 0 #1D2B4F}
+body.kid .btn.primary:hover{background:#FF8270}
+body.kid .btn.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #1D2B4F}
+body.kid .btn.ok{background:#5BC236;color:#1D2B4F;border:3px solid #1D2B4F;box-shadow:0 5px 0 #1D2B4F}
+body.kid .btn.ghost{background:#fff;color:#1D2B4F;border:3px solid #1D2B4F;box-shadow:0 4px 0 #1D2B4F}
+body.kid .btn.ghost:active{transform:translateY(2px);box-shadow:0 2px 0 #1D2B4F}
+body.kid .panel{border:2.5px solid var(--line);border-radius:20px}
+body.kid .tabs{background:#fff;border-top:3px solid #D3E6F4;-webkit-backdrop-filter:none;backdrop-filter:none}
+body.kid .tabs button{font-family:"Baloo 2",var(--body);font-weight:700;font-size:13px;color:#4A5675}
+body.kid .tabs button[aria-current="page"]{color:#1D2B4F;background:#E1F4FF;box-shadow:inset 0 0 0 2.5px #4CB7F5}
+
+/* map home */
+.kbanner{position:relative;background:#FF6F59;border-radius:22px;box-shadow:0 6px 0 #C94A38;padding:14px 112px 16px 18px;color:#1D2B4F;min-height:110px;font-family:"Baloo 2",var(--body)}
+.kbanner small{display:block;font-weight:700;font-size:14px}
+.kbanner h1{font-family:"Baloo 2",var(--body);font-weight:800;font-size:29px;line-height:1.05;color:#1D2B4F}
+.kbanner p{font-weight:600;font-size:16px;line-height:1.3;margin-top:4px}
+.kbanner .pip{position:absolute;right:12px;bottom:-8px;width:90px;height:124px}
+.kworld{display:flex;flex-direction:column;gap:4px}
+.kw-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 2px}
+.kw-head h2{font-family:"Baloo 2",var(--body);font-weight:800;font-size:21px}
+.kw-c{font-family:"Baloo 2",var(--body);font-weight:800;font-size:15px;background:#fff;border:2.5px solid #1D2B4F;border-radius:999px;padding:0 11px}
+.kmap{position:relative}
+.kmap>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.kmap .kp1{fill:none;stroke:#CDEBFB;stroke-width:20;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.kmap .kp2{fill:none;stroke:#1D2B4F;stroke-opacity:.3;stroke-width:5;stroke-dasharray:1 14;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.kn{position:absolute;width:0;height:0}
+body.kid .kmap .kn-b{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:92px;height:92px;padding:0;border-radius:50%;border:5px solid #1D2B4F;box-shadow:0 6px 0 #1D2B4F;overflow:hidden;cursor:pointer;display:block}
+body.kid .kmap .kn-b .art{width:100%;height:100%;aspect-ratio:auto}
+body.kid .kmap .kn-b:active{transform:translate(-50%,calc(-50% + 3px));box-shadow:0 3px 0 #1D2B4F}
+body.kid .kmap .kn.current .kn-b{width:118px;height:118px;border-width:6px;box-shadow:0 0 0 7px #FF6F59,0 13px 0 #1D2B4F}
+.kn.locked .kn-b .art{opacity:.5}
+body.kid .kmap .kn.soon .kn-b{border-style:dashed;background:#F4F7FB;display:grid;place-items:center;font-family:"Baloo 2",var(--body);font-weight:800;font-size:16px;color:#4A5675;box-shadow:none}
+.kn-badge{position:absolute;left:20px;top:-52px;width:32px;height:32px;border-radius:50%;background:#5BC236;border:3px solid #1D2B4F;display:grid;place-items:center;color:#fff;pointer-events:none}
+.kn-badge .ico{width:15px;height:15px;stroke-width:3.4}
+.kn-badge.lk{background:#1D2B4F;color:#FFC93C}
+.kn-badge.lk .ico{stroke-width:2.6}
+.kn.current .kn-badge{left:34px;top:-66px}
+.kn-t{position:absolute;left:0;top:56px;transform:translateX(-50%);width:170px;text-align:center;font-family:"Baloo 2",var(--body);font-weight:700;font-size:15.5px;line-height:1.15;color:#1D2B4F}
+.kn.current .kn-t{top:74px;font-weight:800;font-size:18px}
+.kn.locked .kn-t,.kn.soon .kn-t{color:#4A5675}
+.kstart{position:absolute;left:0;top:-106px;transform:translateX(-50%);padding:2px 18px;background:#fff;color:#B8402E;border:3px solid #1D2B4F;border-radius:12px;font-family:"Baloo 2",var(--body);font-weight:800;font-size:17px;box-shadow:0 4px 0 #1D2B4F;white-space:nowrap}
+
+/* sketchbook lesson, finish and colouring */
+body.kid.kless{background:#E4E2DC}
+body.kid .app.full{--ink:#2E2F33;--ink-2:#3A3C42;--muted:#55575E;--line:#CFCBC2;--line-2:#B9B4AA;--guide:#4C7CC0;--new:#2F5FA8;--new-ink:#2F5FA8;--vp:#C8463F;--surface:#F7F5F0;--surface-2:#F7F5F0;--paper:#F7F5F0;--accent:#2F5FA8;--accent-soft:#E9ECF5;--ok:#2E7D32;--ok-soft:#E4EFE0;--display:"Kalam","Bradley Hand",cursive;--hand:"Kalam","Bradley Hand",cursive;color:#2E2F33}
+body.kid .app.full h1,body.kid .app.full h2{font-weight:700;letter-spacing:0}
+body.kid .app.full .eyebrow{font-family:var(--body);text-transform:none;letter-spacing:0;font-size:13.5px;font-weight:600;color:#55575E}
+body.kid .app.lessonv .lbar{background:rgba(228,226,220,.94)}
+body.kid .segs i{height:7px;background:#C9C6BE}
+body.kid .segs i.on{background:#2E2F33}
+body.kid .segs i.cur{background:#F2C230;box-shadow:0 0 0 1.5px #2E2F33}
+body.kid .lnum{font-family:"Kalam",cursive;font-weight:700;font-size:17px}
+body.kid .app.full .paper{border:1.5px solid #2E2F33;border-radius:4px;box-shadow:3px 4px 0 #2E2F33}
+body.kid .app.lessonv #canvas{overflow:visible;box-shadow:3px 4px 0 #2E2F33}
+body.kid .app.lessonv #canvas::before{content:"";position:absolute;top:-11px;left:calc(50% - 38px);width:76px;height:22px;background:rgba(242,194,48,.78);transform:rotate(-4deg);z-index:1;pointer-events:none}
+@media (max-width:959px){body.kid .app.lessonv #canvas{position:relative}}
+body.kid .app.lessonv #canvas .lns{filter:url(#pencil)}
+body.kid .app.lessonv .lbody h2{font-size:31px;line-height:1.08}
+body.kid .app.lessonv .tip{font-family:"Kalam",cursive;font-size:21px;line-height:1.2;color:#2F5FA8;transform:rotate(-1deg);transform-origin:left center}
+body.kid .app.full .kchip{background:#F7F5F0;border:1.5px solid #2E2F33}
+body.kid .app.full .rule,body.kid .app.full .goal{background:#F7F5F0;border:1.5px solid #2E2F33;border-left-width:1.5px;border-radius:6px;box-shadow:none}
+body.kid .app.full .panel{background:#F7F5F0;border:1.5px solid #2E2F33;border-radius:8px;box-shadow:none}
+body.kid .app.full .chip{background:#F7F5F0;border:1.5px solid #2E2F33}
+body.kid .app.lessonv .lactions{background:rgba(228,226,220,.94);border-top:1px solid #CFCBC2}
+body.kid .app.full .btn{font-family:var(--body);font-weight:700;font-size:16px;border-radius:12px}
+body.kid .app.full .btn.primary,body.kid .app.full .btn.ok{background:#F2C230;color:#2E2F33;border:2px solid #2E2F33;box-shadow:3px 3px 0 #2E2F33}
+body.kid .app.full .btn.primary:hover,body.kid .app.full .btn.ok:hover{background:#F5CB4A}
+body.kid .app.full .btn.primary:active,body.kid .app.full .btn.ok:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #2E2F33}
+body.kid .app.full .btn.ghost{background:#F7F5F0;color:#2E2F33;border:2px solid #2E2F33;box-shadow:none}
+body.kid .app.full .btn.ghost:active{transform:translate(1px,1px)}
 </style>
 </head>
 <body>
@@ -892,6 +975,7 @@ h3{font-size:17px;line-height:1.25;letter-spacing:-.01em}
   <defs>
     <pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="hl"/></pattern>
     <filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <filter id="pencil" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.8" xChannelSelector="R" yChannelSelector="G"/></filter>
     <pattern id="hatchLight" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="9" class="hl" style="opacity:.6"/></pattern>
   </defs>
 </svg>
@@ -1997,14 +2081,7 @@ function setTabs(name){
 }
 
 /* ---------- views ---------- */
-function vLearn(){
-  const ni=nextIdx(),q=quest(),P=PATH();
-  const warn=(onTrial()&&daysLeft()<=2)||trialOver()?trialBanner():'';
-  let hero;
-  if(ni<0)hero=`<section class="hero-next"><div class="hn-art paper">${art(P[P.length-1],P[P.length-1].steps.length-1,'thumb')}</div><div class="hn-body"><h1>${isKid()?'You finished every lesson!':'Every lesson done'}</h1><button class="btn primary wide hn-cta" data-act="tab" data-tab="draw">${I.pencil}${isKid()?'Pick a new drawing':'Open the drawing studio'}</button></div></section>`;
-  else{const l=P[ni],locked=l.pro&&!isPro(),isQ=q.kind==='lesson'&&q.id===l.id&&!q.done;
-    hero=`<section class="hero-next"><button class="hn-art paper" data-act="open" data-i="${ni}" aria-label="Open ${esc(LT(l))}">${art(l,l.steps.length-1,'thumb')}<span class="hn-tag">${ni===0?(isKid()?'Start here':'Start here'):'Next'}</span>${isQ?`<span class="hn-q">${I.gem}+${QUEST_GEMS}</span>`:''}</button>
-    <div class="hn-body"><h1>${esc(LT(l))}</h1><button class="btn primary wide hn-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+function missionTile(P,ni,q){
   let mission='';
   if(!(q.kind==='lesson'&&q.id===(P[ni]||{}).id)){
     const ml=q.kind==='day'?null:(q.kind==='lib'?LIB:P).find(z=>z.id===q.id);
@@ -2012,6 +2089,46 @@ function vLearn(){
     const thumb=ml||hl;const go=q.kind==='day'?`data-act="questday" data-d="${q.d}"`:`data-act="${q.kind==='lib'?'lib':'open'}" data-i="${q.i}"`;
     mission=`<button class="mtile${q.done?' mdone':''}" ${q.done?'disabled':go}><span class="mt-art paper">${thumb?art(thumb,thumb.steps.length-1,'thumb'):''}</span><span class="mt-txt"><small>${isKid()?"Today's mission":"Today's mission"}</small><b>${q.kind==='day'?`Challenge day ${q.d}`:esc(LT(ml))}</b></span><span class="mt-end">${q.done?I.check:`${I.gem}+${QUEST_GEMS}`}</span></button>`}
   else if(q.done)mission='';
+  return mission;
+}
+const PIP='<svg class="pip" viewBox="0 0 96 132" role="img" aria-label="Pip, a smiling pencil, waving"><path d="M18 62 L6 44" stroke="#1D2B4F" stroke-width="4" stroke-linecap="round"/><path d="M78 62 L90 50" stroke="#1D2B4F" stroke-width="4" stroke-linecap="round"/><rect x="28" y="6" width="40" height="18" rx="7" fill="#FF8FA3" stroke="#1D2B4F" stroke-width="3.5"/><rect x="26" y="22" width="44" height="10" fill="#C9D3E0" stroke="#1D2B4F" stroke-width="3.5"/><rect x="26" y="31" width="44" height="66" fill="#FFC93C" stroke="#1D2B4F" stroke-width="3.5"/><path d="M41 33v62M55 33v62" stroke="#E0A520" stroke-width="3"/><path d="M26 97 L48 126 L70 97 Z" fill="#F4C38B" stroke="#1D2B4F" stroke-width="3.5" stroke-linejoin="round"/><path d="M42 118 L48 126 L54 118 Z" fill="#1D2B4F"/><circle cx="39" cy="56" r="5.5" fill="#1D2B4F"/><circle cx="57" cy="56" r="5.5" fill="#1D2B4F"/><circle cx="41" cy="54" r="1.8" fill="#fff"/><circle cx="59" cy="54" r="1.8" fill="#fff"/><path d="M40 68 Q48 76 56 68" stroke="#1D2B4F" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="32" cy="66" r="4" fill="#FF8FA3" opacity=".8"/><circle cx="64" cy="66" r="4" fill="#FF8FA3" opacity=".8"/></svg>';
+function kbox(l){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const add=p=>{x0=Math.min(x0,p[0]);y0=Math.min(y0,p[1]);x1=Math.max(x1,p[0]);y1=Math.max(y1,p[1])};
+  const last=l.steps.length-1;l.steps.forEach(st=>st.shapes.forEach(s=>{if(s.until!=null&&last>=s.until)return;
+    if(s.t==='l'&&s.k!=='guide'&&s.k!=='erase'){add(s.a);add(s.b)}else if(s.t==='e'){add([s.c[0]-s.rx,s.c[1]-s.ry]);add([s.c[0]+s.rx,s.c[1]+s.ry])}else if(s.t==='p')s.pts.forEach(add)}));
+  if(x0>x1)return `0 0 ${W} ${H}`;
+  const cx=(x0+x1)/2,cy=(y0+y1)/2,sz=Math.min(H,Math.max(120,Math.max(x1-x0,y1-y0)*1.12+16));
+  return `${(cx-sz/2).toFixed(1)} ${(cy-sz/2).toFixed(1)} ${sz.toFixed(1)} ${sz.toFixed(1)}`}
+function kidMap(){
+  const ni=nextIdx(),q=quest(),P=PATH();
+  const warn=(onTrial()&&daysLeft()<=2)||trialOver()?trialBanner():'';
+  const cur=ni>=0?P[ni]:null,cu=cur?PUNITS().find(u=>u.n===cur.unit):null;
+  const banner=`<section class="kbanner"><small>${cur?'World '+cur.unit:'Every world done'}</small><h1>${cur?esc(cu.title):'You did them all!'}</h1><p>${cur?`Pip says: today we draw the ${esc(LT(cur).toLowerCase())}!`:'Pip says: pick a new drawing in Draw.'}</p>${PIP}</section>`;
+  const worlds=PUNITS().map(u=>{
+    const list=P.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n),ud=list.filter(x=>S.done[x.l.id]).length;
+    const items=[...list,...u.soon.map(t=>({soon:t}))];if(!items.length)return '';
+    const gap=168,top=118,n=items.length,H=top+(n-1)*gap+100;
+    const pos=items.map((_,k)=>[k%2?68:32,top+k*gap]);
+    let d=`M${pos[0][0]} ${pos[0][1]}`;for(let k=1;k<n;k++){const [x0,y0]=pos[k-1],[x1,y1]=pos[k];d+=` C${x0} ${y0+gap/2} ${x1} ${y1-gap/2} ${x1} ${y1}`}
+    const nodes=items.map((it,k)=>{const [x,y]=pos[k];
+      if(it.soon)return `<div class="kn soon" style="left:${x}%;top:${y}px"><button class="kn-b" data-act="soon" aria-label="${esc(it.soon)}: coming soon">Soon</button><span class="kn-t">${esc(it.soon)}</span></div>`;
+      const {l,i}=it,st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
+      const badge=st==='done'?`<span class="kn-badge">${I.check}</span>`:(st==='locked'||pro)?`<span class="kn-badge lk">${pro?I.gem:I.lock}</span>`:'';
+      const th=art(l,l.steps.length-1,'thumb').replace('<svg ','<svg preserveAspectRatio="xMidYMid slice" ').replace(`viewBox="0 0 ${W} ${H}"`,`viewBox="${kbox(l)}"`);
+      return `<div class="kn ${st}" style="left:${x}%;top:${y}px">${st==='current'?`<button class="kstart" data-act="node" data-i="${i}" tabindex="-1" aria-hidden="true">${pro?'Unlock':'Start'}</button>`:''}<button class="kn-b paper" data-act="node" data-i="${i}" aria-label="${esc(LT(l))}: ${st==='current'?(pro?'unlock with Pro':'start'):st}">${th}</button>${badge}<span class="kn-t">${esc(LT(l))}</span></div>`}).join('');
+    return `<section class="kworld"><div class="kw-head"><h2>World ${u.n}: ${esc(u.title)}</h2><span class="kw-c">${ud}/${list.length}</span></div><div class="kmap" style="height:${H}px"><svg viewBox="0 0 100 ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d}" class="kp1"/><path d="${d}" class="kp2"/></svg>${nodes}</div></section>`}).join('');
+  const code=!S.pro&&!S.trialCode?`<button class="codelink" data-act="paywall" data-focus="code">${I.gem}Have a code? Ask a grown-up</button>`:'';
+  return header()+warn+banner+missionTile(P,ni,q)+worlds+code;
+}
+function vLearn(){
+  if(isKid())return kidMap();
+  const ni=nextIdx(),q=quest(),P=PATH();
+  const warn=(onTrial()&&daysLeft()<=2)||trialOver()?trialBanner():'';
+  let hero;
+  if(ni<0)hero=`<section class="hero-next"><div class="hn-art paper">${art(P[P.length-1],P[P.length-1].steps.length-1,'thumb')}</div><div class="hn-body"><h1>${isKid()?'You finished every lesson!':'Every lesson done'}</h1><button class="btn primary wide hn-cta" data-act="tab" data-tab="draw">${I.pencil}${isKid()?'Pick a new drawing':'Open the drawing studio'}</button></div></section>`;
+  else{const l=P[ni],locked=l.pro&&!isPro(),isQ=q.kind==='lesson'&&q.id===l.id&&!q.done;
+    hero=`<section class="hero-next"><button class="hn-art paper" data-act="open" data-i="${ni}" aria-label="Open ${esc(LT(l))}">${art(l,l.steps.length-1,'thumb')}<span class="hn-tag">${ni===0?(isKid()?'Start here':'Start here'):'Next'}</span>${isQ?`<span class="hn-q">${I.gem}+${QUEST_GEMS}</span>`:''}</button>
+    <div class="hn-body"><h1>${esc(LT(l))}</h1><button class="btn primary wide hn-cta" data-act="open" data-i="${ni}">${locked?I.gem+'Unlock with Pro':I.pencil+(ni===0?'Start drawing':'Continue')}</button></div></section>`}
+  const mission=missionTile(P,ni,q);
   const units=PUNITS().map(u=>{
     const list=P.map((l,i)=>({l,i})).filter(x=>x.l.unit===u.n);const ud=list.filter(x=>S.done[x.l.id]).length;
     const cards=list.map(({l,i})=>{const st=S.done[l.id]?'done':(i===ni?'current':'locked'),pro=l.pro&&!isPro();
@@ -2031,7 +2148,7 @@ function vDraw(){
     const cta=locked?`${I.lock}Unlock · Pro`:done?`${I.replay}Draw again`:`${I.pencil}Start drawing`;
     return `<article class="dcard${done?' isdone':''}${locked?' islocked':''}"><button class="dprev" data-act="lib" data-i="${i}" tabindex="-1" aria-hidden="true"><div class="paper">${art(l,l.steps.length-1,'thumb')}</div>${isNew(l)?'<span class="newpill dnew">NEW</span>':''}${done?`<span class="ddone">${I.check}Done</span>`:''}</button>
     <div class="dinfo"><h3>${esc(LT(l))}</h3>
-    <p class="dlevel"><span class="lvdots lv${lv.k}" aria-hidden="true"><i></i><i></i><i></i></span>${isKid()?lv.kt+' · '+lv.k+' magic dot'+(lv.k>1?'s':''):lv.t+' · '+lv.p}</p>
+    <p class="dlevel"><span class="lvdots lv${lv.k}" aria-hidden="true"><i></i><i></i><i></i></span>${isKid()?lv.kt+' · '+Math.max(1,vpCount(l))+' magic dot'+(vpCount(l)>1?'s':''):lv.t+' · '+lv.p}</p>
     <p class="dmeta"><span>${l.steps.length} steps</span><span>${l.mins} min</span><span class="dgem">${I.gem}+${gemsFor(l)}</span></p></div>
     <button class="btn ${locked?'ghost':done?'ghost':'primary'} small wide dcta" data-act="lib" data-i="${i}" aria-label="${esc(LT(l))}: ${locked?'unlock with Pro':done?'draw again':'start drawing'}">${cta}</button></article>`};
   const order=isKid()?['fun','place']:['place','fun'];
@@ -2175,6 +2292,7 @@ const app=document.getElementById('app');
 function render(scrollTop,quiet){
   document.body.classList.toggle('kid',isKid());document.body.dataset.paper=S.paper||'grid';
   const name=S.mode?view.name:'onboard';
+  document.body.classList.toggle('kless',name==='lesson'||name==='complete'||name==='color');
   app.classList.toggle('full',name==='lesson'||name==='complete'||name==='color');
   app.classList.toggle('lessonv',name==='lesson');app.classList.toggle('colorv',name==='color');app.classList.toggle('learnv',name==='learn');
   setTabs(name==='mine'?'profile':name);
